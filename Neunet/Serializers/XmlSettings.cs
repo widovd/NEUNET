@@ -9,12 +9,7 @@ namespace Neunet.Serializers
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        protected override string DocumentFileName
-        {
-            get { return "Settings.xml"; }
-        }
-
-        private const string _formsId = "FormList";
+        private const string _formsId = "Forms";
 
         public XmlElement FormsElement
         {
@@ -26,13 +21,6 @@ namespace Neunet.Serializers
         public XmlElement GlobalsElement
         {
             get { return DocumentElement.GetOrCreateElement(_globalsId); }
-        }
-
-        private const string _testId = "Test";
-
-        public XmlElement TestElement
-        {
-            get { return DocumentElement.GetOrCreateElement(_testId); }
         }
 
         #endregion

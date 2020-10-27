@@ -72,7 +72,6 @@
             // colorGradientDropDownButton
             // 
             this.colorGradientDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.colorGradientDropDownButton.Image = global::Neunet.Properties.Resources.ColorGradient;
             this.colorGradientDropDownButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.colorGradientDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.colorGradientDropDownButton.Name = "colorGradientDropDownButton";

@@ -27,7 +27,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -36,6 +36,10 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>8.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Neunet.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -458,6 +462,8 @@
     <Content Include="Icons\MoveUpColumn.png" />
     <Content Include="Icons\MoveUpRow.png" />
     <Content Include="Icons\MoveUpTreeNode.png" />
+    <Content Include="Neunet.ico" />
+    <None Include="Icons\neural.png" />
     <Content Include="Icons\NewDistribution.png" />
     <Content Include="Icons\NewFreeformSurface.png" />
     <Content Include="Icons\NewInverseSurface.png" />

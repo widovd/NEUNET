@@ -3,9 +3,10 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
+using Neulib.Exceptions;
+using Neulib.Serializers;
 using Neunet.Serializers;
 using Neunet.Forms;
-using Neulib.Serializers;
 
 namespace Neunet
 {
@@ -13,22 +14,12 @@ namespace Neunet
     {
         public static string Name
         {
-            get => "NEUNET";
+            get => "Neunet";
         }
 
         public static Version Version
         {
             get => Assembly.GetExecutingAssembly().GetName().Version;
-        }
-
-        public static string VersionString
-        {
-            get => Version.ToString();
-        }
-
-        public static string AssemblyTitleAndVersion
-        {
-            get => $"{Name} {Version}";
         }
 
         public static string ApplicationData
@@ -89,9 +80,28 @@ namespace Neunet
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            try
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                XmlSettings = new XmlSettings();
+                string settingsFileName = "settings.xml";
+                string applicationFileFolder = ApplicationData;
+                string settingsfilePath = Path.Combine(applicationFileFolder, settingsFileName);
+                if (!File.Exists(settingsfilePath))
+                    settingsfilePath = Path.Combine(CommonApplicationData, settingsFileName);
+                if (File.Exists(settingsfilePath)) 
+                    XmlSettings.Load(settingsfilePath); 
+                Application.Run(new MainForm());
+                if (!Directory.Exists(applicationFileFolder))
+                    Directory.CreateDirectory(applicationFileFolder);
+                settingsfilePath = Path.Combine(applicationFileFolder, settingsFileName);
+                XmlSettings.Save(settingsfilePath);
+            }
+            catch (BaseException ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
         }
     }
 }

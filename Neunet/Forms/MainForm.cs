@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
+using Neulib;
 using Neulib.Numerics;
 using Neulib.Exceptions;
 using Neulib.Neurons;
-using System.IO;
 using Neulib.MultiArrays;
+using Neulib.Serializers;
 using Neunet.Images.Charts2D;
-using Neulib;
+using Neunet.Serializers;
 
 namespace Neunet.Forms
 {
@@ -23,8 +27,63 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Properties
 
+        //private readonly string _workingFolderId = "WorkingFolder";
+
+        //private string WorkingFolder
+        //{
+        //    get { return Program.XmlSettings.GlobalsElement.ReadString(_workingFolderId, string.Empty); }
+        //    set { Program.XmlSettings.GlobalsElement.WriteString(_workingFolderId, value); }
+        //}
+
+        private readonly string _networkFilePathId = "NetworkFilePath";
+
+        private string NetworkFilePath
+        {
+            get { return Program.XmlSettings.GlobalsElement.ReadString(_networkFilePathId, string.Empty); }
+            set { Program.XmlSettings.GlobalsElement.WriteString(_networkFilePathId, value); }
+        }
+
+        private readonly string _trainingSetImageFilePathId = "TrainingSetImageFilePath";
+
+        private string TrainingSetImageFilePath
+        {
+            get { return Program.XmlSettings.GlobalsElement.ReadString(_trainingSetImageFilePathId, string.Empty); }
+            set { Program.XmlSettings.GlobalsElement.WriteString(_trainingSetImageFilePathId, value); }
+        }
+
+        private readonly string _trainingSetLabelFilePathId = "TrainingSetLabelFilePath";
+
+        private string TrainingSetLabelFilePath
+        {
+            get { return Program.XmlSettings.GlobalsElement.ReadString(_trainingSetLabelFilePathId, string.Empty); }
+            set { Program.XmlSettings.GlobalsElement.WriteString(_trainingSetLabelFilePathId, value); }
+        }
+
+
         private Mersenne Mersenne { get; set; } = new Mersenne();
-        private Network Network { get; set; } = new Network();
+
+        private bool _networkChanged = false;
+        private bool NetworkChanged
+        {
+            get { return _networkChanged; }
+            set
+            {
+                _networkChanged = value;
+                changedStatusLabel.Visible = value;
+            }
+        }
+
+        private Network _network = new Network();
+        private Network Network
+        {
+            get { return _network; }
+            set
+            {
+                _network = value;
+                UpdateCoefficients();
+            }
+        }
+
 
         private CancellationTokenSource _tokenSource = null;
 
@@ -35,29 +94,162 @@ namespace Neunet.Forms
         public MainForm()
         {
             InitializeComponent();
-            ReadTraingSetImageFile();
-            ReadTraingSetLabelFile();
-            ImageIndex = 0;
         }
 
-        private string _filePath = @"D:\VS Projects\Neunet\NeunetData\Networks\Network.bin";
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region MainForm events
+
+        private void LoadTraingSetImageFile()
+        {
+            // train-images.idx3-ubyte
+            using (FileStream stream = new FileStream(TrainingSetImageFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                TrainingSetImages = BaseArray.ReadFromStream(stream) as ByteArray;
+            }
+        }
+
+        private bool LoadTrainingSetImageFileDialog()
+        {
+            do
+            {
+                openFileDialog.Filter = "idx3-ubyte files|*.idx3-ubyte|All files|*.*";
+                openFileDialog.Title = "Open training set image file";
+                openFileDialog.FileName = TrainingSetImageFilePath;
+                if (openFileDialog.ShowDialog(this) != DialogResult.OK) return false;
+                TrainingSetImageFilePath = openFileDialog.FileName;
+            }
+            while (!File.Exists(TrainingSetImageFilePath));
+            LoadTraingSetImageFile();
+            return true;
+        }
+
+        private void LoadTraingSetLabelFile()
+        {
+            using (FileStream stream = new FileStream(TrainingSetLabelFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                TrainingSetLabels = BaseArray.ReadFromStream(stream) as ByteArray;
+            }
+        }
+
+        private bool LoadTrainingSetLabelFileDialog()
+        {
+            do
+            {
+                // train-labels.idx1-ubyte
+                openFileDialog.Filter = "idx1-ubyte files|*.idx1-ubyte|All files|*.*";
+                openFileDialog.Title = "Open training set label file";
+                openFileDialog.FileName = TrainingSetLabelFilePath;
+                if (openFileDialog.ShowDialog(this) != DialogResult.OK) return false;
+                TrainingSetLabelFilePath = openFileDialog.FileName;
+            }
+            while (!File.Exists(TrainingSetLabelFilePath));
+            LoadTraingSetLabelFile();
+            return true;
+        }
+
+
+        private void NewNetwork()
+        {
+            const float biasMagnitude = 0.1f;
+            const float weightMagnitude = 0.1f;
+            Network = new Network();
+            Network.AddLayer(28 * 28, Mersenne, biasMagnitude, weightMagnitude);
+            Network.AddLayer(100, Mersenne, biasMagnitude, weightMagnitude);
+            Network.AddLayer(30, Mersenne, biasMagnitude, weightMagnitude);
+            Network.AddLayer(10, Mersenne, biasMagnitude, weightMagnitude);
+        }
+
 
         private void LoadNetwork()
         {
-            if (File.Exists(_filePath))
-            {
-                Network = (Network)LoadFileForm.LoadFile(_filePath, out Version fileVersion);
-                UpdateCoefficients();
-            }
-            else
-                NewNetwork();
+            Network = (Network)LoadFileForm.LoadFile(NetworkFilePath, out Version fileVersion);
         }
 
-        private void TestForm_Load(object sender, EventArgs e)
+        private void LoadNetworkDialog()
+        {
+            do
+            {
+                openFileDialog.Filter = "bin files|*.bin|All files|*.*";
+                openFileDialog.Title = "Open network file";
+                openFileDialog.FileName = NetworkFilePath;
+                if (openFileDialog.ShowDialog(this) != DialogResult.OK) return;
+                NetworkFilePath = openFileDialog.FileName;
+            }
+            while (!File.Exists(NetworkFilePath));
+            LoadNetwork();
+        }
+
+        private void SaveNetwork()
+        {
+            SaveFileForm.SaveFile(NetworkFilePath, Network);
+        }
+
+        private void SaveNetworkDialog()
+        {
+            saveFileDialog.Filter = "bin files|*.bin|All files|*.*";
+            saveFileDialog.Title = "Save network file";
+            saveFileDialog.FileName = NetworkFilePath;
+            if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                NetworkFilePath = saveFileDialog.FileName;
+                SaveNetwork();
+            }
+        }
+
+        private void SaveNetworkElseDialog()
+        {
+            string filePath = NetworkFilePath;
+            if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+                SaveNetwork();
+            else
+                SaveNetworkDialog();
+        }
+
+        private bool CancelOnClose()
+        {
+            const string message = "The network has changed. Save before closing?";
+            const string caption = "Closing";
+            const MessageBoxButtons buttons = MessageBoxButtons.YesNoCancel;
+            DialogResult result = MessageBox.Show(message, caption, buttons);
+            switch (result)
+            {
+                case DialogResult.No:
+                    return false;
+                case DialogResult.Yes:
+                    SaveNetworkElseDialog();
+                    return false;
+            }
+            return true; // cancelled
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
         {
             try
             {
-                LoadNetwork();
+                //while (!Directory.Exists(WorkingFolder))
+                //{
+                //    folderBrowserDialog.SelectedPath = WorkingFolder;
+                //    if (folderBrowserDialog.ShowDialog(this) != DialogResult.OK) Close();
+                //    WorkingFolder = folderBrowserDialog.SelectedPath;
+                //}
+
+                if (File.Exists(TrainingSetImageFilePath))
+                    LoadTraingSetImageFile();
+                else
+                    if (!LoadTrainingSetImageFileDialog()) Close();
+
+                if (File.Exists(TrainingSetLabelFilePath))
+                    LoadTraingSetLabelFile();
+                else
+                    if (!LoadTrainingSetLabelFileDialog()) Close();
+
+                if (File.Exists(NetworkFilePath))
+                    LoadNetwork();
+                else
+                    NewNetwork();
+                ImageIndex = 0;
+
             }
             catch (Exception ex)
             {
@@ -65,16 +257,180 @@ namespace Neunet.Forms
             }
         }
 
-        private void SaveNetwork()
-        {
-            SaveFileForm.SaveFile(_filePath, Network);
-        }
-
-        private void TestForm_FormClosed(object sender, FormClosedEventArgs e)
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
             {
-                SaveNetwork();
+                e.Cancel = NetworkChanged && CancelOnClose();
+            }
+            catch (BaseException ex)
+            {
+                ExceptionDialog.Show(ex);
+                e.Cancel = false;
+            }
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            try
+            {
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void NewMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                NewNetwork();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void OpenMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LoadNetworkDialog();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void SaveMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SaveNetworkElseDialog();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void SaveAsMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SaveNetworkDialog();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void OpenTrainingSetImageFileMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LoadTrainingSetImageFileDialog();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void OpenTrainingSetLabelFileMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LoadTrainingSetLabelFileDialog();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void ExitMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Close();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void CalculationSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void ClearSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DialogResult result = MessageBox.Show("Are you sure you want to clear settings.xml in the AppData folder?",
+        "Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No) return;
+                Program.XmlSettings.Clear();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void ApplicationDataFolder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start("explorer", Program.ApplicationData);
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void CommonAppDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start("explorer", Program.CommonApplicationData);
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void ProgramFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start("explorer", Program.ProgramFiles);
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
             }
             catch (Exception ex)
             {
@@ -115,15 +471,6 @@ namespace Neunet.Forms
             }
         }
 
-        private void ReadTraingSetImageFile()
-        {
-            string filePath = @"D:\VS Projects\Neunet\NeunetData\Samples\Idx\train-images.idx3-ubyte";
-            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
-            {
-                TrainingSetImages = BaseArray.ReadFromStream(stream) as ByteArray;
-            }
-        }
-
         private ByteArray _trainingSetLabels;
         private ByteArray TrainingSetLabels
         {
@@ -131,15 +478,6 @@ namespace Neunet.Forms
             set
             {
                 _trainingSetLabels = value ?? throw new VarNullException(nameof(TrainingSetLabels), 682702);
-            }
-        }
-
-        private void ReadTraingSetLabelFile()
-        {
-            string filePath = @"D:\VS Projects\Neunet\NeunetData\Samples\Idx\train-labels.idx1-ubyte";
-            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
-            {
-                TrainingSetLabels = BaseArray.ReadFromStream(stream) as ByteArray;
             }
         }
 
@@ -201,18 +539,6 @@ namespace Neunet.Forms
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Network
-
-        private void NewNetwork()
-        {
-            const float biasMagnitude = 0.1f;
-            const float weightMagnitude = 0.1f;
-            Network = new Network();
-            Network.AddLayer(28 * 28, Mersenne, biasMagnitude, weightMagnitude);
-            Network.AddLayer(100, Mersenne, biasMagnitude, weightMagnitude);
-            Network.AddLayer(30, Mersenne, biasMagnitude, weightMagnitude);
-            Network.AddLayer(10, Mersenne, biasMagnitude, weightMagnitude);
-            UpdateCoefficients();
-        }
 
         private void NewButton_Click(object sender, EventArgs e)
         {
@@ -326,7 +652,7 @@ namespace Neunet.Forms
                     for (int i = 0; i < nu; i++)
                         for (int j = 0; j < nv; j++)
                         {
-                            sample.Xs[k++] = (float)TrainingSetImages[h, i, j] / 255f;
+                            sample.Xs[k++] = ((float)TrainingSetImages[h, i, j] - 128f) / 128f;
                         }
                     for (int i = 0; i < ny; i++)
                     {
@@ -334,6 +660,7 @@ namespace Neunet.Forms
                     }
                     samples.Add(sample);
                 }
+                NetworkChanged = true;
                 Network.Learn(samples, arguments);
             }
         }
@@ -348,7 +675,7 @@ namespace Neunet.Forms
 
         private void SetStatusText(string value)
         {
-            if (statusLabel.Text != value) statusLabel.Text = value;
+            if (messageStatusLabel.Text != value) messageStatusLabel.Text = value;
         }
 
         private void ReportProgress(ReportData reportData)

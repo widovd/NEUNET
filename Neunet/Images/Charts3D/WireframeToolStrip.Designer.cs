@@ -196,7 +196,6 @@
             // 
             this.viewRaysButton.CheckOnClick = true;
             this.viewRaysButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.viewRaysButton.Image = global::Neunet.Properties.Resources.ViewRays;
             this.viewRaysButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.viewRaysButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.viewRaysButton.Name = "viewRaysButton";
@@ -208,7 +207,6 @@
             // 
             this.viewNormalsButton.CheckOnClick = true;
             this.viewNormalsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.viewNormalsButton.Image = global::Neunet.Properties.Resources.ViewNormalVectors;
             this.viewNormalsButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.viewNormalsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.viewNormalsButton.Name = "viewNormalsButton";

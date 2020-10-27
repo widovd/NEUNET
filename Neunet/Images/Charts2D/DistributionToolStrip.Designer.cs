@@ -61,7 +61,6 @@
             // 
             this.distributionVisibleButton.CheckOnClick = true;
             this.distributionVisibleButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.distributionVisibleButton.Image = global::Neunet.Properties.Resources.GradientInterpolated;
             this.distributionVisibleButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.distributionVisibleButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.distributionVisibleButton.Name = "distributionVisibleButton";
@@ -89,7 +88,6 @@
             // parametricGridPenColorButton
             // 
             this.parametricGridPenColorButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.parametricGridPenColorButton.Image = global::Neunet.Properties.Resources.ParamLinesColor;
             this.parametricGridPenColorButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.parametricGridPenColorButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.parametricGridPenColorButton.Name = "parametricGridPenColorButton";
@@ -106,7 +104,6 @@
             // 
             this.parametricPointsVisible.CheckOnClick = true;
             this.parametricPointsVisible.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.parametricPointsVisible.Image = global::Neunet.Properties.Resources.ParamPoints;
             this.parametricPointsVisible.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.parametricPointsVisible.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.parametricPointsVisible.Name = "pointsVisibleButton";
@@ -117,7 +114,6 @@
             // pointsPenButton
             // 
             this.pointsPenButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.pointsPenButton.Image = global::Neunet.Properties.Resources.ParamPointsPenColor;
             this.pointsPenButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.pointsPenButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pointsPenButton.Name = "pointsPenButton";
@@ -128,7 +124,6 @@
             // pointsBrushButton
             // 
             this.pointsBrushButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.pointsBrushButton.Image = global::Neunet.Properties.Resources.ParamPointsBrushColor;
             this.pointsBrushButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.pointsBrushButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pointsBrushButton.Name = "pointsBrushButton";
@@ -145,7 +140,6 @@
             // 
             this.intersectionsVisibleButton.CheckOnClick = true;
             this.intersectionsVisibleButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.intersectionsVisibleButton.Image = global::Neunet.Properties.Resources.ParamIntersections;
             this.intersectionsVisibleButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.intersectionsVisibleButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.intersectionsVisibleButton.Name = "intersectionsVisibleButton";
@@ -156,7 +150,6 @@
             // intersectionsPenButton
             // 
             this.intersectionsPenButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.intersectionsPenButton.Image = global::Neunet.Properties.Resources.ParamInterPenColor;
             this.intersectionsPenButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.intersectionsPenButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.intersectionsPenButton.Name = "intersectionsPenButton";
@@ -167,7 +160,6 @@
             // intersectionsBrushButton
             // 
             this.intersectionsBrushButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.intersectionsBrushButton.Image = global::Neunet.Properties.Resources.ParamInterBrushColor;
             this.intersectionsBrushButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.intersectionsBrushButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.intersectionsBrushButton.Name = "intersectionsBrushButton";
