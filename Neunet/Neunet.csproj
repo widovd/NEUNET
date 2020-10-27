@@ -1,0 +1,603 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7B30674B-95C4-4F66-9F47-694CD5BC4B31}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Neunet</RootNamespace>
+    <AssemblyName>Neunet</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\Attr.cs" />
+    <Compile Include="Attributes\ShowNameAttribute.cs" />
+    <Compile Include="Attributes\XmlTextAttribute.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\IListExtensions.cs" />
+    <Compile Include="Extensions\SplitContainerExtensions.cs" />
+    <Compile Include="Extensions\TabControlExtensions.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Images\CoefficientsImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\CoefficientsImage.Designer.cs">
+      <DependentUpon>CoefficientsImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\MatrixImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\MatrixImage.Designer.cs">
+      <DependentUpon>MatrixImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MinimizeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MinimizeForm.Designer.cs">
+      <DependentUpon>MinimizeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AsyncForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AsyncForm.Designer.cs">
+      <DependentUpon>AsyncForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BaseDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BaseDialog.Designer.cs">
+      <DependentUpon>BaseDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BaseForm.Designer.cs">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ExceptionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExceptionDialog.Designer.cs">
+      <DependentUpon>ExceptionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FileForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FileForm.Designer.cs">
+      <DependentUpon>FileForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LoadFileForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LoadFileForm.Designer.cs">
+      <DependentUpon>LoadFileForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NotificationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NotificationForm.Designer.cs">
+      <DependentUpon>NotificationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ResizeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ResizeForm.Designer.cs">
+      <DependentUpon>ResizeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SaveFileForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SaveFileForm.Designer.cs">
+      <DependentUpon>SaveFileForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\BaseImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\BaseImage.Designer.cs">
+      <DependentUpon>BaseImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\Charts2D\CartesianImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\Charts2D\Chart2DImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\Charts2D\Chart2DImage.designer.cs">
+      <DependentUpon>Chart2DImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\Charts2D\DistributionToolStrip.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\Charts2D\DistributionToolStrip.Designer.cs">
+      <DependentUpon>DistributionToolStrip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\Charts2D\GradientToolStrip.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\Charts2D\GradientToolStrip.Designer.cs">
+      <DependentUpon>GradientToolStrip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\Charts3D\Chart3DImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\Charts3D\Chart3DImage.designer.cs">
+      <DependentUpon>Chart3DImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\Charts3D\Chart3DToolStrip.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\Charts3D\Chart3DToolStrip.Designer.cs">
+      <DependentUpon>Chart3DToolStrip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\Charts3D\Wireframe.cs" />
+    <Compile Include="Images\Charts3D\WireframeDimensions.cs" />
+    <Compile Include="Images\Charts3D\WireframeImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\Charts3D\WireframeImage.Designer.cs">
+      <DependentUpon>WireframeImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\Charts3D\WireframeNode.cs" />
+    <Compile Include="Images\Charts3D\WireframePoint.cs" />
+    <Compile Include="Images\Charts3D\WireframeToolStrip.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\Charts3D\WireframeToolStrip.Designer.cs">
+      <DependentUpon>WireframeToolStrip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serializers\XmlSettings.cs" />
+    <Compile Include="Serializers\XmlWrapper.cs" />
+    <Compile Include="UserControls\DoubleTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserControls\IntegerTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserControls\NumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserControls\NumericUpDownToolStripButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserControls\RadioButtonStrip.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\RadioButtonStrip.Designer.cs">
+      <DependentUpon>RadioButtonStrip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\RunToolStrip.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\RunToolStrip.Designer.cs">
+      <DependentUpon>RunToolStrip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ToolStripRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Images\ColorUtilities.cs" />
+    <Compile Include="Images\GradientBitmap.cs" />
+    <Compile Include="Utils\FileUtils.cs" />
+    <EmbeddedResource Include="Forms\AsyncForm.resx">
+      <DependentUpon>AsyncForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BaseDialog.resx">
+      <DependentUpon>BaseDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BaseForm.resx">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExceptionDialog.resx">
+      <DependentUpon>ExceptionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FileForm.resx">
+      <DependentUpon>FileForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NotificationForm.resx">
+      <DependentUpon>NotificationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ResizeForm.resx">
+      <DependentUpon>ResizeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\BaseImage.resx">
+      <DependentUpon>BaseImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\Charts2D\Chart2DImage.resx">
+      <DependentUpon>Chart2DImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\Charts2D\DistributionToolStrip.resx">
+      <DependentUpon>DistributionToolStrip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\Charts2D\GradientToolStrip.resx">
+      <DependentUpon>GradientToolStrip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\Charts3D\Chart3DImage.resx">
+      <DependentUpon>Chart3DImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\Charts3D\Chart3DToolStrip.resx">
+      <DependentUpon>Chart3DToolStrip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\Charts3D\WireframeImage.resx">
+      <DependentUpon>WireframeImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\Charts3D\WireframeToolStrip.resx">
+      <DependentUpon>WireframeToolStrip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MinimizeForm.resx">
+      <DependentUpon>MinimizeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="UserControls\RadioButtonStrip.resx">
+      <DependentUpon>RadioButtonStrip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\RunToolStrip.resx">
+      <DependentUpon>RunToolStrip.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
+    <None Include="Icons\gfie\ClearCalculations.gfie" />
+    <None Include="Icons\gfie\Cylinder.gfie" />
+    <None Include="Icons\ifx\Distribution.ifx" />
+    <None Include="Icons\ifx\Grid3DImage.ifx" />
+    <None Include="Icons\ifx\MatrixRotations.ifx" />
+    <None Include="Icons\ifx\MeshResolutionIcons.ifx" />
+    <None Include="Icons\ifx\NOK.ifx" />
+    <None Include="Icons\ifx\OpticSegmentSurface.ifx" />
+    <None Include="Icons\ifx\Origin.ifx" />
+    <None Include="Icons\ifx\Projection.ifx" />
+    <None Include="Icons\ifx\RotationMatrices.ifx" />
+    <None Include="Icons\ifx\Show.ifx" />
+    <None Include="Icons\ifx\TargetWindows.ifx" />
+    <None Include="Icons\ifx\Templates.ifx" />
+    <None Include="Icons\ifx\ViewOptions.ifx" />
+    <None Include="Icons\ifx\ViewRayOptions.ifx" />
+    <None Include="Icons\ifx\ViewSlice.ifx" />
+    <None Include="Icons\ifx\WireframeImage.ifx" />
+    <None Include="Icons\ifx\WireframeImage2.ifx" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Icons\AddCylinder.png" />
+    <Content Include="Icons\AddDistribution.png" />
+    <Content Include="Icons\AddEllipseSurface.png" />
+    <Content Include="Icons\AddFlipSurface.png" />
+    <Content Include="Icons\AddFreeformSurface.png" />
+    <Content Include="Icons\AddHyperboloidSurface.png" />
+    <Content Include="Icons\AddInverseSurface.png" />
+    <Content Include="Icons\AddOptic.png" />
+    <Content Include="Icons\AddParaboloidSurface.png" />
+    <Content Include="Icons\AddPlaneSurface.png" />
+    <Content Include="Icons\AddQuadricSurface.png" />
+    <Content Include="Icons\AddSegment.png" />
+    <Content Include="Icons\AddSolution.png" />
+    <Content Include="Icons\AddSourceDistribution.png" />
+    <Content Include="Icons\AddTargetDistribution.png" />
+    <Content Include="Icons\Append.png" />
+    <Content Include="Icons\AppendRow.png" />
+    <Content Include="Icons\AppendTreeNode.png" />
+    <Content Include="Icons\BlankDocument.png" />
+    <Content Include="Icons\bullseye.png" />
+    <Content Include="Icons\CalculateDistribution.png" />
+    <Content Include="Icons\CalculatePreview.png" />
+    <Content Include="Icons\CalculateRayData.png" />
+    <Content Include="Icons\Cancel.png" />
+    <Content Include="Icons\Cartesian.png" />
+    <Content Include="Icons\Cascade.png" />
+    <Content Include="Icons\CheckerboardPartitions.png" />
+    <Content Include="Icons\Clear.png" />
+    <Content Include="Icons\ClearCalculations.png" />
+    <Content Include="Icons\ClearRayData.png" />
+    <Content Include="Icons\ClearSolution.png" />
+    <Content Include="Icons\Close.png" />
+    <Content Include="Icons\CloseAll.png" />
+    <Content Include="Icons\CloseForm.png" />
+    <Content Include="Icons\Clr.png" />
+    <Content Include="Icons\CollapseTreeNode.png" />
+    <Content Include="Icons\ColorGradient.png" />
+    <Content Include="Icons\ColumnSelect.png" />
+    <Content Include="Icons\Continue.png" />
+    <Content Include="Icons\Copy.png" />
+    <Content Include="Icons\CopyImage.png" />
+    <Content Include="Icons\CropImage.png" />
+    <Content Include="Icons\CumulativeFlux.png" />
+    <Content Include="Icons\CurrentRayParams.png" />
+    <Content Include="Icons\Cut.png" />
+    <Content Include="Icons\Cylinder.png" />
+    <Content Include="Icons\CylindricalCoordinates.png" />
+    <Content Include="Icons\DecreasePerspective.png" />
+    <Content Include="Icons\Delete.png" />
+    <Content Include="Icons\DeleteDistribution.png" />
+    <Content Include="Icons\DeleteLast.png" />
+    <Content Include="Icons\DeleteRow.png" />
+    <Content Include="Icons\DeltaRayParams.png" />
+    <Content Include="Icons\Design.png" />
+    <Content Include="Icons\Distribution.png" />
+    <Content Include="Icons\DoubleWindow.png" />
+    <Content Include="Icons\Down.png" />
+    <Content Include="Icons\EllipseSurface.png" />
+    <Content Include="Icons\Error.png" />
+    <Content Include="Icons\Exit.png" />
+    <Content Include="Icons\ExpandTreeNode.png" />
+    <Content Include="Icons\ExportDistribution.png" />
+    <Content Include="Icons\ExportFreeformSurface.png" />
+    <Content Include="Icons\ExportInverseSurface.png" />
+    <Content Include="Icons\ExportLightTools.png" />
+    <Content Include="Icons\ExportOptic.png" />
+    <Content Include="Icons\ExportQuadricSurface.png" />
+    <Content Include="Icons\ExportSegment.png" />
+    <Content Include="Icons\ExportSolution.png" />
+    <Content Include="Icons\ExportSurface.png" />
+    <Content Include="Icons\ExportToLightTools.png" />
+    <Content Include="Icons\ExportToRhino.png" />
+    <Content Include="Icons\FlipSurface.png" />
+    <Content Include="Icons\FluxData.png" />
+    <Content Include="Icons\FreeformSurface.png" />
+    <Content Include="Icons\Function.png" />
+    <Content Include="Icons\FunctionDistribution.png" />
+    <Content Include="Icons\GaussianFunction.PNG" />
+    <Content Include="Icons\gfie\AddCylinderSurface.png" />
+    <Content Include="Icons\GradientInterpolated.png" />
+    <Content Include="Icons\GradientPartitions.png" />
+    <Content Include="Icons\HyperboloidSurface.png" />
+    <Content Include="Icons\ifx\if_ic_close_48px_352270.png" />
+    <Content Include="Icons\ifx\LightToolsMedium.PNG" />
+    <Content Include="Icons\Images\ReceiverOrientationSettingExample.PNG" />
+    <Content Include="Icons\ImportDistribution.png" />
+    <Content Include="Icons\ImportFreeformSurface.png" />
+    <Content Include="Icons\ImportFromLightTools.png" />
+    <Content Include="Icons\ImportInverseSurface.png" />
+    <Content Include="Icons\ImportLightTools.png" />
+    <Content Include="Icons\ImportOptic.png" />
+    <Content Include="Icons\ImportQuadricSurface.png" />
+    <Content Include="Icons\ImportSegment.png" />
+    <Content Include="Icons\ImportSolution.png" />
+    <Content Include="Icons\ImportSurface.png" />
+    <Content Include="Icons\IncreasePerspective.png" />
+    <Content Include="Icons\Info.png" />
+    <Content Include="Icons\InsertRow.png" />
+    <Content Include="Icons\InsertTreeNode.png" />
+    <Content Include="Icons\InverseGradient.png" />
+    <Content Include="Icons\InverseSurface.png" />
+    <Content Include="Icons\KeepPoints.png" />
+    <Content Include="Icons\Left.png" />
+    <Content Include="Icons\LightTools.png" />
+    <Content Include="Icons\LightToolsGet.png" />
+    <Content Include="Icons\LightToolsReceiver.png" />
+    <Content Include="Icons\LightToolsRun.png" />
+    <Content Include="Icons\LightToolsSet.png" />
+    <Content Include="Icons\Lin.png" />
+    <Content Include="Icons\LinkSurface.png" />
+    <Content Include="Icons\LoadDistribution.png" />
+    <Content Include="Icons\Log.png" />
+    <Content Include="Icons\Matrix3x3.png" />
+    <Content Include="Icons\Matrix_abg.png" />
+    <Content Include="Icons\Matrix_m1.png" />
+    <Content Include="Icons\Matrix_m2.png" />
+    <Content Include="Icons\Matrix_m3.png" />
+    <Content Include="Icons\Matrix_p1.png" />
+    <Content Include="Icons\Matrix_p2.png" />
+    <Content Include="Icons\Matrix_p3.png" />
+    <Content Include="Icons\MoveBottomRight.png" />
+    <Content Include="Icons\MoveDownColumn.png" />
+    <Content Include="Icons\MoveDownRow.png" />
+    <Content Include="Icons\MoveDownTreeNode.png" />
+    <Content Include="Icons\MoveTopLeft.png" />
+    <Content Include="Icons\MoveUpColumn.png" />
+    <Content Include="Icons\MoveUpRow.png" />
+    <Content Include="Icons\MoveUpTreeNode.png" />
+    <Content Include="Icons\NewDistribution.png" />
+    <Content Include="Icons\NewFreeformSurface.png" />
+    <Content Include="Icons\NewInverseSurface.png" />
+    <Content Include="Icons\NewOptic.png" />
+    <Content Include="Icons\NewQuadricSurface.png" />
+    <Content Include="Icons\NewSegment.png" />
+    <Content Include="Icons\NewSolution.png" />
+    <Content Include="Icons\NewSurface.png" />
+    <Content Include="Icons\Nok.png" />
+    <Content Include="Icons\Ok.png" />
+    <Content Include="Icons\Open.png" />
+    <Content Include="Icons\OpenFile.png" />
+    <Content Include="Icons\Optic.png" />
+    <Content Include="Icons\Origin.png" />
+    <Content Include="Icons\Palette.png" />
+    <Content Include="Icons\ParaboloidSurface.png" />
+    <Content Include="Icons\ParamInterBrushColor.png" />
+    <Content Include="Icons\ParamInterPenColor.png" />
+    <Content Include="Icons\ParamIntersections.png" />
+    <Content Include="Icons\ParamLines.png" />
+    <Content Include="Icons\ParamLinesColor.png" />
+    <Content Include="Icons\ParamPoints.png" />
+    <Content Include="Icons\ParamPointsBrushColor.png" />
+    <Content Include="Icons\ParamPointsPenColor.png" />
+    <Content Include="Icons\Partitions1.png" />
+    <Content Include="Icons\Partitions2.png" />
+    <Content Include="Icons\Partitions3.png" />
+    <Content Include="Icons\Partitions4.png" />
+    <Content Include="Icons\Paste.png" />
+    <Content Include="Icons\Pause.png" />
+    <Content Include="Icons\Pipette.png" />
+    <Content Include="Icons\PlaneSurface.png" />
+    <Content Include="Icons\Polar.png" />
+    <Content Include="Icons\Preview.png" />
+    <Content Include="Icons\Projection.png" />
+    <Content Include="Icons\Properties.png" />
+    <Content Include="Icons\QuadricSurface.png" />
+    <Content Include="Icons\QuadrupleWindow.png" />
+    <Content Include="Icons\Redo.png" />
+    <Content Include="Icons\RemoveLast.png" />
+    <Content Include="Icons\Rename.png" />
+    <Content Include="Icons\RenameColumn.png" />
+    <Content Include="Icons\RenameRow.png" />
+    <Content Include="Icons\RenameTreeNode.png" />
+    <Content Include="Icons\Reset.png" />
+    <Content Include="Icons\ResetOrigin.png" />
+    <Content Include="Icons\ResetPerspective.png" />
+    <Content Include="Icons\ResetZoom.png" />
+    <Content Include="Icons\Resize.png" />
+    <Content Include="Icons\ResizeImage.png" />
+    <Content Include="Icons\RhinoCommand.png" />
+    <Content Include="Icons\Right.png" />
+    <Content Include="Icons\Rotation_xm.png" />
+    <Content Include="Icons\Rotation_xp.png" />
+    <Content Include="Icons\Rotation_ym.png" />
+    <Content Include="Icons\Rotation_yp.png" />
+    <Content Include="Icons\Rotation_zm.png" />
+    <Content Include="Icons\Rotation_zp.png" />
+    <Content Include="Icons\RowSelect.png" />
+    <Content Include="Icons\Run.png" />
+    <Content Include="Icons\Save.png" />
+    <Content Include="Icons\SaveDistribution.png" />
+    <Content Include="Icons\SaveFile.png" />
+    <Content Include="Icons\SaveFileAs.png" />
+    <Content Include="Icons\SaveImage.png" />
+    <Content Include="Icons\Segment.png" />
+    <Content Include="Icons\Settings.png" />
+    <Content Include="Icons\SettingsOld.png" />
+    <Content Include="Icons\Show.png" />
+    <Content Include="Icons\SimulatedDistribution.png" />
+    <Content Include="Icons\SingleWindow.png" />
+    <Content Include="Icons\Solution.png" />
+    <Content Include="Icons\SourceDistribution.png" />
+    <Content Include="Icons\SpatialCoordinates.png" />
+    <Content Include="Icons\SphericalCoordinates.png" />
+    <Content Include="Icons\StartCropImage.png" />
+    <Content Include="Icons\Step.png" />
+    <Content Include="Icons\Stop.png" />
+    <Content Include="Icons\Surface.png" />
+    <Content Include="Icons\SwapAxes.png" />
+    <Content Include="Icons\SwapFrontRear.png" />
+    <Content Include="Icons\SwapLeftRight.png" />
+    <Content Include="Icons\SwapTopBottom.png" />
+    <Content Include="Icons\TargetDistribution.png" />
+    <Content Include="Icons\Template edit.png" />
+    <Content Include="Icons\Template export.png" />
+    <Content Include="Icons\TileHorz.png" />
+    <Content Include="Icons\TileVert.png" />
+    <Content Include="Icons\Traced.png" />
+    <Content Include="Icons\Undo.png" />
+    <Content Include="Icons\Up.png" />
+    <Content Include="Icons\Update.png" />
+    <Content Include="Icons\View.png" />
+    <Content Include="Icons\ViewAllRays.png" />
+    <Content Include="Icons\ViewAxes.png" />
+    <Content Include="Icons\ViewDesignNormals.png" />
+    <Content Include="Icons\ViewDesignRays.png" />
+    <Content Include="Icons\ViewDesignSurfaces.png" />
+    <Content Include="Icons\ViewGrid.png" />
+    <Content Include="Icons\ViewIntensityMesh.png" />
+    <Content Include="Icons\ViewInvalidRays.png" />
+    <Content Include="Icons\ViewNormalVectors.png" />
+    <Content Include="Icons\ViewPartitionBounds.png" />
+    <Content Include="Icons\ViewPartitionCenters.png" />
+    <Content Include="Icons\ViewRayPoints.png" />
+    <Content Include="Icons\ViewRays.png" />
+    <Content Include="Icons\ViewSliceDefault.png" />
+    <Content Include="Icons\ViewSliceDown.png" />
+    <Content Include="Icons\ViewSliceNone.png" />
+    <Content Include="Icons\ViewSliceU.png" />
+    <Content Include="Icons\ViewSliceUp.png" />
+    <Content Include="Icons\ViewSliceV.png" />
+    <Content Include="Icons\ViewSurfaces.png" />
+    <Content Include="Icons\ViewTracedNormals.png" />
+    <Content Include="Icons\ViewTracedRays.png" />
+    <Content Include="Icons\ViewTracedSurfaces.png" />
+    <Content Include="Icons\ViewValidRays.png" />
+    <Content Include="Icons\WireframeResolutionDefault.png" />
+    <Content Include="Icons\WireframeResolutionDown.png" />
+    <Content Include="Icons\WireframeResolutionUp.png" />
+    <Content Include="Icons\WireFrameSizeDefault.png" />
+    <Content Include="Icons\WireFrameSizeDown.png" />
+    <Content Include="Icons\WireFrameSizeUp.png" />
+    <Content Include="Icons\XOrientation.png" />
+    <Content Include="Icons\xyProjection.png" />
+    <Content Include="Icons\xzProjection.png" />
+    <Content Include="Icons\YOrientation.png" />
+    <Content Include="Icons\yxProjection.png" />
+    <Content Include="Icons\yzProjection.png" />
+    <Content Include="Icons\ZoomIn.png" />
+    <Content Include="Icons\ZoomOut.png" />
+    <Content Include="Icons\ZOrientation.png" />
+    <Content Include="Icons\zxProjection.png" />
+    <Content Include="Icons\zyProjection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Neulib\Neulib.csproj">
+      <Project>{dc2af5f8-d922-4ea1-a74b-28f2a17d8283}</Project>
+      <Name>Neulib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
