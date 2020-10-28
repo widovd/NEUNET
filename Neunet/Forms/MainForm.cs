@@ -17,6 +17,7 @@ using Neulib.Exceptions;
 using Neulib.Neurons;
 using Neulib.MultiArrays;
 using Neulib.Serializers;
+using Neunet.Extensions;
 using Neunet.Images.Charts2D;
 using Neunet.Serializers;
 
@@ -94,6 +95,24 @@ namespace Neunet.Forms
         public MainForm()
         {
             InitializeComponent();
+        }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region BaseForm
+
+        private const string _SplitterDistanceId = "SplitterDistance";
+
+        public override void LoadFromSettings(XmlElement rootElement)
+        {
+            base.LoadFromSettings(rootElement);
+            splitContainer.SetSplitterDistance(rootElement, _SplitterDistanceId);
+        }
+
+        public override void SaveToSettings(XmlElement rootElement)
+        {
+            base.SaveToSettings(rootElement);
+            rootElement.WriteInt(_SplitterDistanceId, splitContainer.SplitterDistance);
         }
 
         #endregion
@@ -463,11 +482,7 @@ namespace Neunet.Forms
             set
             {
                 _trainingSetImages = value ?? throw new VarNullException(nameof(TrainingSetImages), 229440);
-                matrixImage1.ByteArray = TrainingSetImages;
-                matrixImage2.ByteArray = TrainingSetImages;
-                matrixImage3.ByteArray = TrainingSetImages;
-                matrixImage4.ByteArray = TrainingSetImages;
-                matrixImage5.ByteArray = TrainingSetImages;
+                //matrixImage1.ImageArray = TrainingSetImages;
             }
         }
 
@@ -478,19 +493,68 @@ namespace Neunet.Forms
             set
             {
                 _trainingSetLabels = value ?? throw new VarNullException(nameof(TrainingSetLabels), 682702);
+                //matrixImage1.LabelArray = TrainingSetLabels;
             }
         }
+
+        private SingleArray _trainingSetResults;
+        private SingleArray TrainingSetResults
+        {
+            get { return _trainingSetResults; }
+            set
+            {
+                _trainingSetResults = value ?? throw new VarNullException(nameof(TrainingSetResults), 134871);
+                //matrixImage1.ResultsArray = TrainingSetResults;
+            }
+        }
+
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region ImageIndex
 
-        private void UpdateImage(MatrixImage matrixImage, Label label, int k)
+        private void GetXs(int h, float[] xs)
         {
-            matrixImage.ImageIndex = k;
-            int dim0 = TrainingSetImages.GetLength(0);
-            bool ok = k >= 0 && k < dim0;
-            label.Text = ok ? $"[{k}] = {TrainingSetLabels[k]}" : string.Empty;
+            int nu = TrainingSetImages.GetLength(1);
+            int nv = TrainingSetImages.GetLength(2);
+            int k = 0;
+            for (int i = 0; i < nu; i++)
+                for (int j = 0; j < nv; j++)
+                {
+                    xs[k++] = (float)TrainingSetImages[h, i, j] / 255f;
+                }
+        }
+
+        private void GetYs(int h, float[] ys)
+        {
+            int ny = ys.Length;
+            for (int i = 0; i < ny; i++)
+            {
+                ys[i] = TrainingSetLabels[h] == i ? 1f : 0f;
+            }
+        }
+
+        private void UpdateImage()
+        {
+            int nu = TrainingSetImages.GetLength(1);
+            int nv = TrainingSetImages.GetLength(2);
+            int nx = Network.First.Neurons.Count;
+            int ny = Network.Last.Neurons.Count;
+            SampleList samples = new SampleList(nu, nv, ny);
+            const int nSamples = 10;
+            for (int l = 0; l < nSamples; l++)
+            {
+                int h = Mersenne.Next(TrainingSetImages.GetLength(0));
+                Sample sample = new Sample(nx, ny)
+                {
+                    Index = h,
+                    Label = TrainingSetLabels[h],
+                };
+                GetXs(h, sample.Xs);
+                Network.FeedForward(sample.Xs, sample.Ys);
+                samples.Add(sample);
+            }
+            matrixImage1.Samples = samples;
         }
 
         private int _imageIndex = 0;
@@ -502,12 +566,7 @@ namespace Neunet.Forms
                 int dim0 = TrainingSetImages.GetLength(0);
                 if (value < 0 || value >= dim0) return;
                 _imageIndex = value;
-                UpdateImage(matrixImage1, label1, value - 2);
-                UpdateImage(matrixImage2, label2, value - 1);
-                UpdateImage(matrixImage3, label3, value);
-                UpdateImage(matrixImage4, label4, value + 1);
-                UpdateImage(matrixImage5, label5, value + 2);
-                Test(value);
+                UpdateImage();
             }
         }
 
@@ -552,32 +611,38 @@ namespace Neunet.Forms
             }
         }
 
-        private void Test(int h)
+        private void Test()
         {
             if (Network?.First == null) return;
+            int nh = TrainingSetImages.GetLength(0);
             int nu = TrainingSetImages.GetLength(1);
             int nv = TrainingSetImages.GetLength(2);
+
             int nx = Network.First.Neurons.Count;
             if (nx != nu * nv) throw new UnequalValueException(nx, nu * nv, 527884);
             float[] xs = new float[nx];
-            int k = 0;
-            for (int i = 0; i < nu; i++)
-                for (int j = 0; j < nv; j++)
-                {
-                    xs[k++] = TrainingSetImages[h, i, j] / 255;
-                }
             int ny = Network.Last.Neurons.Count;
             float[] ys = new float[ny];
-            Network.FeedForward(xs, ys);
-            ysLabel.Text = $"{ys[0]:F3}, {ys[1]:F3}, {ys[2]:F3}, {ys[3]:F3}, {ys[4]:F3}, {ys[5]:F3}, {ys[6]:F3}, {ys[7]:F3}, {ys[8]:F3}, {ys[9]:F3}";
-            UpdateCoefficients();
+            SingleArray trainingSetResults = new SingleArray(nh, ny);
+            for (int h = 0; h < nh; h++)
+            {
+                GetXs(h, xs);
+                Network.FeedForward(xs, ys);
+                for (int i = 0; i < ny; i++)
+                {
+                    trainingSetResults[h, i] = ys[i];
+                }
+            }
+            TrainingSetResults = trainingSetResults;
+            //ysLabel.Text = $"{ys[0]:F3}, {ys[1]:F3}, {ys[2]:F3}, {ys[3]:F3}, {ys[4]:F3}, {ys[5]:F3}, {ys[6]:F3}, {ys[7]:F3}, {ys[8]:F3}, {ys[9]:F3}";
+            //UpdateCoefficients();
         }
 
         private void TestButton_Click(object sender, EventArgs e)
         {
             try
             {
-                Test(ImageIndex);
+                Test();
             }
             catch (Exception ex)
             {
@@ -638,26 +703,21 @@ namespace Neunet.Forms
             int nv = TrainingSetImages.GetLength(2);
             int nx = Network.First.Neurons.Count;
             int ny = Network.Last.Neurons.Count;
-
+            SampleList samples = new SampleList(nu, nv, ny);
             const int nSamples = 1000;
-
             for (int g = 0; g < 100; g++)
             {
-                SampleList samples = new SampleList();
+                samples.Clear();
                 for (int l = 0; l < nSamples; l++)
                 {
                     int h = Mersenne.Next(TrainingSetImages.GetLength(0));
-                    Sample sample = new Sample(nx, ny);
-                    int k = 0;
-                    for (int i = 0; i < nu; i++)
-                        for (int j = 0; j < nv; j++)
-                        {
-                            sample.Xs[k++] = ((float)TrainingSetImages[h, i, j] - 128f) / 128f;
-                        }
-                    for (int i = 0; i < ny; i++)
+                    Sample sample = new Sample(nx, ny)
                     {
-                        sample.Ys[i] = _trainingSetLabels[h] == i ? 1f : 0f;
-                    }
+                        Index = h,
+                        Label = TrainingSetLabels[h],
+                    };
+                    GetXs(h, sample.Xs);
+                    GetYs(h, sample.Ys);
                     samples.Add(sample);
                 }
                 NetworkChanged = true;

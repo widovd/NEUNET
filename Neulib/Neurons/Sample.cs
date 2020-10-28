@@ -15,7 +15,12 @@ namespace Neulib.Neurons
         #region Properties
 
         public float[] Xs { get; private set; }
+
         public float[] Ys { get; private set; }
+
+        public int Index { get; set; }
+
+        public byte Label { get; set; }
 
         #endregion
         // ----------------------------------------------------------------------------------------

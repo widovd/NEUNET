@@ -24,6 +24,11 @@ namespace Neulib.MultiArrays
             set => _values[i] = value;
         }
 
+        public float this[params int[] indices]
+        {
+            get => _values[GetLongIndex(indices)];
+            set => _values[GetLongIndex(indices)] = value;
+        }
 
         #endregion
         // ----------------------------------------------------------------------------------------
