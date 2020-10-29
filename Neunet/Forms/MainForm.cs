@@ -267,8 +267,7 @@ namespace Neunet.Forms
                     LoadNetwork();
                 else
                     NewNetwork();
-                ImageIndex = 0;
-
+                UpdateImage();
             }
             catch (Exception ex)
             {
@@ -541,7 +540,7 @@ namespace Neunet.Forms
             int nx = Network.First.Neurons.Count;
             int ny = Network.Last.Neurons.Count;
             SampleList samples = new SampleList(nu, nv, ny);
-            const int nSamples = 10;
+            int nSamples = nSampleTextBox.Value;
             for (int l = 0; l < nSamples; l++)
             {
                 int h = Mersenne.Next(TrainingSetImages.GetLength(0));
@@ -554,45 +553,12 @@ namespace Neunet.Forms
                 Network.FeedForward(sample.Xs, sample.Ys);
                 samples.Add(sample);
             }
-            matrixImage1.Samples = samples;
-        }
-
-        private int _imageIndex = 0;
-        private int ImageIndex
-        {
-            get { return _imageIndex; }
-            set
-            {
-                int dim0 = TrainingSetImages.GetLength(0);
-                if (value < 0 || value >= dim0) return;
-                _imageIndex = value;
-                UpdateImage();
-            }
-        }
-
-        private void Left1Button_Click(object sender, EventArgs e)
-        {
-            ImageIndex--;
-        }
-
-        private void Right1Button_Click(object sender, EventArgs e)
-        {
-            ImageIndex++;
-        }
-
-        private void Left2Button_Click(object sender, EventArgs e)
-        {
-            ImageIndex -= 5;
-        }
-
-        private void Right2Button_Click(object sender, EventArgs e)
-        {
-            ImageIndex += 5;
+            samplesImage.Samples = samples;
         }
 
         private void RandomIndexButton_Click(object sender, EventArgs e)
         {
-            ImageIndex = Mersenne.Next(TrainingSetImages.GetLength(0));
+            UpdateImage();
         }
 
         #endregion

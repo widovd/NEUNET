@@ -30,15 +30,10 @@
         {
             this.testButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.matrixImage1 = new Neunet.Images.Charts2D.MatrixImage();
-            this.label1 = new System.Windows.Forms.Label();
+            this.samplesImage = new Neunet.Images.Charts2D.SamplesImage();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.left2Button = new System.Windows.Forms.Button();
-            this.left1Button = new System.Windows.Forms.Button();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.right2Button = new System.Windows.Forms.Button();
-            this.right1Button = new System.Windows.Forms.Button();
-            this.panel3 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.nSampleTextBox = new Neunet.UserControls.IntegerTextBox();
             this.randomIndexButton = new System.Windows.Forms.Button();
             this.learnButton = new System.Windows.Forms.Button();
             this.newButton = new System.Windows.Forms.Button();
@@ -81,8 +76,6 @@
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.panel3.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.mainPanel.SuspendLayout();
             this.mainMenuStrip.SuspendLayout();
@@ -105,15 +98,12 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.InsetDouble;
-            this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 64F));
+            this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 67F));
-            this.tableLayoutPanel1.Controls.Add(this.matrixImage1, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.label1, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panel2, 2, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 0);
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Controls.Add(this.samplesImage, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -124,101 +114,55 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(837, 135);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
-            // matrixImage1
+            // samplesImage
             // 
-            this.matrixImage1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.matrixImage1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.matrixImage1.Location = new System.Drawing.Point(70, 35);
-            this.matrixImage1.Margin = new System.Windows.Forms.Padding(0);
-            this.matrixImage1.Name = "matrixImage1";
-            this.matrixImage1.Size = new System.Drawing.Size(694, 97);
-            this.matrixImage1.TabIndex = 0;
+            this.samplesImage.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.samplesImage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.samplesImage.Location = new System.Drawing.Point(3, 35);
+            this.samplesImage.Margin = new System.Windows.Forms.Padding(0);
+            this.samplesImage.Name = "samplesImage";
+            this.samplesImage.Size = new System.Drawing.Size(831, 97);
+            this.samplesImage.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.nSampleTextBox);
+            this.panel1.Controls.Add(this.randomIndexButton);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(831, 29);
+            this.panel1.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(73, 3);
+            this.label1.Location = new System.Drawing.Point(165, 11);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(688, 29);
+            this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 7;
             this.label1.Text = "label1";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // panel1
+            // nSampleTextBox
             // 
-            this.panel1.Controls.Add(this.left2Button);
-            this.panel1.Controls.Add(this.left1Button);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(6, 38);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(58, 91);
-            this.panel1.TabIndex = 12;
-            // 
-            // left2Button
-            // 
-            this.left2Button.Location = new System.Drawing.Point(0, 22);
-            this.left2Button.Name = "left2Button";
-            this.left2Button.Size = new System.Drawing.Size(58, 23);
-            this.left2Button.TabIndex = 6;
-            this.left2Button.Text = "<<";
-            this.left2Button.UseVisualStyleBackColor = true;
-            this.left2Button.Click += new System.EventHandler(this.Left2Button_Click);
-            // 
-            // left1Button
-            // 
-            this.left1Button.Location = new System.Drawing.Point(0, 0);
-            this.left1Button.Name = "left1Button";
-            this.left1Button.Size = new System.Drawing.Size(58, 23);
-            this.left1Button.TabIndex = 5;
-            this.left1Button.Text = "<";
-            this.left1Button.UseVisualStyleBackColor = true;
-            this.left1Button.Click += new System.EventHandler(this.Left1Button_Click);
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.right2Button);
-            this.panel2.Controls.Add(this.right1Button);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(770, 38);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(61, 91);
-            this.panel2.TabIndex = 13;
-            // 
-            // right2Button
-            // 
-            this.right2Button.Location = new System.Drawing.Point(0, 22);
-            this.right2Button.Name = "right2Button";
-            this.right2Button.Size = new System.Drawing.Size(58, 23);
-            this.right2Button.TabIndex = 7;
-            this.right2Button.Text = ">>";
-            this.right2Button.UseVisualStyleBackColor = true;
-            this.right2Button.Click += new System.EventHandler(this.Right2Button_Click);
-            // 
-            // right1Button
-            // 
-            this.right1Button.Location = new System.Drawing.Point(0, 0);
-            this.right1Button.Name = "right1Button";
-            this.right1Button.Size = new System.Drawing.Size(58, 23);
-            this.right1Button.TabIndex = 6;
-            this.right1Button.Text = ">";
-            this.right1Button.UseVisualStyleBackColor = true;
-            this.right1Button.Click += new System.EventHandler(this.Right1Button_Click);
-            // 
-            // panel3
-            // 
-            this.panel3.Controls.Add(this.randomIndexButton);
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(6, 6);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(58, 23);
-            this.panel3.TabIndex = 14;
+            this.nSampleTextBox.Format = "G";
+            this.nSampleTextBox.Location = new System.Drawing.Point(84, 4);
+            this.nSampleTextBox.MaxValue = 100000;
+            this.nSampleTextBox.MinValue = 1;
+            this.nSampleTextBox.Name = "nSampleTextBox";
+            this.nSampleTextBox.Size = new System.Drawing.Size(75, 20);
+            this.nSampleTextBox.TabIndex = 1;
+            this.nSampleTextBox.Text = "25";
+            this.nSampleTextBox.Value = 25;
             // 
             // randomIndexButton
             // 
-            this.randomIndexButton.Location = new System.Drawing.Point(0, 0);
+            this.randomIndexButton.Location = new System.Drawing.Point(5, 3);
             this.randomIndexButton.Name = "randomIndexButton";
-            this.randomIndexButton.Size = new System.Drawing.Size(58, 23);
+            this.randomIndexButton.Size = new System.Drawing.Size(75, 23);
             this.randomIndexButton.TabIndex = 0;
             this.randomIndexButton.Text = "Random";
             this.randomIndexButton.UseVisualStyleBackColor = true;
@@ -545,6 +489,7 @@
             // splitContainer
             // 
             this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainer.Location = new System.Drawing.Point(0, 24);
             this.splitContainer.Name = "splitContainer";
             this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -569,16 +514,14 @@
             this.Controls.Add(this.mainMenuStrip);
             this.Controls.Add(this.statusStrip);
             this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "TestForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            this.panel3.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.mainPanel.ResumeLayout(false);
@@ -598,17 +541,10 @@
 
         private System.Windows.Forms.Button testButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private Images.Charts2D.MatrixImage matrixImage1;
-        private System.Windows.Forms.Button left1Button;
-        private System.Windows.Forms.Button right1Button;
+        private Images.Charts2D.SamplesImage samplesImage;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button learnButton;
         private System.Windows.Forms.Button newButton;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button left2Button;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button right2Button;
-        private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button randomIndexButton;
         private System.Windows.Forms.Label ysLabel;
         private System.Windows.Forms.Button stopButton;
@@ -647,6 +583,8 @@
         private System.Windows.Forms.ToolStripMenuItem openTrainingSetLabelFileMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel changedStatusLabel;
         private System.Windows.Forms.SplitContainer splitContainer;
+        private System.Windows.Forms.Panel panel1;
+        private UserControls.IntegerTextBox nSampleTextBox;
     }
 }
 
