@@ -14,12 +14,29 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Properties
 
+        /// <summary>
+        /// Input for the first layer in the network.
+        /// </summary>
         public float[] Xs { get; private set; }
 
+        /// <summary>
+        /// Required output of the last layer in the network.
+        /// </summary>
         public float[] Ys { get; private set; }
 
+        /// <summary>
+        /// Realized output of the last layer in the network by feedforward.
+        /// </summary>
+        public float[] Zs { get; private set; }
+
+        /// <summary>
+        /// A reference to the source of this sample.
+        /// </summary>
         public int Index { get; set; }
 
+        /// <summary>
+        /// The required output value as a (training set-) label.
+        /// </summary>
         public byte Label { get; set; }
 
         #endregion
@@ -30,6 +47,7 @@ namespace Neulib.Neurons
         {
             Xs = new float[nx];
             Ys = new float[ny];
+            Zs = new float[ny];
         }
 
         #endregion

@@ -110,7 +110,6 @@ namespace Neulib.Neurons
         {
             const float eta = 3f;
             int n = samples.Count; // number of sample rows
-            float[] ys = new float[Last.Neurons.Count];
             int o = CountCoefficients();
             float[] p = new float[o]; // Current biasses and weights of all neurons in this network
             float[] dC = new float[o]; // The derivatives of the merit function f with respect to the biasses and weights of all neurons in this network
@@ -125,8 +124,8 @@ namespace Neulib.Neurons
                 for (int k = 0; k < n; k++)
                 {
                     Sample sample = samples[k];
-                    FeedForward(sample.Xs, ys);
-                    c += CostFunction(ys, sample.Ys);
+                    FeedForward(sample.Xs, sample.Zs);
+                    c += CostFunction(sample.Zs, sample.Ys);
                     FeedBackward(sample.Ys);
                     AddDerivatives(dC);
                 }

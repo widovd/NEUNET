@@ -36,6 +36,8 @@ namespace Neunet.Forms
         //    set { Program.XmlSettings.GlobalsElement.WriteString(_workingFolderId, value); }
         //}
 
+        private CalculationSettings Settings { get; set; } = new CalculationSettings();
+
         private readonly string _networkFilePathId = "NetworkFilePath";
 
         private string NetworkFilePath
@@ -81,11 +83,22 @@ namespace Neunet.Forms
             set
             {
                 _network = value;
+                NetworkChanged = true;
                 UpdateCoefficients();
             }
         }
 
-
+        private SampleList _samples;
+        public SampleList Samples
+        {
+            get { return _samples; }
+            set
+            {
+                _samples = value;
+                UpdateCoefficients();
+            }
+        }
+        
         private CancellationTokenSource _tokenSource = null;
 
         #endregion
@@ -102,17 +115,20 @@ namespace Neunet.Forms
         #region BaseForm
 
         private const string _SplitterDistanceId = "SplitterDistance";
+        private const string _CalculationSettingsId = "CalculationSettings";
 
         public override void LoadFromSettings(XmlElement rootElement)
         {
             base.LoadFromSettings(rootElement);
             splitContainer.SetSplitterDistance(rootElement, _SplitterDistanceId);
+            Settings.LoadFromSettings(rootElement.GetOrCreateElement(_CalculationSettingsId));
         }
 
         public override void SaveToSettings(XmlElement rootElement)
         {
             base.SaveToSettings(rootElement);
             rootElement.WriteInt(_SplitterDistanceId, splitContainer.SplitterDistance);
+            Settings.SaveToSettings(rootElement.GetOrCreateElement(_CalculationSettingsId));
         }
 
         #endregion
@@ -172,17 +188,19 @@ namespace Neunet.Forms
         {
             const float biasMagnitude = 0.1f;
             const float weightMagnitude = 0.1f;
-            Network = new Network();
-            Network.AddLayer(28 * 28, Mersenne, biasMagnitude, weightMagnitude);
-            Network.AddLayer(100, Mersenne, biasMagnitude, weightMagnitude);
-            Network.AddLayer(30, Mersenne, biasMagnitude, weightMagnitude);
-            Network.AddLayer(10, Mersenne, biasMagnitude, weightMagnitude);
+            Network network = new Network();
+            network.AddLayer(28 * 28, Mersenne, biasMagnitude, weightMagnitude);
+            network.AddLayer(100, Mersenne, biasMagnitude, weightMagnitude);
+            network.AddLayer(30, Mersenne, biasMagnitude, weightMagnitude);
+            network.AddLayer(10, Mersenne, biasMagnitude, weightMagnitude);
+            Network = network;
         }
 
 
         private void LoadNetwork()
         {
             Network = (Network)LoadFileForm.LoadFile(NetworkFilePath, out Version fileVersion);
+            NetworkChanged = false;
         }
 
         private void LoadNetworkDialog()
@@ -191,7 +209,11 @@ namespace Neunet.Forms
             {
                 openFileDialog.Filter = "bin files|*.bin|All files|*.*";
                 openFileDialog.Title = "Open network file";
-                openFileDialog.FileName = NetworkFilePath;
+                if (!string.IsNullOrEmpty(NetworkFilePath))
+                {
+                    openFileDialog.InitialDirectory = Path.GetDirectoryName(NetworkFilePath);
+                    openFileDialog.FileName = Path.GetFileNameWithoutExtension(NetworkFilePath);
+                }
                 if (openFileDialog.ShowDialog(this) != DialogResult.OK) return;
                 NetworkFilePath = openFileDialog.FileName;
             }
@@ -202,13 +224,18 @@ namespace Neunet.Forms
         private void SaveNetwork()
         {
             SaveFileForm.SaveFile(NetworkFilePath, Network);
+            NetworkChanged = false;
         }
 
         private void SaveNetworkDialog()
         {
             saveFileDialog.Filter = "bin files|*.bin|All files|*.*";
             saveFileDialog.Title = "Save network file";
-            saveFileDialog.FileName = NetworkFilePath;
+            if (!string.IsNullOrEmpty(NetworkFilePath))
+            {
+                saveFileDialog.InitialDirectory = Path.GetDirectoryName(NetworkFilePath);
+                saveFileDialog.FileName = Path.GetFileNameWithoutExtension(NetworkFilePath);
+            }
             if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 NetworkFilePath = saveFileDialog.FileName;
@@ -267,7 +294,7 @@ namespace Neunet.Forms
                     LoadNetwork();
                 else
                     NewNetwork();
-                UpdateImage();
+                RandomSamples();
             }
             catch (Exception ex)
             {
@@ -387,6 +414,11 @@ namespace Neunet.Forms
         {
             try
             {
+                using (CalculationSettingsDialog dialog = new CalculationSettingsDialog() { Settings = Settings })
+                {
+                    if (dialog.ShowDialog(this) == DialogResult.OK)
+                        Settings = dialog.Settings;
+                }
             }
             catch (Exception ex)
             {
@@ -533,32 +565,46 @@ namespace Neunet.Forms
             }
         }
 
-        private void UpdateImage()
+        private SampleList GetSamples(int nSample)
         {
             int nu = TrainingSetImages.GetLength(1);
             int nv = TrainingSetImages.GetLength(2);
             int nx = Network.First.Neurons.Count;
+            if (nu * nv != nx) throw new UnequalValueException(nu * nv, nx, 292526);
             int ny = Network.Last.Neurons.Count;
             SampleList samples = new SampleList(nu, nv, ny);
-            int nSamples = nSampleTextBox.Value;
-            for (int l = 0; l < nSamples; l++)
+            int nSource = TrainingSetImages.GetLength(0);
+            for (int iSample = 0; iSample < nSample; iSample++)
             {
-                int h = Mersenne.Next(TrainingSetImages.GetLength(0));
+                int h = Mersenne.Next(nSource);
                 Sample sample = new Sample(nx, ny)
                 {
                     Index = h,
                     Label = TrainingSetLabels[h],
                 };
                 GetXs(h, sample.Xs);
-                Network.FeedForward(sample.Xs, sample.Ys);
+                GetYs(h, sample.Ys);
+                Network.FeedForward(sample.Xs, sample.Zs);
                 samples.Add(sample);
             }
-            samplesImage.Samples = samples;
+            return samples;
         }
 
-        private void RandomIndexButton_Click(object sender, EventArgs e)
+        private void RandomSamples()
         {
-            UpdateImage();
+            samplesImage.Samples = GetSamples(nSampleTextBox.Value);
+        }
+
+        private void RandomSamplesButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                RandomSamples();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
         }
 
         #endregion
@@ -665,27 +711,9 @@ namespace Neunet.Forms
 
         private void Learn(CalculationArguments arguments)
         {
-            int nu = TrainingSetImages.GetLength(1);
-            int nv = TrainingSetImages.GetLength(2);
-            int nx = Network.First.Neurons.Count;
-            int ny = Network.Last.Neurons.Count;
-            SampleList samples = new SampleList(nu, nv, ny);
-            const int nSamples = 1000;
             for (int g = 0; g < 100; g++)
             {
-                samples.Clear();
-                for (int l = 0; l < nSamples; l++)
-                {
-                    int h = Mersenne.Next(TrainingSetImages.GetLength(0));
-                    Sample sample = new Sample(nx, ny)
-                    {
-                        Index = h,
-                        Label = TrainingSetLabels[h],
-                    };
-                    GetXs(h, sample.Xs);
-                    GetYs(h, sample.Ys);
-                    samples.Add(sample);
-                }
+                SampleList samples = GetSamples(arguments.settings.SampleCount);
                 NetworkChanged = true;
                 Network.Learn(samples, arguments);
             }
@@ -733,14 +761,13 @@ namespace Neunet.Forms
         {
             try
             {
-                CalculationSettings settings = new CalculationSettings();
                 ProgressReporter reporter = new ProgressReporter(this, (reportData) => { ReportProgress(reportData); });
                 _tokenSource = new CancellationTokenSource();
                 Exception ex = await Task.Run(() =>
                 {
                     try
                     {
-                        Learn(new CalculationArguments(settings, reporter, _tokenSource));
+                        Learn(new CalculationArguments(Settings, reporter, _tokenSource));
                         return null;
                     }
                     catch (Exception ex)

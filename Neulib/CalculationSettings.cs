@@ -11,33 +11,35 @@ namespace Neulib
 
         public int MaxIter { get; set; } = 100;
 
+        public int SampleCount { get; set; } = 100;
+
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
-        public CalculationSettings(bool load = false)
+        public CalculationSettings()
         {
-            if (load) LoadFromSettings();
         }
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region CalculationSettings
 
-        private const string _CalculationSettingsId = "CalculationSettings";
+        private const string _MaxIterId = "MaxIter";
 
-        public void LoadFromSettings()
+        public void LoadFromSettings(XmlElement rootElement)
         {
-            //XmlElement globalsElement = Program.GlobalsElement;
-            //if (globalsElement == null) return;
-            //XmlElement rootElement = globalsElement.GetOrCreateElement(_CalculationSettingsId);
+            MaxIter = rootElement.ReadInt(_MaxIterId, MaxIter);
         }
 
-        public void SaveToSettings()
+        public void SaveToSettings(XmlElement rootElement)
         {
-            //XmlElement globalsElement = Program.GlobalsElement;
-            //if (globalsElement == null) return;
-            //XmlElement rootElement = globalsElement.GetOrCreateElement(_CalculationSettingsId);
+            rootElement.WriteInt(_MaxIterId, MaxIter);
+        }
+
+        public void Default()
+        {
+
         }
 
         #endregion

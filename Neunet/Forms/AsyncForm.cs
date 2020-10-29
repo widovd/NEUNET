@@ -14,6 +14,8 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Properties
 
+        public CalculationSettings Settings { get; set; }
+
         public Action<CalculationArguments> Action { get; set; }
 
         protected CancellationTokenSource _tokenSource = null;
@@ -88,13 +90,12 @@ namespace Neunet.Forms
             try
             {
                 DialogResult = DialogResult.None;
-                CalculationSettings settings = new CalculationSettings();
                 _tokenSource = new CancellationTokenSource();
                 Exception ex = await Task.Run<Exception>(() =>
                 {
                     try
                     {
-                        Action(new CalculationArguments(settings, reporter, _tokenSource));
+                        Action(new CalculationArguments(Settings, reporter, _tokenSource));
                         return null;
                     }
                     catch (Exception ex)

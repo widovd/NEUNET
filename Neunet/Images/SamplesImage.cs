@@ -127,7 +127,7 @@ namespace Neunet.Images.Charts2D
                     y += LabelHeight + GapHeight;
                     DrawInputs(graphics, sample.Xs, x, y, w, w, Samples.NU, Samples.NV);
                     y += w + GapHeight;
-                    DrawOutputs(graphics, sample.Ys, x, y, w, OutputHeight);
+                    DrawOutputs(graphics, sample.Ys, sample.Zs, x, y, w, OutputHeight);
                     x += w + GapWidth;
                 }
             }
@@ -201,7 +201,7 @@ namespace Neunet.Images.Charts2D
             }
         }
 
-        private static void DrawOutputs(Graphics graphics, float[] ys, float x, float y, float w, float h)
+        private static void DrawOutputs(Graphics graphics, float[] ys, float[] zs, float x, float y, float w, float h)
         {
             const float sh = 14f;
             float hb = h - sh;
@@ -209,7 +209,9 @@ namespace Neunet.Images.Charts2D
             float d2 = w / ny;
             float xgap = 1f;
             float dx = d2 - 2 * xgap;
-            using (Pen pen = new Pen(Color.Black, 1f))
+            using (Pen peny = new Pen(Color.DarkRed, 3f)) // required y values
+            using (Pen penz = new Pen(Color.DarkGray, 1f)) // feedforward y values
+            using (Pen penr = new Pen(Color.Black, 1f)) // rectangle
             using (SolidBrush fillBrush = new SolidBrush(Color.Gray))
             using (SolidBrush stringBrush = new SolidBrush(Color.Black))
             using (StringFormat stringFormat = new StringFormat()
@@ -227,13 +229,16 @@ namespace Neunet.Images.Charts2D
                 }
                 for (int i = 0; i < ny; i++)
                 {
-                    fillBrush.Color = i == iMax ? Color.Red : Color.Gray;
+                    //fillBrush.Color = i == iMax ? Color.Red : Color.Gray;
                     float xi = x + xgap + i * d2;
-                    float dy = hb * ys[i];
-                    float y1 = y + hb - dy;
-                    graphics.FillRectangle(fillBrush, xi, y1, dx, dy);
-                    graphics.DrawLine(pen, xi, y1, xi + dx, y1);
-                    graphics.DrawRectangle(pen, xi, y, dx, hb);
+                    float yy = ys[i];
+                    float y1 = y + hb * (1f - yy);
+                    float zz = zs[i];
+                    float z1 = y + hb * (1f - zz);
+                    graphics.DrawRectangle(penr, xi, y, dx, hb);
+                    graphics.FillRectangle(fillBrush, xi+1f, z1, dx - 1f, hb * zz);
+                    //graphics.DrawLine(penz, xi, z1, xi + dx, z1);
+                    graphics.DrawLine(peny, xi, y1, xi + dx + 1f, y1);
                     graphics.DrawString($"{i}", DefaultFont, stringBrush, xi, y + hb, stringFormat);
                 }
             }

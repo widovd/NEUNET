@@ -101,6 +101,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "BaseDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "DialogForm";
             this.bottomTableLayoutPanel.ResumeLayout(false);
             this.bottomTableLayoutPanel.PerformLayout();

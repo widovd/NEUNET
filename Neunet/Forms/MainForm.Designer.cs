@@ -34,7 +34,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.nSampleTextBox = new Neunet.UserControls.IntegerTextBox();
-            this.randomIndexButton = new System.Windows.Forms.Button();
+            this.randomSamplesButton = new System.Windows.Forms.Button();
             this.learnButton = new System.Windows.Forms.Button();
             this.newButton = new System.Windows.Forms.Button();
             this.ysLabel = new System.Windows.Forms.Label();
@@ -128,7 +128,7 @@
             // 
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.nSampleTextBox);
-            this.panel1.Controls.Add(this.randomIndexButton);
+            this.panel1.Controls.Add(this.randomSamplesButton);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
@@ -158,15 +158,15 @@
             this.nSampleTextBox.Text = "25";
             this.nSampleTextBox.Value = 25;
             // 
-            // randomIndexButton
+            // randomSamplesButton
             // 
-            this.randomIndexButton.Location = new System.Drawing.Point(5, 3);
-            this.randomIndexButton.Name = "randomIndexButton";
-            this.randomIndexButton.Size = new System.Drawing.Size(75, 23);
-            this.randomIndexButton.TabIndex = 0;
-            this.randomIndexButton.Text = "Random";
-            this.randomIndexButton.UseVisualStyleBackColor = true;
-            this.randomIndexButton.Click += new System.EventHandler(this.RandomIndexButton_Click);
+            this.randomSamplesButton.Location = new System.Drawing.Point(5, 3);
+            this.randomSamplesButton.Name = "randomSamplesButton";
+            this.randomSamplesButton.Size = new System.Drawing.Size(75, 23);
+            this.randomSamplesButton.TabIndex = 0;
+            this.randomSamplesButton.Text = "Random";
+            this.randomSamplesButton.UseVisualStyleBackColor = true;
+            this.randomSamplesButton.Click += new System.EventHandler(this.RandomSamplesButton_Click);
             // 
             // learnButton
             // 
@@ -545,7 +545,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button learnButton;
         private System.Windows.Forms.Button newButton;
-        private System.Windows.Forms.Button randomIndexButton;
+        private System.Windows.Forms.Button randomSamplesButton;
         private System.Windows.Forms.Label ysLabel;
         private System.Windows.Forms.Button stopButton;
         private System.Windows.Forms.StatusStrip statusStrip;
