@@ -97,31 +97,35 @@ namespace Neulib.Neurons
         {
             float cost = 0;
             int n = ys1.Length;
+            if (n != ys2.Length) throw new UnequalValueException(n, ys2.Length, 109047);
             for (int i = 0; i < n; i++)
             {
                 cost += Sqr(ys1[i] - ys2[i]);
             }
-            return cost;
+            return cost / (2f * n);
         }
-
 
         public void Learn(SampleList samples, CalculationArguments arguments)
         // samples = yjks
         {
-            const float eta = 3f;
-            int n = samples.Count; // number of sample rows
+            int nSample = samples.Count; // number of sample rows
             int o = CountCoefficients();
             float[] p = new float[o]; // Current biasses and weights of all neurons in this network
             float[] dC = new float[o]; // The derivatives of the merit function f with respect to the biasses and weights of all neurons in this network
             GetCoefficients(p);
-            Minimization minimization = new Minimization() { MaxIter = arguments.settings.MaxIter };
+            Minimization minimization = new Minimization()
+            {
+                MaxIter = arguments.settings.MaxIter,
+                Eps = arguments.settings.Epsilon,
+                Tol = arguments.settings.Tolerance,
+            };
             minimization.SteepestDescent(p, dC, () =>
             {
                 arguments.ThrowIfCancellationRequested();
                 SetCoefficients(p);
                 float c = 0f;
                 for (int i = 0; i < o; i++) dC[i] = 0f;
-                for (int k = 0; k < n; k++)
+                for (int k = 0; k < nSample; k++)
                 {
                     Sample sample = samples[k];
                     FeedForward(sample.Xs, sample.Zs);
@@ -129,11 +133,11 @@ namespace Neulib.Neurons
                     FeedBackward(sample.Ys);
                     AddDerivatives(dC);
                 }
-                c /= 2 * n;
-                for (int i = 0; i < o; i++) dC[i] /= n;
-                arguments.reporter?.ReportIteration((float)Math.Sqrt(c/10));
+                c /= nSample;
+                for (int i = 0; i < o; i++) dC[i] /= nSample;
+                arguments.reporter?.ReportIteration((float)Math.Sqrt(c));
                 return c;
-            }, eta);
+            }, arguments.settings.LearningRate);
         }
 
 

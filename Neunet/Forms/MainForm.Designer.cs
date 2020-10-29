@@ -66,7 +66,6 @@
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.calculationSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.applicationDataFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.commonAppDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -415,7 +414,6 @@
             // 
             this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.calculationSettingsToolStripMenuItem,
-            this.clearSettingsToolStripMenuItem,
             this.toolStripSeparator5,
             this.applicationDataFolder,
             this.commonAppDataFolderToolStripMenuItem,
@@ -430,15 +428,8 @@
             this.calculationSettingsToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.calculationSettingsToolStripMenuItem.Name = "calculationSettingsToolStripMenuItem";
             this.calculationSettingsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.calculationSettingsToolStripMenuItem.Text = "Settings";
+            this.calculationSettingsToolStripMenuItem.Text = "Calculation settings";
             this.calculationSettingsToolStripMenuItem.Click += new System.EventHandler(this.CalculationSettingsToolStripMenuItem_Click);
-            // 
-            // clearSettingsToolStripMenuItem
-            // 
-            this.clearSettingsToolStripMenuItem.Name = "clearSettingsToolStripMenuItem";
-            this.clearSettingsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.clearSettingsToolStripMenuItem.Text = "Clear settings";
-            this.clearSettingsToolStripMenuItem.Click += new System.EventHandler(this.ClearSettingsToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
@@ -573,7 +564,6 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsMenu;
         private System.Windows.Forms.ToolStripMenuItem calculationSettingsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem clearSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem applicationDataFolder;
         private System.Windows.Forms.ToolStripMenuItem commonAppDataFolderToolStripMenuItem;

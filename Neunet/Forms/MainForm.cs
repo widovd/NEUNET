@@ -98,7 +98,7 @@ namespace Neunet.Forms
                 UpdateCoefficients();
             }
         }
-        
+
         private CancellationTokenSource _tokenSource = null;
 
         #endregion
@@ -186,8 +186,8 @@ namespace Neunet.Forms
 
         private void NewNetwork()
         {
-            const float biasMagnitude = 0.1f;
-            const float weightMagnitude = 0.1f;
+            float biasMagnitude = Settings.BiasMagnitude;
+            float weightMagnitude = Settings.WeightMagnitude;
             Network network = new Network();
             network.AddLayer(28 * 28, Mersenne, biasMagnitude, weightMagnitude);
             network.AddLayer(100, Mersenne, biasMagnitude, weightMagnitude);
@@ -430,8 +430,9 @@ namespace Neunet.Forms
         {
             try
             {
-                DialogResult result = MessageBox.Show("Are you sure you want to clear settings.xml in the AppData folder?",
-        "Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                const string message = "Are you sure you want to clear settings.xml in the AppData folder?";
+                const string caption = "Settings";
+                DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.No) return;
                 Program.XmlSettings.Clear();
             }

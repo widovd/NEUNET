@@ -71,6 +71,7 @@
             this.ClientSize = new System.Drawing.Size(387, 493);
             this.Controls.Add(this.propertyGrid);
             this.Controls.Add(this.toolStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "CalculationSettingsDialog";
             this.Text = "Calculation settings";
             this.Controls.SetChildIndex(this.toolStrip1, 0);

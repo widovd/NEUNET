@@ -54,7 +54,12 @@ namespace Neulib.Numerics
             return DBrent(ax, bx, cx, tol, func);
         }
 
-            public void ConjugateGradient(float[] p2, Func<float[], float[], float> func, float alpha)
+        public bool EndCriteriumMet(float f1, float f2)
+        {
+            return 2f * Abs(f2 - f1) <= Tol * (Abs(f1) + Abs(f2) + Eps);
+        }
+
+        public void ConjugateGradient(float[] p2, Func<float[], float[], float> func, float alpha)
         // Frprmn
         {
             int n = p2.Length;
@@ -85,7 +90,7 @@ namespace Neulib.Numerics
                     return (fx, dfx);
                 });
                 Console.WriteLine($"{iter + 1:000}: f({ArrayToString(p2)}) = {f2:E3}");
-                if ((2f * Abs(f2 - f1)) <= (Tol * (Abs(f1) + Abs(f2) + Eps))) return;
+                if (EndCriteriumMet(f1, f2)) return;
 
                 float gg = 0f, dgg = 0f;
                 for (int j = 0; j < n; j++)
@@ -137,7 +142,7 @@ namespace Neulib.Numerics
                 f2 = func();
                 Console.WriteLine($"{iter:000}: f = {f2:E3}");
                 //Console.WriteLine($"{iter:000}: f({ArrayToString(p)}) = {f2:E3}");
-                if ((2f * Abs(f2 - f1)) <= (Tol * (Abs(f1) + Abs(f2) + Eps))) return;
+                if (EndCriteriumMet(f1, f2)) return;
                 for (int j = 0; j < n; j++) p[j] -= alpha * df[j];
             }
         }
