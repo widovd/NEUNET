@@ -87,12 +87,10 @@
     <Compile Include="Neurons\Network.cs" />
     <Compile Include="Neurons\Neuron.cs" />
     <Compile Include="Neurons\Layer.cs" />
-    <Compile Include="Numerics\Double1.cs" />
     <Compile Include="Numerics\Double2.cs" />
     <Compile Include="Numerics\Double3.cs" />
     <Compile Include="Numerics\Double3x3.cs" />
     <Compile Include="Numerics\Int2.cs" />
-    <Compile Include="Numerics\Interpolation.cs" />
     <Compile Include="Numerics\LinearAlgebra.cs" />
     <Compile Include="Numerics\LudCmp.cs" />
     <Compile Include="Numerics\Matrix2x2.cs" />
@@ -102,7 +100,6 @@
     <Compile Include="Numerics\ParamBounds.cs" />
     <Compile Include="Numerics\ParamRange.cs" />
     <Compile Include="Numerics\PartialDerivatives.cs" />
-    <Compile Include="Numerics\Physics.cs" />
     <Compile Include="Numerics\Single2.cs" />
     <Compile Include="Numerics\Single3.cs" />
     <Compile Include="Numerics\Single3x3.cs" />

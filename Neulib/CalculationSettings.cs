@@ -2,6 +2,7 @@
 using System.Xml;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Neulib.Exceptions;
 using Neulib.Serializers;
 
 namespace Neulib
@@ -72,23 +73,54 @@ namespace Neulib
 
         #endregion
         // ----------------------------------------------------------------------------------------
+        #region BaseObject
+
+        protected override void CopyFrom(object o)
+        {
+            base.CopyFrom(o);
+            CalculationSettings value = o as CalculationSettings ?? throw new InvalidTypeException(o, nameof(CalculationSettings), 473835);
+            MaxIter = value.MaxIter;
+            Epsilon = value.Epsilon;
+            Tolerance = value.Tolerance;
+            SampleCount = value.SampleCount;
+            LearningRate = value.LearningRate;
+            BiasMagnitude = value.BiasMagnitude;
+            WeightMagnitude = value.WeightMagnitude;
+        }
+
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
         #region CalculationSettings
 
         private const string _MaxIterId = "MaxIter";
+        private const string _EpsilonId = "Epsilon";
+        private const string _ToleranceId = "Tolerance";
+        private const string _SampleCountId = "SampleCount";
+        private const string _LearningRateId = "LearningRate";
+        private const string _BiasMagnitudeId = "BiasMagnitude";
+        private const string _WeightMagnitudeId = "WeightMagnitude";
 
         public void LoadFromSettings(XmlElement rootElement)
         {
             MaxIter = rootElement.ReadInt(_MaxIterId, MaxIter);
+            Epsilon = rootElement.ReadSingle(_EpsilonId, Epsilon);
+            Tolerance = rootElement.ReadSingle(_ToleranceId, Tolerance);
+            SampleCount = rootElement.ReadInt(_SampleCountId, SampleCount);
+            LearningRate = rootElement.ReadSingle(_LearningRateId, LearningRate);
+            BiasMagnitude = rootElement.ReadSingle(_BiasMagnitudeId, BiasMagnitude);
+            WeightMagnitude = rootElement.ReadSingle(_WeightMagnitudeId, WeightMagnitude);
         }
 
         public void SaveToSettings(XmlElement rootElement)
         {
             rootElement.WriteInt(_MaxIterId, MaxIter);
-        }
-
-        public void Default()
-        {
-
+            rootElement.WriteSingle(_EpsilonId, Epsilon);
+            rootElement.WriteSingle(_ToleranceId, Tolerance);
+            rootElement.WriteInt(_SampleCountId, SampleCount);
+            rootElement.WriteSingle(_LearningRateId, LearningRate);
+            rootElement.WriteSingle(_BiasMagnitudeId, BiasMagnitude);
+            rootElement.WriteSingle(_WeightMagnitudeId, WeightMagnitude);
         }
 
         #endregion

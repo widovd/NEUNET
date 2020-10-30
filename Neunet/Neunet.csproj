@@ -63,11 +63,23 @@
     <Compile Include="Extensions\IListExtensions.cs" />
     <Compile Include="Extensions\SplitContainerExtensions.cs" />
     <Compile Include="Extensions\TabControlExtensions.cs" />
-    <Compile Include="Forms\CalculationSettingsDialog.cs">
+    <Compile Include="Forms\LayerDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\CalculationSettingsDialog.Designer.cs">
-      <DependentUpon>CalculationSettingsDialog.cs</DependentUpon>
+    <Compile Include="Forms\LayerDialog.Designer.cs">
+      <DependentUpon>LayerDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NetworkDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NetworkDialog.Designer.cs">
+      <DependentUpon>NetworkDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SettingsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SettingsDialog.Designer.cs">
+      <DependentUpon>SettingsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TestFloatForm.cs">
       <SubType>Form</SubType>
@@ -259,8 +271,14 @@
     <EmbeddedResource Include="Forms\BaseForm.resx">
       <DependentUpon>BaseForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CalculationSettingsDialog.resx">
-      <DependentUpon>CalculationSettingsDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\LayerDialog.resx">
+      <DependentUpon>LayerDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NetworkDialog.resx">
+      <DependentUpon>NetworkDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SettingsDialog.resx">
+      <DependentUpon>SettingsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ExceptionDialog.resx">
       <DependentUpon>ExceptionDialog.cs</DependentUpon>

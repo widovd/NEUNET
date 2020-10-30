@@ -251,6 +251,15 @@ namespace Neunet.Forms
             network.AddLayer(100, Mersenne, biasMagnitude, weightMagnitude);
             network.AddLayer(30, Mersenne, biasMagnitude, weightMagnitude);
             network.AddLayer(10, Mersenne, biasMagnitude, weightMagnitude);
+
+            using (NetworkDialog dialog = new NetworkDialog() { Network = (Network)network.Clone() })
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    network = dialog.Network;
+                }
+            }
+
             historyImage.ClearItems();
             Derivatives = null;
             Measurements = null;
@@ -468,7 +477,7 @@ namespace Neunet.Forms
         {
             try
             {
-                using (CalculationSettingsDialog dialog = new CalculationSettingsDialog() { Settings = Settings })
+                using (SettingsDialog dialog = new SettingsDialog() { Settings = (CalculationSettings)Settings.Clone() })
                 {
                     if (dialog.ShowDialog(this) == DialogResult.OK)
                         Settings = dialog.Settings;

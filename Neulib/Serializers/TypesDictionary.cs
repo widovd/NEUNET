@@ -14,7 +14,6 @@ namespace Neulib.Serializers
 
         public TypesDictionary()
         {
-            Add("Double1", typeof(Double1)); // ok
             Add("Double3", typeof(Double3)); // ok
             Add("Double3x3", typeof(Double3x3)); // ok
             Add("ParamBounds", typeof(ParamBounds)); // ok

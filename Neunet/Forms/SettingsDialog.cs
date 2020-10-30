@@ -23,7 +23,7 @@ using Neunet.Serializers;
 
 namespace Neunet.Forms
 {
-    public partial class CalculationSettingsDialog : Neunet.Forms.BaseDialog
+    public partial class SettingsDialog : Neunet.Forms.BaseDialog
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -38,7 +38,7 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
-        public CalculationSettingsDialog()
+        public SettingsDialog()
         {
             InitializeComponent();
         }

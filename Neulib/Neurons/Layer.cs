@@ -49,6 +49,14 @@ namespace Neulib.Neurons
             }
         }
 
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Object
+
+        public override string ToString()
+        {
+            return $"{Neurons.Count}";
+        }
 
         #endregion
         // ----------------------------------------------------------------------------------------

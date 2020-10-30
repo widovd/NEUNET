@@ -1,6 +1,6 @@
 ﻿namespace Neunet.Forms
 {
-    partial class CalculationSettingsDialog
+    partial class SettingsDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CalculationSettingsDialog));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsDialog));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.defaultButton = new System.Windows.Forms.ToolStripButton();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
