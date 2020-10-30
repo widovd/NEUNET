@@ -4,14 +4,14 @@ using static System.Math;
 
 namespace Neulib.Numerics
 {
-    public struct SingleN
+    public class Single1D
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
 
         public int Count
         {
-            get { return _values.Length; }
+            get => _values.Length;
         }
 
         private readonly float[] _values;
@@ -22,7 +22,7 @@ namespace Neulib.Numerics
             set { _values[i] = value; }
         }
 
-        public float LengthSqr
+        public float EuclideanDistanceSqr
         {
             get
             {
@@ -37,12 +37,12 @@ namespace Neulib.Numerics
             }
         }
 
-        public float Length
+        public float EuclideanDistance
         {
-            get=> (float)Sqrt(LengthSqr);
+            get=> (float)Sqrt(EuclideanDistanceSqr);
         }
 
-        public static bool IsNaN(SingleN value)
+        public static bool IsNaN(Single1D value)
         {
             int count = value.Count;
             for (int i = 0; i < count; i++)
@@ -52,7 +52,7 @@ namespace Neulib.Numerics
             return false;
         }
 
-        public static bool IsZero(SingleN value)
+        public static bool IsZero(Single1D value)
         {
             int count = value.Count;
             for (int i = 0; i < count; i++)
@@ -66,7 +66,7 @@ namespace Neulib.Numerics
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
-        public SingleN(int n)
+        public Single1D(int n)
         {
             _values = new float[n];
         }
@@ -77,7 +77,8 @@ namespace Neulib.Numerics
 
         public override bool Equals(object o)
         {
-            SingleN value = (SingleN)o;
+            if (!base.Equals(o)) return false;
+            Single1D value = (Single1D)o;
             int count = Count;
             if (count != value.Count) return false;
             for (int i = 0; i < count; i++)
@@ -105,21 +106,21 @@ namespace Neulib.Numerics
         // ----------------------------------------------------------------------------------------
         #region Operators
 
-        public static bool operator ==(SingleN left, SingleN right)
-        {
-            return left.Equals(right);
-        }
+        //public static bool operator ==(Single1D left, Single1D right)
+        //{
+        //    return left.Equals(right);
+        //}
 
-        public static bool operator !=(SingleN left, SingleN right)
-        {
-            return !left.Equals(right);
-        }
+        //public static bool operator !=(Single1D left, Single1D right)
+        //{
+        //    return !left.Equals(right);
+        //}
 
-        public static SingleN operator +(SingleN left, SingleN right)
+        public static Single1D operator +(Single1D left, Single1D right)
         {
             int count = left.Count;
             if (count != right.Count) throw new UnequalValueException(count, right.Count, 693639);
-            SingleN result = new SingleN(count);
+            Single1D result = new Single1D(count);
             for (int i = 0; i < count; i++)
             {
                 result._values[i] = left._values[i] + right._values[i];
@@ -127,11 +128,11 @@ namespace Neulib.Numerics
             return result;
         }
 
-        public static SingleN operator -(SingleN left, SingleN right)
+        public static Single1D operator -(Single1D left, Single1D right)
         {
             int count = left.Count;
             if (count != right.Count) throw new UnequalValueException(count, right.Count, 474703);
-            SingleN result = new SingleN(count);
+            Single1D result = new Single1D(count);
             for (int i = 0; i < count; i++)
             {
                 result._values[i] = left._values[i] - right._values[i];
@@ -139,10 +140,10 @@ namespace Neulib.Numerics
             return result;
         }
 
-        public static SingleN operator -(SingleN right)
+        public static Single1D operator -(Single1D right)
         {
             int count = right.Count;
-            SingleN result = new SingleN(count);
+            Single1D result = new Single1D(count);
             for (int i = 0; i < count; i++)
             {
                 result._values[i] = - right._values[i];
@@ -150,10 +151,10 @@ namespace Neulib.Numerics
             return result;
         }
 
-        public static SingleN operator *(float f, SingleN right)
+        public static Single1D operator *(float f, Single1D right)
         {
             int count = right.Count;
-            SingleN result = new SingleN(count);
+            Single1D result = new Single1D(count);
             for (int i = 0; i < count; i++)
             {
                 result._values[i] = f * right._values[i];
@@ -161,10 +162,10 @@ namespace Neulib.Numerics
             return result;
         }
 
-        public static SingleN operator *(SingleN left, float f)
+        public static Single1D operator *(Single1D left, float f)
         {
             int count = left.Count;
-            SingleN result = new SingleN(count);
+            Single1D result = new Single1D(count);
             for (int i = 0; i < count; i++)
             {
                 result._values[i] = f * left._values[i];
@@ -172,10 +173,10 @@ namespace Neulib.Numerics
             return result;
         }
 
-        public static SingleN operator /(SingleN left, float f)
+        public static Single1D operator /(Single1D left, float f)
         {
             int count = left.Count;
-            SingleN result = new SingleN(count);
+            Single1D result = new Single1D(count);
             for (int i = 0; i < count; i++)
             {
                 result._values[i] = left._values[i] / f;
@@ -183,7 +184,7 @@ namespace Neulib.Numerics
             return result;
         }
 
-        public static float operator *(SingleN left, SingleN right)
+        public static float operator *(Single1D left, Single1D right)
         {
             int count = left.Count;
             if (count != right.Count) throw new UnequalValueException(count, right.Count, 375076);
@@ -235,7 +236,7 @@ namespace Neulib.Numerics
             }
         }
 
-        public void Assign(SingleN value)
+        public void Assign(Single1D value)
         {
             int count = Count;
             if (count != value.Count) throw new UnequalValueException(count, value.Count, 403516);
@@ -254,7 +255,7 @@ namespace Neulib.Numerics
             }
         }
 
-        public void Add(SingleN value)
+        public void Add(Single1D value)
         {
             int count = Count;
             if (count != value.Count) throw new UnequalValueException(count, value.Count, 826652);
@@ -273,7 +274,7 @@ namespace Neulib.Numerics
             }
         }
 
-        public void Subtract(SingleN value)
+        public void Subtract(Single1D value)
         {
             int count = Count;
             if (count != value.Count) throw new UnequalValueException(count, value.Count, 657736);
@@ -292,7 +293,7 @@ namespace Neulib.Numerics
             }
         }
 
-        public void Multiply(SingleN value)
+        public void Multiply(Single1D value)
         {
             int count = Count;
             if (count != value.Count) throw new UnequalValueException(count, value.Count, 893830);
@@ -311,7 +312,7 @@ namespace Neulib.Numerics
             }
         }
 
-        public void Divide(SingleN value)
+        public void Divide(Single1D value)
         {
             int count = Count;
             if (count != value.Count) throw new UnequalValueException(count, value.Count, 663127);
@@ -330,7 +331,7 @@ namespace Neulib.Numerics
             }
         }
 
-        public float Product(SingleN value)
+        public float Product(Single1D value)
         {
             int count = Count;
             if (count != value.Count) throw new UnequalValueException(count, value.Count, 282607);

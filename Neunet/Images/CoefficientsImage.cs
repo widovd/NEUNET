@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Neulib.Numerics;
 using static System.Math;
 
 namespace Neunet.Images
@@ -16,13 +17,13 @@ namespace Neunet.Images
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        private float[] _coefficients;
-        public float[] Coefficients
+        private Single1D _values;
+        public Single1D Values
         {
-            get { return _coefficients; }
+            get { return _values; }
             set
             {
-                _coefficients = value;
+                _values = value;
                 RefreshImage();
             }
         }
@@ -42,7 +43,7 @@ namespace Neunet.Images
         public override void DrawImage(Bitmap bitmap)
         {
             base.DrawImage(bitmap);
-            if (Coefficients == null) return;
+            if (Values == null) return;
             DrawCoefficients(bitmap);
         }
 
@@ -52,11 +53,11 @@ namespace Neunet.Images
 
         private float MaxValue()
         {
-            int count = Coefficients.Length;
+            int count = Values.Count;
             float max = float.NaN;
             for (int i = 0; i < count; i++)
             {
-                float value = Coefficients[i];
+                float value = Values[i];
                 if (float.IsNaN(max) || value > max) max = value;
             }
             return max;
@@ -64,11 +65,11 @@ namespace Neunet.Images
 
         private float MinValue()
         {
-            int count = Coefficients.Length;
+            int count = Values.Count;
             float min = float.NaN;
             for (int i = 0; i < count; i++)
             {
-                float value = Coefficients[i];
+                float value = Values[i];
                 if (float.IsNaN(min) || value < min) min = value;
             }
             return min;
@@ -76,13 +77,13 @@ namespace Neunet.Images
 
         private float Interpolate(float x)
         {
-            int n = Coefficients.Length;
+            int n = Values.Count;
             if (n == 0) return 0f;
             float fx = (n - 1) * x;
             int ix = (int)fx;
             if (ix < 0) ix = 0; else if (ix > n - 2) ix = n - 2;
             fx -= ix;
-            return (1f - fx) * Coefficients[ix] + fx * Coefficients[ix + 1];
+            return (1f - fx) * Values[ix] + fx * Values[ix + 1];
         }
 
         private void DrawCoefficients(Bitmap bitmap)

@@ -59,13 +59,13 @@ namespace Neulib.Numerics
             return 2f * Abs(f2 - f1) <= Tol * (Abs(f1) + Abs(f2) + Eps);
         }
 
-        public void ConjugateGradient(float[] p2, Func<float[], float[], float> func, float alpha)
+        public void ConjugateGradient(Single1D p2, Func<Single1D, Single1D, float> func, float alpha)
         // Frprmn
         {
-            int n = p2.Length;
+            int n = p2.Count;
             float[] p1 = new float[n];
             float[] df1 = new float[n];
-            float[] df2 = new float[n];
+            Single1D df2 = new Single1D(n);
             float[] g = new float[n];
             float[] h = new float[n];
             float f2 = func(p2, df2);
@@ -119,9 +119,9 @@ namespace Neulib.Numerics
             }
         }
 
-        public static string ArrayToString(float[] x)
+        public static string ArrayToString(Single1D x)
         {
-            int n = x.Length;
+            int n = x.Count;
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < n; i++)
             {
@@ -131,15 +131,15 @@ namespace Neulib.Numerics
             return builder.ToString();
         }
 
-        public void SteepestDescent(float[] p, float[] df, Func<float> func, float alpha)
+        public void SteepestDescent(Single1D p, Single1D df, Func<int, float> func, float alpha)
         {
-            int n = p.Length;
-            if (n != df.Length) throw new UnequalValueException(n, df.Length, 750074);
+            int n = p.Count;
+            if (n != df.Count) throw new UnequalValueException(n, df.Count, 750074);
             float f2 = float.NaN;
             for (int iter = 0; iter < MaxIter; iter++)
             {
                 float f1 = f2;
-                f2 = func();
+                f2 = func(iter);
                 Console.WriteLine($"{iter:000}: f = {f2:E3}");
                 //Console.WriteLine($"{iter:000}: f({ArrayToString(p)}) = {f2:E3}");
                 if (EndCriteriumMet(f1, f2)) return;

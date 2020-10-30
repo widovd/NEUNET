@@ -39,11 +39,11 @@ namespace Neulib.Numerics
                         _c[i, j, k] = -1f + 2f * (double)random.NextDouble();
         }
 
-        public float Calculate(float[] x, float[] df)
+        public float Calculate(Single1D x, Single1D df)
         {
             int n = N;
-            if (n != x.Length) throw new UnequalValueException(n, x.Length, 539428);
-            if (n != df.Length) throw new UnequalValueException(n, df.Length, 624376);
+            if (n != x.Count) throw new UnequalValueException(n, x.Count, 539428);
+            if (n != df.Count) throw new UnequalValueException(n, df.Count, 624376);
 
             double f = 0f;
             for (int i = 0; i <= n; i++)

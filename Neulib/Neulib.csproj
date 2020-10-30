@@ -50,6 +50,7 @@
     <Compile Include="BaseObject.cs" />
     <Compile Include="CalculationArguments.cs" />
     <Compile Include="CalculationSettings.cs" />
+    <Compile Include="Neurons\MeasurementList.cs" />
     <Compile Include="ProgressInterval.cs" />
     <Compile Include="ProgressReporter.cs" />
     <Compile Include="ReportData.cs" />

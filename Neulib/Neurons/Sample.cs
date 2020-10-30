@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Neulib.Numerics;
 
 namespace Neulib.Neurons
 {
     /// <summary>
-    /// Represents one sample row of x (input) and y (output) values.
+    /// Represents one sample row of input (x) and output (y) values.
     /// </summary>
     public class Sample
     {
@@ -17,17 +18,12 @@ namespace Neulib.Neurons
         /// <summary>
         /// Input for the first layer in the network.
         /// </summary>
-        public float[] Xs { get; private set; }
+        public Single1D Inputs { get; private set; }
 
         /// <summary>
         /// Required output of the last layer in the network.
         /// </summary>
-        public float[] Ys { get; private set; }
-
-        /// <summary>
-        /// Realized output of the last layer in the network by feedforward.
-        /// </summary>
-        public float[] Zs { get; private set; }
+        public Single1D Requirements { get; private set; }
 
         /// <summary>
         /// A reference to the source of this sample.
@@ -43,11 +39,10 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
-        public Sample(int nx, int ny)
+        public Sample(int nInput, int nRequirements)
         {
-            Xs = new float[nx];
-            Ys = new float[ny];
-            Zs = new float[ny];
+            Inputs = new Single1D(nInput);
+            Requirements = new Single1D(nRequirements);
         }
 
         #endregion

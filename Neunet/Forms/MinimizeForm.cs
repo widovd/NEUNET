@@ -59,12 +59,12 @@ namespace Neunet.Forms
         }
 
 
-        private float[] _point;
+        private Single1D _point;
 
         private void RandomizePoint()
         {
             int n = multifunc.N;
-            _point = new float[n];
+            _point = new Single1D(n);
             for (int i = 0; i < n; i++)
             {
                 _point[i] = -1f + 2f * (float)_random.NextDouble();
@@ -92,10 +92,10 @@ namespace Neunet.Forms
                 MaxIter = maxIter,
             };
             int n = multifunc.N;
-            float[] p = new float[n];
-            float[] df = new float[n];
+            Single1D p = new Single1D(n);
+            Single1D df = new Single1D(n);
             for (int i = 0; i < n; i++) p[i] = _point[i];
-            minimization.SteepestDescent(p, df, () =>
+            minimization.SteepestDescent(p, df, (iter) =>
             {
                 return multifunc.Calculate(p, df);
             }, alpha);
@@ -121,7 +121,7 @@ namespace Neunet.Forms
                 MaxIter = maxIter,
             };
             int n = multifunc.N;
-            float[] p = new float[n];
+            Single1D p = new Single1D(n);
             for (int i = 0; i < n; i++) p[i] = _point[i];
             minimization.ConjugateGradient(p, multifunc.Calculate, alpha);
             Console.WriteLine();

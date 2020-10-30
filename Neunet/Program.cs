@@ -91,7 +91,7 @@ namespace Neunet
                 if (!File.Exists(settingsfilePath))
                     settingsfilePath = Path.Combine(CommonApplicationData, settingsFileName);
                 if (File.Exists(settingsfilePath)) 
-                    XmlSettings.Load(settingsfilePath); 
+                    XmlSettings.Load(settingsfilePath);
                 Application.Run(new MainForm());
                 if (!Directory.Exists(applicationFileFolder))
                     Directory.CreateDirectory(applicationFileFolder);

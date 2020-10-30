@@ -1,4 +1,6 @@
 ﻿using System;
+using Neulib.Neurons;
+using Neulib.Numerics;
 
 namespace Neulib
 {
@@ -31,14 +33,50 @@ namespace Neulib
 
     }
 
-    public class IterationReportData : ReportData
+    public class CoefficientsReportData : ReportData
     {
-        public double Merit { get; private set; }
+        public Single1D Coefficients { get; private set; }
 
-        public IterationReportData(float merit)
+        public CoefficientsReportData(Single1D coefficients)
         {
-            Merit = merit;
+            Coefficients = coefficients;
         }
+
+    }
+
+    public class CostAndDerivativesReportData : ReportData
+    {
+        public float Cost { get; private set; }
+
+        public Single1D Derivatives { get; private set; }
+
+        public MeasurementList Measurements { get; private set; }
+
+        public CostAndDerivativesReportData(float cost, Single1D derivatives, MeasurementList measurements)
+        {
+            Cost = cost;
+            Derivatives = derivatives;
+            Measurements = measurements;
+        }
+    }
+
+    public class SamplesReportData : ReportData
+    {
+        public SampleList Samples { get; private set; }
+
+        public SamplesReportData(SampleList samples)
+        {
+            Samples = samples;
+        }
+
+    }
+
+    public class NetworkReportData : ReportData
+    {
+        public NetworkReportData()
+        {
+        }
+
     }
 
     public class MessageReportData : ReportData

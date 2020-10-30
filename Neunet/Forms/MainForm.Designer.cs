@@ -28,27 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.testButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.samplesImage = new Neunet.Images.Charts2D.SamplesImage();
+            this.coefficientsImage = new Neunet.Images.CoefficientsImage();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
+            this.samplesLabel = new System.Windows.Forms.Label();
+            this.derivativesImage = new Neunet.Images.CoefficientsImage();
+            this.coefficientsLabel = new System.Windows.Forms.Label();
+            this.derivativesLabel = new System.Windows.Forms.Label();
             this.nSampleTextBox = new Neunet.UserControls.IntegerTextBox();
             this.randomSamplesButton = new System.Windows.Forms.Button();
             this.learnButton = new System.Windows.Forms.Button();
-            this.newButton = new System.Windows.Forms.Button();
-            this.ysLabel = new System.Windows.Forms.Label();
             this.stopButton = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.messageStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.changedStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.coefficientsImage = new Neunet.Images.CoefficientsImage();
-            this.label6 = new System.Windows.Forms.Label();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.mainPanel = new System.Windows.Forms.Panel();
+            this.historyImage = new Neunet.Images.HistoryImage();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.newMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,6 +78,7 @@
             this.panel1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.mainPanel.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -84,71 +86,108 @@
             this.splitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
-            // testButton
-            // 
-            this.testButton.Location = new System.Drawing.Point(11, 36);
-            this.testButton.Name = "testButton";
-            this.testButton.Size = new System.Drawing.Size(75, 23);
-            this.testButton.TabIndex = 0;
-            this.testButton.Text = "Test";
-            this.testButton.UseVisualStyleBackColor = true;
-            this.testButton.Click += new System.EventHandler(this.TestButton_Click);
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.InsetDouble;
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.samplesImage, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.coefficientsImage, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.derivativesImage, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.coefficientsLabel, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.derivativesLabel, 0, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            this.tableLayoutPanel1.RowCount = 6;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(837, 135);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(837, 308);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // samplesImage
             // 
             this.samplesImage.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.samplesImage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.samplesImage.Location = new System.Drawing.Point(3, 35);
+            this.samplesImage.Location = new System.Drawing.Point(3, 26);
             this.samplesImage.Margin = new System.Windows.Forms.Padding(0);
             this.samplesImage.Name = "samplesImage";
-            this.samplesImage.Size = new System.Drawing.Size(831, 97);
+            this.samplesImage.Size = new System.Drawing.Size(831, 181);
             this.samplesImage.TabIndex = 0;
+            // 
+            // coefficientsImage
+            // 
+            this.coefficientsImage.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.coefficientsImage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.coefficientsImage.Location = new System.Drawing.Point(3, 233);
+            this.coefficientsImage.Margin = new System.Windows.Forms.Padding(0);
+            this.coefficientsImage.Name = "coefficientsImage";
+            this.coefficientsImage.Size = new System.Drawing.Size(831, 23);
+            this.coefficientsImage.TabIndex = 8;
+            this.coefficientsImage.Values = null;
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.nSampleTextBox);
-            this.panel1.Controls.Add(this.randomSamplesButton);
+            this.panel1.Controls.Add(this.samplesLabel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(831, 29);
+            this.panel1.Size = new System.Drawing.Size(831, 20);
             this.panel1.TabIndex = 1;
             // 
-            // label1
+            // samplesLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(165, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "label1";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.samplesLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.samplesLabel.Location = new System.Drawing.Point(0, 0);
+            this.samplesLabel.Name = "samplesLabel";
+            this.samplesLabel.Size = new System.Drawing.Size(831, 20);
+            this.samplesLabel.TabIndex = 7;
+            this.samplesLabel.Text = "Samples";
+            this.samplesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // derivativesImage
+            // 
+            this.derivativesImage.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.derivativesImage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.derivativesImage.Location = new System.Drawing.Point(3, 282);
+            this.derivativesImage.Margin = new System.Windows.Forms.Padding(0);
+            this.derivativesImage.Name = "derivativesImage";
+            this.derivativesImage.Size = new System.Drawing.Size(831, 23);
+            this.derivativesImage.TabIndex = 12;
+            this.derivativesImage.Values = null;
+            // 
+            // coefficientsLabel
+            // 
+            this.coefficientsLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.coefficientsLabel.Location = new System.Drawing.Point(6, 210);
+            this.coefficientsLabel.Name = "coefficientsLabel";
+            this.coefficientsLabel.Size = new System.Drawing.Size(825, 20);
+            this.coefficientsLabel.TabIndex = 13;
+            this.coefficientsLabel.Text = "Coefficients";
+            this.coefficientsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // derivativesLabel
+            // 
+            this.derivativesLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.derivativesLabel.Location = new System.Drawing.Point(6, 259);
+            this.derivativesLabel.Name = "derivativesLabel";
+            this.derivativesLabel.Size = new System.Drawing.Size(825, 20);
+            this.derivativesLabel.TabIndex = 14;
+            this.derivativesLabel.Text = "Derivatives";
+            this.derivativesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // nSampleTextBox
             // 
             this.nSampleTextBox.Format = "G";
-            this.nSampleTextBox.Location = new System.Drawing.Point(84, 4);
+            this.nSampleTextBox.Location = new System.Drawing.Point(260, 8);
             this.nSampleTextBox.MaxValue = 100000;
             this.nSampleTextBox.MinValue = 1;
             this.nSampleTextBox.Name = "nSampleTextBox";
@@ -159,9 +198,9 @@
             // 
             // randomSamplesButton
             // 
-            this.randomSamplesButton.Location = new System.Drawing.Point(5, 3);
+            this.randomSamplesButton.Location = new System.Drawing.Point(176, 8);
             this.randomSamplesButton.Name = "randomSamplesButton";
-            this.randomSamplesButton.Size = new System.Drawing.Size(75, 23);
+            this.randomSamplesButton.Size = new System.Drawing.Size(75, 28);
             this.randomSamplesButton.TabIndex = 0;
             this.randomSamplesButton.Text = "Random";
             this.randomSamplesButton.UseVisualStyleBackColor = true;
@@ -169,38 +208,19 @@
             // 
             // learnButton
             // 
-            this.learnButton.Location = new System.Drawing.Point(11, 65);
+            this.learnButton.Location = new System.Drawing.Point(8, 8);
             this.learnButton.Name = "learnButton";
-            this.learnButton.Size = new System.Drawing.Size(75, 23);
+            this.learnButton.Size = new System.Drawing.Size(75, 28);
             this.learnButton.TabIndex = 2;
             this.learnButton.Text = "Learn";
             this.learnButton.UseVisualStyleBackColor = true;
             this.learnButton.Click += new System.EventHandler(this.LearnButton_Click);
             // 
-            // newButton
-            // 
-            this.newButton.Location = new System.Drawing.Point(11, 7);
-            this.newButton.Name = "newButton";
-            this.newButton.Size = new System.Drawing.Size(75, 23);
-            this.newButton.TabIndex = 3;
-            this.newButton.Text = "New";
-            this.newButton.UseVisualStyleBackColor = true;
-            this.newButton.Click += new System.EventHandler(this.NewButton_Click);
-            // 
-            // ysLabel
-            // 
-            this.ysLabel.AutoSize = true;
-            this.ysLabel.Location = new System.Drawing.Point(121, 7);
-            this.ysLabel.Name = "ysLabel";
-            this.ysLabel.Size = new System.Drawing.Size(17, 13);
-            this.ysLabel.TabIndex = 5;
-            this.ysLabel.Text = "ys";
-            // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(11, 94);
+            this.stopButton.Location = new System.Drawing.Point(92, 8);
             this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(75, 23);
+            this.stopButton.Size = new System.Drawing.Size(75, 28);
             this.stopButton.TabIndex = 6;
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
@@ -212,7 +232,7 @@
             this.progressBar,
             this.messageStatusLabel,
             this.changedStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 405);
+            this.statusStrip.Location = new System.Drawing.Point(0, 536);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(837, 22);
             this.statusStrip.TabIndex = 7;
@@ -236,25 +256,6 @@
             this.changedStatusLabel.Text = "changed";
             this.changedStatusLabel.Visible = false;
             // 
-            // coefficientsImage
-            // 
-            this.coefficientsImage.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.coefficientsImage.Coefficients = null;
-            this.coefficientsImage.Location = new System.Drawing.Point(124, 36);
-            this.coefficientsImage.Margin = new System.Windows.Forms.Padding(0);
-            this.coefficientsImage.Name = "coefficientsImage";
-            this.coefficientsImage.Size = new System.Drawing.Size(639, 23);
-            this.coefficientsImage.TabIndex = 8;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(121, 70);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 13);
-            this.label6.TabIndex = 9;
-            this.label6.Text = "label6";
-            // 
             // folderBrowserDialog
             // 
             this.folderBrowserDialog.RootFolder = System.Environment.SpecialFolder.MyDocuments;
@@ -265,18 +266,42 @@
             // 
             // mainPanel
             // 
-            this.mainPanel.Controls.Add(this.newButton);
-            this.mainPanel.Controls.Add(this.label6);
-            this.mainPanel.Controls.Add(this.testButton);
-            this.mainPanel.Controls.Add(this.coefficientsImage);
-            this.mainPanel.Controls.Add(this.learnButton);
-            this.mainPanel.Controls.Add(this.stopButton);
-            this.mainPanel.Controls.Add(this.ysLabel);
+            this.mainPanel.Controls.Add(this.historyImage);
+            this.mainPanel.Controls.Add(this.panel2);
             this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainPanel.Location = new System.Drawing.Point(0, 0);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(837, 242);
+            this.mainPanel.Size = new System.Drawing.Size(837, 200);
             this.mainPanel.TabIndex = 11;
+            // 
+            // historyImage
+            // 
+            this.historyImage.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.historyImage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.historyImage.InnerConnection = Neunet.Images.ConnectionTypeEnum.Line;
+            this.historyImage.Location = new System.Drawing.Point(0, 44);
+            this.historyImage.Magnification = 1;
+            this.historyImage.Margin = new System.Windows.Forms.Padding(0);
+            this.historyImage.Name = "historyImage";
+            this.historyImage.OuterConnection = Neunet.Images.ConnectionTypeEnum.Line;
+            this.historyImage.PointSize = 14F;
+            this.historyImage.Size = new System.Drawing.Size(837, 156);
+            this.historyImage.TabIndex = 10;
+            this.historyImage.VAxisText = null;
+            this.historyImage.ViewPoints = false;
+            this.historyImage.Zoom = 0.95F;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.stopButton);
+            this.panel2.Controls.Add(this.nSampleTextBox);
+            this.panel2.Controls.Add(this.learnButton);
+            this.panel2.Controls.Add(this.randomSamplesButton);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(837, 44);
+            this.panel2.TabIndex = 11;
             // 
             // mainMenuStrip
             // 
@@ -492,31 +517,31 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.tableLayoutPanel1);
-            this.splitContainer.Size = new System.Drawing.Size(837, 381);
-            this.splitContainer.SplitterDistance = 242;
+            this.splitContainer.Size = new System.Drawing.Size(837, 512);
+            this.splitContainer.SplitterDistance = 200;
             this.splitContainer.TabIndex = 13;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(837, 427);
+            this.ClientSize = new System.Drawing.Size(837, 558);
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.mainMenuStrip);
             this.Controls.Add(this.statusStrip);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "TestForm";
+            this.Text = "Main";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.mainPanel.ResumeLayout(false);
-            this.mainPanel.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.mainMenuStrip.ResumeLayout(false);
             this.mainMenuStrip.PerformLayout();
             this.splitContainer.Panel1.ResumeLayout(false);
@@ -529,21 +554,16 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button testButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private Images.Charts2D.SamplesImage samplesImage;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label samplesLabel;
         private System.Windows.Forms.Button learnButton;
-        private System.Windows.Forms.Button newButton;
         private System.Windows.Forms.Button randomSamplesButton;
-        private System.Windows.Forms.Label ysLabel;
         private System.Windows.Forms.Button stopButton;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripProgressBar progressBar;
         private System.Windows.Forms.ToolStripStatusLabel messageStatusLabel;
         private Images.CoefficientsImage coefficientsImage;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
@@ -575,6 +595,11 @@
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.Panel panel1;
         private UserControls.IntegerTextBox nSampleTextBox;
+        private Images.HistoryImage historyImage;
+        private System.Windows.Forms.Panel panel2;
+        private Images.CoefficientsImage derivativesImage;
+        private System.Windows.Forms.Label coefficientsLabel;
+        private System.Windows.Forms.Label derivativesLabel;
     }
 }
 

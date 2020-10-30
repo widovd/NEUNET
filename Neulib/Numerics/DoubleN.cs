@@ -4,7 +4,7 @@ using static System.Math;
 
 namespace Neulib.Numerics
 {
-    public struct DoubleN
+    public class DoubleN
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -22,7 +22,7 @@ namespace Neulib.Numerics
             set { _values[i] = value; }
         }
 
-        public double LengthSqr
+        public double EuclideanDistanceSqr
         {
             get
             {
@@ -37,9 +37,9 @@ namespace Neulib.Numerics
             }
         }
 
-        public double Length
+        public double EuclideanDistance
         {
-            get => Sqrt(LengthSqr);
+            get => Sqrt(EuclideanDistanceSqr);
         }
 
         public static bool IsNaN(DoubleN value)
@@ -77,6 +77,7 @@ namespace Neulib.Numerics
 
         public override bool Equals(object o)
         {
+            if (!base.Equals(o)) return false;
             DoubleN value = (DoubleN)o;
             int count = Count;
             if (count != value.Count) return false;
@@ -105,15 +106,15 @@ namespace Neulib.Numerics
         // ----------------------------------------------------------------------------------------
         #region Operators
 
-        public static bool operator ==(DoubleN left, DoubleN right)
-        {
-            return left.Equals(right);
-        }
+        //public static bool operator ==(DoubleN left, DoubleN right)
+        //{
+        //    return left.Equals(right);
+        //}
 
-        public static bool operator !=(DoubleN left, DoubleN right)
-        {
-            return !left.Equals(right);
-        }
+        //public static bool operator !=(DoubleN left, DoubleN right)
+        //{
+        //    return !left.Equals(right);
+        //}
 
         public static DoubleN operator +(DoubleN left, DoubleN right)
         {

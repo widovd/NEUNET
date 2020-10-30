@@ -113,23 +113,23 @@ namespace Neulib.Neurons
             }
         }
 
-        public void SetActivations(float[] xs)
+        public void SetActivations(Single1D xs)
         {
-            if (Neurons.Count != xs.Length) throw new UnequalValueException(Neurons.Count, xs.Length, 480461);
+            if (Neurons.Count != xs.Count) throw new UnequalValueException(Neurons.Count, xs.Count, 480461);
             int count = Neurons.Count;
             ParallelFor(0, count, j => Neurons[j].Activation = xs[j]);
         }
 
-        public void GetActivations(float[] ys)
+        public void GetActivations(Single1D output)
         {
-            if (Neurons.Count != ys.Length) throw new UnequalValueException(Neurons.Count, ys.Length, 953472);
+            if (Neurons.Count != output.Count) throw new UnequalValueException(Neurons.Count, output.Count, 953472);
             int count = Neurons.Count;
-            ParallelFor(0, count, j => ys[j] = Neurons[j].Activation);
+            ParallelFor(0, count, j => output[j] = Neurons[j].Activation);
         }
 
-        public void CalculateDeltas(float[] ys)
+        public void CalculateDeltas(Single1D ys)
         {
-            if (Neurons.Count != ys.Length) throw new UnequalValueException(Neurons.Count, ys.Length, 426337);
+            if (Neurons.Count != ys.Count) throw new UnequalValueException(Neurons.Count, ys.Count, 426337);
             int count = Neurons.Count;
             ParallelFor(0, count, j => Neurons[j].CalculateDelta(ys[j]));
         }

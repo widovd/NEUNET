@@ -69,12 +69,25 @@
     <Compile Include="Forms\CalculationSettingsDialog.Designer.cs">
       <DependentUpon>CalculationSettingsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\TestFloatForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TestFloatForm.Designer.cs">
+      <DependentUpon>TestFloatForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Images\CoefficientsImage.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Images\CoefficientsImage.Designer.cs">
       <DependentUpon>CoefficientsImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Images\HistoryDictionary.cs" />
+    <Compile Include="Images\HistoryImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\HistoryImage.Designer.cs">
+      <DependentUpon>HistoryImage.cs</DependentUpon>
     </Compile>
     <Compile Include="Images\SamplesImage.cs">
       <SubType>UserControl</SubType>
@@ -261,6 +274,9 @@
     <EmbeddedResource Include="Forms\ResizeForm.resx">
       <DependentUpon>ResizeForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TestFloatForm.resx">
+      <DependentUpon>TestFloatForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Images\BaseImage.resx">
       <DependentUpon>BaseImage.cs</DependentUpon>
     </EmbeddedResource>
@@ -290,6 +306,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MinimizeForm.resx">
       <DependentUpon>MinimizeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\HistoryImage.resx">
+      <DependentUpon>HistoryImage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Images\SamplesImage.resx">
       <DependentUpon>SamplesImage.cs</DependentUpon>

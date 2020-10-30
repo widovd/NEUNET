@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using Neulib.Neurons;
+using Neulib.Numerics;
 using static System.Convert;
 
 namespace Neulib
@@ -43,9 +45,25 @@ namespace Neulib
             }
         }
 
-        public void ReportIteration(float merit)
+        public void ReportSamples(SampleList samples)
         {
-            Report(new IterationReportData(merit));
+            Report(new SamplesReportData(samples));
+        }
+
+        public void ReportCoefficients(Single1D coefficients)
+        {
+            Report(new CoefficientsReportData(coefficients));
+        }
+
+
+        public void ReportCostAndDerivatives(float cost, Single1D derivatives, MeasurementList measurements)
+        {
+            Report(new CostAndDerivativesReportData(cost, derivatives, measurements));
+        }
+
+        public void ReportNetwork()
+        {
+            Report(new NetworkReportData());
         }
 
         public void ReportProgress(int i, int n)

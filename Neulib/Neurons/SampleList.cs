@@ -16,6 +16,7 @@ namespace Neulib.Neurons
         public int NV { get; private set; }
 
         public int NX { get; private set; }
+
         public int NY { get; private set; }
 
         //public List<Sample> Samples { get; private set; } = new List<Sample>();
@@ -36,7 +37,6 @@ namespace Neulib.Neurons
         #endregion
         // ----------------------------------------------------------------------------------------
         #region SampleList
-
 
         #endregion
     }

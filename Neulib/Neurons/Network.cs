@@ -75,7 +75,7 @@ namespace Neulib.Neurons
             Layers.Add(layer);
         }
 
-        public void FeedForward(float[] xs, float[] ys)
+        public void FeedForward(Single1D xs, Single1D ys)
         {
             if (xs == null) throw new VarNullException(nameof(xs), 850330);
 
@@ -93,11 +93,11 @@ namespace Neulib.Neurons
             layer.GetActivations(ys);
         }
 
-        private static float CostFunction(float[] ys1, float[] ys2)
+        private static float CostFunction(Single1D ys1, Single1D ys2)
         {
             float cost = 0;
-            int n = ys1.Length;
-            if (n != ys2.Length) throw new UnequalValueException(n, ys2.Length, 109047);
+            int n = ys1.Count;
+            if (n != ys2.Count) throw new UnequalValueException(n, ys2.Count, 109047);
             for (int i = 0; i < n; i++)
             {
                 cost += Sqr(ys1[i] - ys2[i]);
@@ -105,38 +105,52 @@ namespace Neulib.Neurons
             return cost / (2f * n);
         }
 
+        public float GetCostAndDerivatives(
+            SampleList samples, Single1D derivatives, MeasurementList measurements)
+        {
+            int nSample = samples.Count;
+            int nCoeff = derivatives.Count;
+            float cost = 0f;
+            for (int i = 0; i < nCoeff; i++) derivatives[i] = 0f;
+            for (int iSample = 0; iSample < nSample; iSample++)
+            {
+                Sample sample = samples[iSample];
+                Single1D measurement = measurements[iSample];
+                FeedForward(sample.Inputs, measurement);
+                cost += CostFunction(measurement, sample.Requirements);
+                FeedBackward(sample.Requirements);
+                AddDerivatives(derivatives);
+            }
+            cost /= nSample;
+            for (int i = 0; i < nCoeff; i++) derivatives[i] /= nSample;
+            return cost;
+        }
+
         public void Learn(SampleList samples, CalculationArguments arguments)
         // samples = yjks
         {
             int nSample = samples.Count; // number of sample rows
-            int o = CountCoefficients();
-            float[] p = new float[o]; // Current biasses and weights of all neurons in this network
-            float[] dC = new float[o]; // The derivatives of the merit function f with respect to the biasses and weights of all neurons in this network
-            GetCoefficients(p);
+            int nCoefficient = CoefficientCount();
+            // Current biasses and weights of the neurons in this network:
+            Single1D coefficients = new Single1D(nCoefficient);
+            // The derivatives of the cost with respect to the biasses and weights:
+            Single1D derivatives = new Single1D(nCoefficient);
+            MeasurementList measurements = new MeasurementList(nSample, samples.NY);
+            GetCoefficients(coefficients);
             Minimization minimization = new Minimization()
             {
                 MaxIter = arguments.settings.MaxIter,
                 Eps = arguments.settings.Epsilon,
                 Tol = arguments.settings.Tolerance,
             };
-            minimization.SteepestDescent(p, dC, () =>
+            minimization.SteepestDescent(coefficients, derivatives, (iter) =>
             {
                 arguments.ThrowIfCancellationRequested();
-                SetCoefficients(p);
-                float c = 0f;
-                for (int i = 0; i < o; i++) dC[i] = 0f;
-                for (int k = 0; k < nSample; k++)
-                {
-                    Sample sample = samples[k];
-                    FeedForward(sample.Xs, sample.Zs);
-                    c += CostFunction(sample.Zs, sample.Ys);
-                    FeedBackward(sample.Ys);
-                    AddDerivatives(dC);
-                }
-                c /= nSample;
-                for (int i = 0; i < o; i++) dC[i] /= nSample;
-                arguments.reporter?.ReportIteration((float)Math.Sqrt(c));
-                return c;
+                SetCoefficients(coefficients);
+                arguments.reporter?.ReportCoefficients(coefficients);
+                float cost = GetCostAndDerivatives(samples, derivatives, measurements);
+                arguments.reporter?.ReportCostAndDerivatives(cost, derivatives, measurements);
+                return cost;
             }, arguments.settings.LearningRate);
         }
 
@@ -154,7 +168,7 @@ namespace Neulib.Neurons
             }
         }
 
-        private void FeedBackward(float[] ys)
+        private void FeedBackward(Single1D ys)
         {
             if (ys == null) throw new VarNullException(nameof(ys), 411263);
             int count = Layers.Count;
@@ -174,7 +188,7 @@ namespace Neulib.Neurons
         /// <summary>
         /// Returns the total number of biasses and weights of all neurons in this network except the first layer.
         /// </summary>
-        public int CountCoefficients()
+        public int CoefficientCount()
         {
             int h = 0;
             ForEach(layer =>
@@ -187,51 +201,63 @@ namespace Neulib.Neurons
             return h;
         }
 
+        public Single1D CreateCoefficients()
+        {
+            return new Single1D(CoefficientCount());
+        }
+
         /// <summary>
-        /// Updates the biasses and weights of all neurons in this network with the values of the float array.
+        /// Sets the biasses and weights of all neurons in this network.
         /// </summary>
-        /// <param name="p">The float array.</param>
-        public void SetCoefficients(float[] p)
+        /// <param name="coefficients">The coefficients.</param>
+        public void SetCoefficients(Single1D coefficients)
         {
             int h = 0;
             ForEach(layer =>
             {
                 layer.ForEach((Neuron neuron) =>
                 {
-                    neuron.Bias = p[h++];
+                    neuron.Bias = coefficients[h++];
                     neuron.ForEach(connection =>
                     {
-                        connection.Weight = p[h++];
+                        connection.Weight = coefficients[h++];
                     });
                 });
             }, true);
         }
 
         /// <summary>
-        /// Fills a float array with the biasses and weights of all neurons in this network.
+        /// Gets the biasses and weights of all neurons in this network.
         /// </summary>
-        /// <param name="p">The float array which must have been created.</param>
-        public void GetCoefficients(float[] p)
+        /// <param name="coefficients">The coefficients.</param>
+        public void GetCoefficients(Single1D coefficients)
         {
             int h = 0;
             ForEach(layer =>
             {
                 layer.ForEach((Neuron neuron) =>
                 {
-                    p[h++] = neuron.Bias;
+                    coefficients[h++] = neuron.Bias;
                     neuron.ForEach(connection =>
                     {
-                        p[h++] = connection.Weight;
+                        coefficients[h++] = connection.Weight;
                     });
                 });
             }, true);
         }
 
+        public Single1D GetCoefficients()
+        {
+            Single1D coefficients = CreateCoefficients();
+            GetCoefficients(coefficients);
+            return coefficients;
+        }
+
         /// <summary>
         /// Fills a float array with the biasses and weights of all neurons in this network.
         /// </summary>
-        /// <param name="dC">The float array which must have been created.</param>
-        private void AddDerivatives(float[] dC)
+        /// <param name="derivatives">The float array which must have been created.</param>
+        private void AddDerivatives(Single1D derivatives)
         {
             int h = 0;
             Layer layer = null;
@@ -244,10 +270,10 @@ namespace Neulib.Neurons
                 layer.ForEach(neuron =>
                 {
                     float delta = neuron.Delta;
-                    dC[h++] += delta; // dC/dbj
+                    derivatives[h++] += delta; // dC/dbj
                     neuron.ForEach((connection, k) =>
                     {
-                        dC[h++] += prevLayer.Neurons[k].Activation * delta; // dC/dwjk
+                        derivatives[h++] += prevLayer.Neurons[k].Activation * delta; // dC/dwjk
                     });
                 });
             }

@@ -33,6 +33,18 @@ namespace Neunet.Images.Charts2D
             }
         }
 
+        private MeasurementList _measurements;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public MeasurementList Measurements
+        {
+            get { return _measurements; }
+            set
+            {
+                _measurements = value;
+                RefreshImage();
+            }
+        }
+
         private float _labelHeight = 14f;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public float LabelHeight
@@ -120,14 +132,14 @@ namespace Neunet.Images.Charts2D
                 float x = 0f;
                 for (int iSample = hScrollBar.Value; iSample < hScrollBar.Value + hScrollBar.LargeChange; iSample++)
                 {
-                    Sample sample = Samples[iSample];
+                    Sample sample = Samples?[iSample];
                     //if (x >= bitmap.Width) break;
                     float y = 0f;
                     DrawLabels(graphics, $"{iSample}: [{sample.Index}] = {sample.Label}", x, y, w, LabelHeight);
                     y += LabelHeight + GapHeight;
-                    DrawInputs(graphics, sample.Xs, x, y, w, w, Samples.NU, Samples.NV);
+                    DrawInputs(graphics, sample?.Inputs, x, y, w, w, Samples.NU, Samples.NV);
                     y += w + GapHeight;
-                    DrawOutputs(graphics, sample.Ys, sample.Zs, x, y, w, OutputHeight);
+                    DrawOutputs(graphics, sample?.Requirements, Measurements?[iSample], x, y, w, OutputHeight);
                     x += w + GapWidth;
                 }
             }
@@ -142,8 +154,6 @@ namespace Neunet.Images.Charts2D
             if (Samples == null) return;
             hScrollBar.Minimum = 0;
             hScrollBar.Maximum = Samples.Count - 1;
-
-
             hScrollBar.LargeChange = (int)(pictureBox.Width / (InputSize + GapWidth));
             RefreshImage();
         }
@@ -175,7 +185,7 @@ namespace Neunet.Images.Charts2D
             }
         }
 
-        private static void DrawInputs(Graphics graphics, float[] xs, float x, float y, float w, float h, int nu, int nv)
+        private static void DrawInputs(Graphics graphics, Single1D xs, float x, float y, float w, float h, int nu, int nv)
         {
             using (Pen pen = new Pen(Color.Black, 1f))
             using (SolidBrush fillBrush = new SolidBrush(Color.Black))
@@ -201,18 +211,16 @@ namespace Neunet.Images.Charts2D
             }
         }
 
-        private static void DrawOutputs(Graphics graphics, float[] ys, float[] zs, float x, float y, float w, float h)
+        private static void DrawOutputs(Graphics graphics, Single1D requirement, Single1D measurement, float x, float y, float w, float h)
         {
             const float sh = 14f;
             float hb = h - sh;
-            int ny = ys.Length;
+            int ny = requirement.Count;
             float d2 = w / ny;
             float xgap = 1f;
             float dx = d2 - 2 * xgap;
-            using (Pen peny = new Pen(Color.DarkRed, 3f)) // required y values
-            using (Pen penz = new Pen(Color.DarkGray, 1f)) // feedforward y values
-            using (Pen penr = new Pen(Color.Black, 1f)) // rectangle
-            using (SolidBrush fillBrush = new SolidBrush(Color.Gray))
+            using (Pen pen_y = new Pen(Color.DarkRed, 1f)) // required y values
+            using (SolidBrush brush_m = new SolidBrush(Color.Gray)) // measured y values
             using (SolidBrush stringBrush = new SolidBrush(Color.Black))
             using (StringFormat stringFormat = new StringFormat()
             {
@@ -224,22 +232,27 @@ namespace Neunet.Images.Charts2D
                 float vMax = float.NaN;
                 for (int i = 0; i < ny; i++)
                 {
-                    float v = ys[i];
+                    float v = requirement[i];
                     if (float.IsNaN(vMax) || v > vMax) { vMax = v; iMax = i; }
                 }
                 for (int i = 0; i < ny; i++)
                 {
-                    //fillBrush.Color = i == iMax ? Color.Red : Color.Gray;
                     float xi = x + xgap + i * d2;
-                    float yy = ys[i];
-                    float y1 = y + hb * (1f - yy);
-                    float zz = zs[i];
-                    float z1 = y + hb * (1f - zz);
-                    graphics.DrawRectangle(penr, xi, y, dx, hb);
-                    graphics.FillRectangle(fillBrush, xi+1f, z1, dx - 1f, hb * zz);
-                    //graphics.DrawLine(penz, xi, z1, xi + dx, z1);
-                    graphics.DrawLine(peny, xi, y1, xi + dx + 1f, y1);
-                    graphics.DrawString($"{i}", DefaultFont, stringBrush, xi, y + hb, stringFormat);
+                    if (measurement != null)
+                    {
+                        float zz = measurement[i];
+                        float z1 = y + hb * (1f - zz);
+                        graphics.FillRectangle(brush_m, xi, z1, dx, hb * zz);
+                    }
+                    if (requirement != null)
+                    {
+                        float yy = requirement[i];
+                        float y1 = y + hb * (1f - yy);
+                        graphics.DrawLine(pen_y, xi, y1, xi + dx, y1);
+                        graphics.DrawLine(pen_y, xi, y1, xi, y + hb);
+                        graphics.DrawLine(pen_y, xi + dx, y1, xi + dx, y + hb);
+                    }
+                    graphics.DrawString(i.ToString(), DefaultFont, stringBrush, xi - 2f, y + hb, stringFormat);
                 }
             }
         }
