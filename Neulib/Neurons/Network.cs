@@ -19,6 +19,10 @@ namespace Neulib.Neurons
 
         public Layer Last { get => Layers.Count > 0 ? Layers[Layers.Count - 1] : null; }
 
+        public int InputCount { get => First.Neurons.Count; }
+
+        public int OutputCount { get => Last.Neurons.Count; }
+
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
@@ -106,36 +110,40 @@ namespace Neulib.Neurons
         }
 
         public float GetCostAndDerivatives(
-            SampleList samples, Single1D derivatives, MeasurementList measurements)
+            SampleList samples, Single1D derivatives, MeasurementList measurements, 
+            CalculationArguments arguments)
         {
-            int nSample = samples.Count;
-            int nCoeff = derivatives.Count;
+            int nSamples = samples.Count;
+            int nCoeffs = derivatives.Count;
             float cost = 0f;
-            for (int i = 0; i < nCoeff; i++) derivatives[i] = 0f;
-            for (int iSample = 0; iSample < nSample; iSample++)
+            for (int i = 0; i < nCoeffs; i++) derivatives[i] = 0f;
+            for (int iSample = 0; iSample < nSamples; iSample++)
             {
+                arguments.ThrowIfCancellationRequested();
                 Sample sample = samples[iSample];
                 Single1D measurement = measurements[iSample];
                 FeedForward(sample.Inputs, measurement);
                 cost += CostFunction(measurement, sample.Requirements);
                 FeedBackward(sample.Requirements);
                 AddDerivatives(derivatives);
+                arguments.reporter?.ReportProgress(iSample, nSamples);
             }
-            cost /= nSample;
-            for (int i = 0; i < nCoeff; i++) derivatives[i] /= nSample;
+            arguments.reporter?.ReportProgress(0, nSamples);
+            cost /= nSamples;
+            for (int i = 0; i < nCoeffs; i++) derivatives[i] /= nSamples;
             return cost;
         }
 
         public void Learn(SampleList samples, CalculationArguments arguments)
         // samples = yjks
         {
-            int nSample = samples.Count; // number of sample rows
-            int nCoefficient = CoefficientCount();
+            int nSamples = samples.Count; // number of sample rows
+            int nCoefficients = CoefficientCount();
             // Current biasses and weights of the neurons in this network:
-            Single1D coefficients = new Single1D(nCoefficient);
+            Single1D coefficients = new Single1D(nCoefficients);
             // The derivatives of the cost with respect to the biasses and weights:
-            Single1D derivatives = new Single1D(nCoefficient);
-            MeasurementList measurements = new MeasurementList(nSample, samples.NY);
+            Single1D derivatives = new Single1D(nCoefficients);
+            MeasurementList measurements = new MeasurementList(nSamples, OutputCount);
             GetCoefficients(coefficients);
             Minimization minimization = new Minimization()
             {
@@ -145,10 +153,9 @@ namespace Neulib.Neurons
             };
             minimization.SteepestDescent(coefficients, derivatives, (iter) =>
             {
-                arguments.ThrowIfCancellationRequested();
                 SetCoefficients(coefficients);
                 arguments.reporter?.ReportCoefficients(coefficients);
-                float cost = GetCostAndDerivatives(samples, derivatives, measurements);
+                float cost = GetCostAndDerivatives(samples, derivatives, measurements, arguments);
                 arguments.reporter?.ReportCostAndDerivatives(cost, derivatives, measurements);
                 return cost;
             }, arguments.settings.LearningRate);

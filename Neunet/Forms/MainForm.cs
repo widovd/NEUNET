@@ -30,6 +30,16 @@ namespace Neunet.Forms
 
         private CalculationSettings Settings { get; set; } = new CalculationSettings();
 
+        private CancellationTokenSource _tokenSource = null;
+
+        private CalculationArguments Arguments
+        {
+            get => new CalculationArguments(
+                Settings,
+                new ProgressReporter(this, (reportData) => { ReportProgress(reportData); }),
+                _tokenSource);
+        }
+
         private readonly string _networkFilePathId = "NetworkFilePath";
 
         private string NetworkFilePath
@@ -54,6 +64,35 @@ namespace Neunet.Forms
             set { Program.XmlSettings.GlobalsElement.WriteString(_trainingSetLabelFilePathId, value); }
         }
 
+        private ByteArray _trainingSetImages;
+        private ByteArray TrainingSetImages
+        {
+            get { return _trainingSetImages; }
+            set
+            {
+                _trainingSetImages = value ?? throw new VarNullException(nameof(TrainingSetImages), 229440);
+            }
+        }
+
+        private ByteArray _trainingSetLabels;
+        private ByteArray TrainingSetLabels
+        {
+            get { return _trainingSetLabels; }
+            set
+            {
+                _trainingSetLabels = value ?? throw new VarNullException(nameof(TrainingSetLabels), 682702);
+            }
+        }
+
+        private SingleArray _trainingSetResults;
+        private SingleArray TrainingSetResults
+        {
+            get { return _trainingSetResults; }
+            set
+            {
+                _trainingSetResults = value ?? throw new VarNullException(nameof(TrainingSetResults), 134871);
+            }
+        }
 
         private Mersenne Mersenne { get; set; } = new Mersenne();
 
@@ -92,6 +131,16 @@ namespace Neunet.Forms
             }
         }
 
+        private int RequiredSampleCount
+        {
+            get
+            {
+                int nSource = TrainingSetImages.GetLength(0);
+                int nSamples = nSampleTextBox.Value;
+                if (nSamples < 1) nSamples = 1; else if (nSamples > nSource) nSamples = nSource;
+                return nSamples;
+            }
+        }
 
         private MeasurementList _measurements;
         private MeasurementList Measurements
@@ -140,7 +189,7 @@ namespace Neunet.Forms
             {
                 _coefficients = value;
                 coefficientsImage.Values = value;
-                coefficientsLabel.Text = value != null ? $"{value.Count} coefficients" : string.Empty; 
+                coefficientsLabel.Text = value != null ? $"{value.Count} coefficients" : string.Empty;
             }
         }
 
@@ -152,12 +201,9 @@ namespace Neunet.Forms
             {
                 _derivatives = value;
                 derivativesImage.Values = value;
-
                 derivativesLabel.Text = value != null ? $"{value.Count} derivatives" : string.Empty;
             }
         }
-
-        private CancellationTokenSource _tokenSource = null;
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -357,7 +403,8 @@ namespace Neunet.Forms
                     LoadNetwork();
                 else
                     NewNetwork();
-                Samples = GetRandomSamples(Network, nSampleTextBox.Value);
+                SetStatusText(string.Empty);
+                Samples = GetRandomSamples(nSampleTextBox.Value);
             }
             catch (Exception ex)
             {
@@ -579,203 +626,10 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Training set
 
-        private ByteArray _trainingSetImages;
-        private ByteArray TrainingSetImages
-        {
-            get { return _trainingSetImages; }
-            set
-            {
-                _trainingSetImages = value ?? throw new VarNullException(nameof(TrainingSetImages), 229440);
-                //matrixImage1.ImageArray = TrainingSetImages;
-            }
-        }
-
-        private ByteArray _trainingSetLabels;
-        private ByteArray TrainingSetLabels
-        {
-            get { return _trainingSetLabels; }
-            set
-            {
-                _trainingSetLabels = value ?? throw new VarNullException(nameof(TrainingSetLabels), 682702);
-                //matrixImage1.LabelArray = TrainingSetLabels;
-            }
-        }
-
-        private SingleArray _trainingSetResults;
-        private SingleArray TrainingSetResults
-        {
-            get { return _trainingSetResults; }
-            set
-            {
-                _trainingSetResults = value ?? throw new VarNullException(nameof(TrainingSetResults), 134871);
-                //matrixImage1.ResultsArray = TrainingSetResults;
-            }
-        }
-
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region ImageIndex
-
-        private void GetXs(int h, Single1D xs)
-        {
-            int nu = TrainingSetImages.GetLength(1);
-            int nv = TrainingSetImages.GetLength(2);
-            int k = 0;
-            for (int i = 0; i < nu; i++)
-                for (int j = 0; j < nv; j++)
-                {
-                    xs[k++] = (float)TrainingSetImages[h, i, j] / 255f;
-                }
-        }
-
-        private void GetYs(int h, Single1D ys)
-        {
-            int ny = ys.Count;
-            for (int i = 0; i < ny; i++)
-            {
-                ys[i] = TrainingSetLabels[h] == i ? 1f : 0f;
-            }
-        }
-
-        private SampleList GetRandomSamples(Network network, int nSample)
-        {
-            int nu = TrainingSetImages.GetLength(1);
-            int nv = TrainingSetImages.GetLength(2);
-            int nx = network.First.Neurons.Count;
-            if (nu * nv != nx) throw new UnequalValueException(nu * nv, nx, 292526);
-            int ny = network.Last.Neurons.Count;
-            SampleList samples = new SampleList(nu, nv, ny);
-            int nSource = TrainingSetImages.GetLength(0);
-            for (int iSample = 0; iSample < nSample; iSample++)
-            {
-                int h = Mersenne.Next(nSource);
-                Sample sample = new Sample(nx, ny)
-                {
-                    Index = h,
-                    Label = TrainingSetLabels[h],
-                };
-                GetXs(h, sample.Inputs);
-                GetYs(h, sample.Requirements);
-                samples.Add(sample);
-            }
-            return samples;
-        }
-
-        private void RandomSamplesButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Network network = Network; // Clone ?
-                Samples = GetRandomSamples(network, nSampleTextBox.Value);
-            }
-            catch (Exception ex)
-            {
-                ExceptionDialog.Show(ex);
-            }
-        }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Network
-
-        private void NewButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                NewNetwork();
-            }
-            catch (Exception ex)
-            {
-                ExceptionDialog.Show(ex);
-            }
-        }
-
-        private void Test()
-        {
-            if (Network?.First == null) return;
-            int nh = TrainingSetImages.GetLength(0);
-            int nu = TrainingSetImages.GetLength(1);
-            int nv = TrainingSetImages.GetLength(2);
-
-            int nx = Network.First.Neurons.Count;
-            if (nx != nu * nv) throw new UnequalValueException(nx, nu * nv, 527884);
-            Single1D xs = new Single1D(nx);
-            int ny = Network.Last.Neurons.Count;
-            Single1D output = new Single1D(ny);
-            SingleArray trainingSetResults = new SingleArray(nh, ny);
-            for (int h = 0; h < nh; h++)
-            {
-                GetXs(h, xs);
-                Network.FeedForward(xs, output);
-                for (int i = 0; i < ny; i++)
-                {
-                    trainingSetResults[h, i] = output[i];
-                }
-            }
-            TrainingSetResults = trainingSetResults;
-        }
-
-        private void TestButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Test();
-            }
-            catch (Exception ex)
-            {
-                ExceptionDialog.Show(ex);
-            }
-        }
-
-
-        private enum NeuronValueTypes { Bias, Sum, Activation, Delta }
-
-        /// <summary>
-        /// Fills a float array with the biasses and weights of all neurons in this network.
-        /// </summary>
-        /// <param name="p">The float array which must have been created.</param>
-        private float[] GetNeuronValues(NeuronValueTypes t)
-        {
-            const bool skipFirst = true;
-            int n = 0;
-            Network.ForEach(layer =>
-            {
-                n += layer.Neurons.Count;
-            }, skipFirst);
-            float[] p = new float[n];
-            int h = 0;
-            Network.ForEach(layer =>
-            {
-                layer.ForEach((Neuron neuron) =>
-                {
-                    p[h++] = t switch
-                    {
-                        NeuronValueTypes.Bias => neuron.Bias,
-                        NeuronValueTypes.Sum => neuron.Sum,
-                        NeuronValueTypes.Activation => neuron.Activation,
-                        NeuronValueTypes.Delta => neuron.Delta,
-                        _ => 0f
-                    };
-                });
-            }, skipFirst);
-            return p;
-        }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Learn
-
-        private void Learn(CalculationArguments arguments)
-        {
-            Network network = Network; // Clone
-            while (true)
-            {
-                SampleList samples = GetRandomSamples(network, arguments.settings.SampleCount);
-                arguments.reporter?.ReportSamples(samples);
-                Network.Learn(samples, arguments);
-            }
-        }
+        #region Async
 
         private void SetProgress(double value)
         {
@@ -825,18 +679,18 @@ namespace Neunet.Forms
                 ExceptionDialog.Show(ex);
         }
 
-        private async void LearnButton_Click(object sender, EventArgs e)
+
+        private async Task RunAsync(Action<CalculationArguments> action)
         {
             try
             {
                 NetworkChanged = true;
-                ProgressReporter reporter = new ProgressReporter(this, (reportData) => { ReportProgress(reportData); });
                 _tokenSource = new CancellationTokenSource();
                 Exception ex = await Task.Run(() =>
                 {
                     try
                     {
-                        Learn(new CalculationArguments(Settings, reporter, _tokenSource));
+                        action(Arguments);
                         return null;
                     }
                     catch (Exception ex)
@@ -853,6 +707,101 @@ namespace Neunet.Forms
             finally
             {
                 if (_tokenSource != null) { _tokenSource.Dispose(); _tokenSource = null; }
+            }
+        }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Samples
+
+        private void GetXs(int h, Single1D xs)
+        {
+            int nu = TrainingSetImages.GetLength(1);
+            int nv = TrainingSetImages.GetLength(2);
+            int k = 0;
+            for (int i = 0; i < nu; i++)
+                for (int j = 0; j < nv; j++)
+                {
+                    xs[k++] = (float)TrainingSetImages[h, i, j] / 255f;
+                }
+        }
+
+        private void GetYs(int h, Single1D ys)
+        {
+            int ny = ys.Count;
+            for (int i = 0; i < ny; i++)
+            {
+                ys[i] = TrainingSetLabels[h] == i ? 1f : 0f;
+            }
+        }
+
+        private SampleList GetRandomSamples(int nSample)
+        {
+            int nx = Network.InputCount;
+            int ny = Network.OutputCount;
+            int nu = TrainingSetImages.GetLength(1);
+            int nv = TrainingSetImages.GetLength(2);
+            if (nu * nv != nx) throw new UnequalValueException(nu * nv, nx, 292526);
+            SampleList samples = new SampleList(nu, nv);
+            int nSource = TrainingSetImages.GetLength(0);
+            for (int iSample = 0; iSample < nSample; iSample++)
+            {
+                int h = Mersenne.Next(nSource);
+                Sample sample = new Sample(nx, ny)
+                {
+                    Index = h,
+                    Label = TrainingSetLabels[h],
+                };
+                GetXs(h, sample.Inputs);
+                GetYs(h, sample.Requirements);
+                samples.Add(sample);
+            }
+            return samples;
+        }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Learn
+
+        private void Learn(CalculationArguments arguments)
+        {
+            while (true)
+            {
+                SampleList samples = GetRandomSamples(arguments.settings.SampleCount);
+                arguments.reporter?.ReportSamples(samples);
+                Network.Learn(samples, arguments);
+            }
+        }
+
+        private async void LearnButton_Click(object sender, EventArgs e)
+        {
+            NetworkChanged = true;
+            await RunAsync(arguments => Learn(arguments));
+        }
+
+        private async void RandomSamplesButton_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                int nSamples = RequiredSampleCount;
+                int nCoefficients = Network.CoefficientCount();
+                Single1D derivatives = new Single1D(nCoefficients);
+                int ny = Network.OutputCount;
+                MeasurementList measurements = new MeasurementList(nSamples, ny);
+                SampleList samples = null;
+                await RunAsync(arguments =>
+                {
+                    samples = GetRandomSamples(nSamples);
+                    Network.GetCostAndDerivatives(samples, derivatives, measurements, arguments);
+                });
+                Samples = samples;
+                Derivatives = derivatives;
+                Measurements = measurements;
+            }
+            catch (BaseException ex)
+            {
+                ExceptionDialog.Show(ex);
             }
         }
 
