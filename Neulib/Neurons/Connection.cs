@@ -35,14 +35,6 @@ namespace Neulib.Neurons
         }
 
         /// <summary>
-        /// Creates a new connection with a small random weight.
-        /// </summary>
-        public Connection(Random random, float magnitude)
-        {
-            Weight = (float)(2d * random.NextDouble() - 1d) * magnitude;
-        }
-
-        /// <summary>
         /// Creates a new connection from the stream.
         /// </summary>
         public Connection(Stream stream, BinarySerializer serializer) : base(stream, serializer)

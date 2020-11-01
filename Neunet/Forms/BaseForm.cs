@@ -26,8 +26,8 @@ namespace Neunet.Forms
             set
             {
                 _text = value;
-                string titleAndVersion = $"{Program.Name.ToUpper()} {Program.Version}";
-                string s = string.IsNullOrEmpty(value) ? titleAndVersion : string.Join(" - ", titleAndVersion, value);
+                string title = $"{Program.Name.ToUpper()}";
+                string s = string.IsNullOrEmpty(value) ? title : string.Join(" - ", title, value);
                 if (s == null) s = string.Empty;
                 //base.Text = s;
                 try

@@ -10,13 +10,14 @@ using Neulib.Serializers;
 using Neulib.Numerics;
 using static Neulib.Extensions.FloatExtensions;
 using static System.Math;
+using System.Collections;
 
 namespace Neulib.Neurons
 {
     /// <summary>
     /// Represents a layer of neurons in a neural network.
     /// </summary>
-    public class Layer : BaseObject
+    public class Layer : BaseObject, IList<Neuron>
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -24,7 +25,14 @@ namespace Neulib.Neurons
         /// <summary>
         /// The neurons in this layer.
         /// </summary>
-        public List<Neuron> Neurons { get; private set; } = new List<Neuron>();
+        private List<Neuron> Neurons { get;  set; } = new List<Neuron>();
+
+        public int Count { get => Neurons.Count; }
+
+        public bool IsReadOnly => ((ICollection<Neuron>)Neurons).IsReadOnly;
+
+        public Neuron this[int index] { get => Neurons[index]; set => Neurons[index] = value; }
+
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -47,6 +55,60 @@ namespace Neulib.Neurons
             {
                 Neurons.Add((Neuron)stream.ReadValue(serializer));
             }
+        }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region IList
+
+        public int IndexOf(Neuron item)
+        {
+            return Neurons.IndexOf(item);
+        }
+
+        public void Insert(int index, Neuron item)
+        {
+            Neurons.Insert(index, item);
+        }
+
+        public void Add(Neuron item)
+        {
+            Neurons.Add(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            Neurons.RemoveAt(index);
+        }
+
+        public bool Remove(Neuron item)
+        {
+            return Neurons.Remove(item);
+        }
+
+        public void Clear()
+        {
+            Neurons.Clear();
+        }
+
+        public bool Contains(Neuron item)
+        {
+            return Neurons.Contains(item);
+        }
+
+        public void CopyTo(Neuron[] array, int arrayIndex)
+        {
+            Neurons.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<Neuron> GetEnumerator()
+        {
+            return ((IEnumerable<Neuron>)Neurons).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)Neurons).GetEnumerator();
         }
 
         #endregion
@@ -89,6 +151,27 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Layer
 
+        public void SetConnections(int connections)
+        {
+            int count = Neurons.Count;
+            for (int i = 0; i < count; i++)
+            {
+                Neuron neuron = Neurons[i];
+                neuron.Clear();
+                for (int j = 0; j < connections; j++)
+                {
+                    neuron.Add(new Connection());
+                }
+            }
+        }
+
+        public void Randomize(Random random, float biasMagnitude, float weightMagnitude)
+        {
+            int count = Neurons.Count;
+            for (int i = 0; i < count; i++)
+                Neurons[i].Randomize(random, biasMagnitude, weightMagnitude);
+        }
+
         public void ForEach(Action<Neuron> action, bool parallel = false)
         {
             int count = Neurons.Count;
@@ -96,29 +179,6 @@ namespace Neulib.Neurons
                 Parallel.For(0, count, j => action(Neurons[j]));
             else
                 for (int j = 0; j < count; j++) action(Neurons[j]);
-        }
-
-        public void ForEach(Action<Neuron, int> action, bool parallel = false)
-        {
-            int count = Neurons.Count;
-            if (parallel)
-                Parallel.For(0, count, j => action(Neurons[j], j));
-            else
-                for (int j = 0; j < count; j++) action(Neurons[j], j);
-        }
-
-        public void InitializeNeurons(int count, Layer previous, Random random, float biasMagnitude, float weightMagnitude)
-        {
-            for (int j = 0; j < count; j++)
-            {
-                Neuron neuron = new Neuron(random, biasMagnitude);
-                Neurons.Add(neuron);
-                if (previous == null) continue;
-                for (int i = 0; i < previous.Neurons.Count; i++)
-                {
-                    neuron.Connections.Add(new Connection(random, weightMagnitude));
-                }
-            }
         }
 
         public void SetActivations(Single1D xs)
@@ -140,34 +200,6 @@ namespace Neulib.Neurons
             if (Neurons.Count != ys.Count) throw new UnequalValueException(Neurons.Count, ys.Count, 426337);
             int count = Neurons.Count;
             ParallelFor(0, count, j => Neurons[j].CalculateDelta(ys[j]));
-        }
-
-        /// <summary>
-        /// Fills a float array with the biasses and weights of all neurons in this layer. The float array must have been created.
-        /// </summary>
-        /// <param name="p">The float array.</param>
-        public void GetCoefficients(float[] p)
-        {
-            int h = 0;
-            ForEach(neuron =>
-            {
-                p[h++] = neuron.Bias;
-                neuron.ForEach(connection => { p[h++] = connection.Weight; });
-            });
-        }
-
-        /// <summary>
-        /// Updates the biasses and weights of all neurons in this layer with the values of the float array.
-        /// </summary>
-        /// <param name="p">The float array.</param>
-        public void SetCoefficients(float[] p)
-        {
-            int h = 0;
-            ForEach((Neuron neuron) =>
-            {
-                neuron.Bias = p[h++];
-                neuron.ForEach(connection => { connection.Weight = p[h++]; });
-            });
         }
 
         /// <summary> 
@@ -193,13 +225,12 @@ namespace Neulib.Neurons
                 for (int k = 0; k < nextCount; k++)
                 {
                     Neuron nextNeuron = nextLayer.Neurons[k];
-                    delta += nextNeuron.Connections[j].Weight * nextNeuron.Delta; // wji
+                    delta += nextNeuron[j].Weight * nextNeuron.Delta; // wji
                 }
                 delta *= Neuron.ActivationDerivative(neuron.Activation);
                 neuron.Delta = delta;
             });
         }
-
 
         #endregion
     }

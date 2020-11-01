@@ -18,8 +18,6 @@ using Neulib.Neurons;
 using Neulib.MultiArrays;
 using Neulib.Serializers;
 using Neunet.Extensions;
-using Neunet.Images.Charts2D;
-using Neunet.Serializers;
 
 namespace Neunet.Forms
 {
@@ -45,7 +43,11 @@ namespace Neunet.Forms
         private string NetworkFilePath
         {
             get { return Program.XmlSettings.GlobalsElement.ReadString(_networkFilePathId, string.Empty); }
-            set { Program.XmlSettings.GlobalsElement.WriteString(_networkFilePathId, value); }
+            set
+            {
+                Program.XmlSettings.GlobalsElement.WriteString(_networkFilePathId, value);
+                Text = Path.GetFileNameWithoutExtension(value);
+            }
         }
 
         private readonly string _trainingSetImageFilePathId = "TrainingSetImageFilePath";
@@ -116,6 +118,9 @@ namespace Neunet.Forms
                 _network = value;
                 NetworkChanged = true;
                 Coefficients = value.GetCoefficients();
+                historyImage.ClearItems();
+                Derivatives = null;
+                Measurements = null;
             }
         }
 
@@ -288,30 +293,40 @@ namespace Neunet.Forms
         }
 
 
+        private Layer NewLayer(int neuronCount)
+        {
+            Layer layer = new Layer();
+            for (int i = 0; i < neuronCount; i++)
+            {
+                layer.Add(new Neuron());
+            }
+            return layer;
+        }
+
         private void NewNetwork()
         {
-            float biasMagnitude = Settings.BiasMagnitude;
-            float weightMagnitude = Settings.WeightMagnitude;
-            Network network = new Network();
-            network.AddLayer(28 * 28, Mersenne, biasMagnitude, weightMagnitude);
-            network.AddLayer(100, Mersenne, biasMagnitude, weightMagnitude);
-            network.AddLayer(30, Mersenne, biasMagnitude, weightMagnitude);
-            network.AddLayer(10, Mersenne, biasMagnitude, weightMagnitude);
-
-            using (NetworkDialog dialog = new NetworkDialog() { Network = (Network)network.Clone() })
+            Network network = new Network
             {
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    network = dialog.Network;
-                }
-            }
-
-            historyImage.ClearItems();
-            Derivatives = null;
-            Measurements = null;
+                NewLayer(28 * 28),
+                NewLayer(50),
+                NewLayer(10)
+            };
+            network.Randomize(Mersenne, Settings.BiasMagnitude, Settings.WeightMagnitude);
             Network = network;
         }
 
+        private void EditNetwork()
+        {
+            using (NetworkDialog dialog = new NetworkDialog() { Network = (Network)Network.Clone() })
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    Network network = dialog.Network;
+                    network.Randomize(Mersenne, Settings.BiasMagnitude, Settings.WeightMagnitude);
+                    Network = network;
+                }
+            }
+        }
 
         private void LoadNetwork()
         {
@@ -447,6 +462,19 @@ namespace Neunet.Forms
                 ExceptionDialog.Show(ex);
             }
         }
+
+        private void EditMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                EditNetwork();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
 
         private void OpenMenuItem_Click(object sender, EventArgs e)
         {
@@ -592,6 +620,10 @@ namespace Neunet.Forms
         {
             try
             {
+                using (AboutDialog dialog = new AboutDialog())
+                {
+                    dialog.ShowDialog(this);
+                }
             }
             catch (Exception ex)
             {
@@ -615,8 +647,8 @@ namespace Neunet.Forms
             openTrainingSetImageFileMenuItem.Enabled = !running;
             openTrainingSetLabelFileMenuItem.Enabled = !running;
             exitMenuItem.Enabled = !running;
-
-
+            newButton.Enabled = !running;
+            editButton.Enabled = !running;
             learnButton.Enabled = !running;
             stopButton.Enabled = stopenabled;
             randomSamplesButton.Enabled = !running;

@@ -38,6 +38,7 @@ namespace Neunet.Forms
         private void SetLayer(Layer value)
         {
             _layer = value;
+            neuronsTextBox.Value = value.Count;
         }
 
         #endregion
@@ -65,13 +66,11 @@ namespace Neunet.Forms
         {
             try
             {
-                Random random;
-                float magnitude;
                 int n = neuronsTextBox.Value;
-                Layer.Neurons.Clear();
+                Layer.Clear();
                 for (int i = 0; i < n; i++)
                 {
-                    //Layer.Neurons.Add(new Neuron(random, magnitude));
+                    Layer.Add(new Neuron());
                 }
             }
             catch (BaseException ex)

@@ -38,14 +38,16 @@ namespace Neunet.Forms
         private void SetNetwork(Network value)
         {
             _network = value;
-            int count = Network.Layers.Count;
+            int count = Network.Count;
             layersListBox.Items.Clear();
             for (int i = 0; i < count; i++)
             {
-                Layer layer = Network.Layers[i];
+                Layer layer = Network[i];
                 layersListBox.Items.Add(layer);
             }
         }
+
+        private Layer Layer { get; set; } = new Layer();
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -67,6 +69,132 @@ namespace Neunet.Forms
         #endregion
         // ----------------------------------------------------------------------------------------
         #region NetworkDialog
+
+        private void IdleTimer_Tick(object sender, EventArgs e)
+        {
+            bool isSelected = layersListBox.SelectedIndex >= 0;
+            deleteButton.Enabled = isSelected;
+            editButton.Enabled = isSelected;
+            insertButton.Enabled = isSelected;
+            addButton.Enabled = true;
+            clearButton.Enabled = layersListBox.Items.Count > 0;
+        }
+
+        private void Delete(int index)
+        {
+            Layer = (Layer)layersListBox.Items[index];
+            Network.Remove(Layer);
+            layersListBox.Items.Remove(Layer);
+        }
+
+        private void DeleteButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int index = layersListBox.SelectedIndex;
+                if (index < 0) return;
+                Delete(index);
+            }
+            catch (BaseException ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void Edit(int index)
+        {
+            Layer layer = (Layer)layersListBox.Items[index];
+            using (LayerDialog dialog = new LayerDialog() { Layer = (Layer)layer.Clone() })
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    Network[index] = dialog.Layer;
+                    layersListBox.Items[index] = dialog.Layer;
+                }
+            }
+        }
+
+        private void EditButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int index = layersListBox.SelectedIndex;
+                if (index < 0) return;
+                Edit(index);
+            }
+            catch (BaseException ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void Insert(int index)
+        {
+            using (LayerDialog dialog = new LayerDialog() { Layer = Layer })
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    Network.Insert(index, dialog.Layer);
+                    layersListBox.Items.Insert(index, dialog.Layer);
+                }
+            }
+        }
+
+        private void InsertButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int index = layersListBox.SelectedIndex;
+                if (index < 0) return;
+                Insert(index);
+            }
+            catch (BaseException ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void Add()
+        {
+            using (LayerDialog dialog = new LayerDialog() { Layer = Layer })
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    Network.Add(dialog.Layer);
+                    layersListBox.Items.Add(dialog.Layer);
+                }
+            }
+        }
+
+        private void AddButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Add();
+            }
+            catch (BaseException ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void Clear()
+        {
+            Network.Clear();
+            layersListBox.Items.Clear();
+        }
+
+        private void ClearButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Clear();
+            }
+            catch (BaseException ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
 
         #endregion
     }

@@ -7,16 +7,28 @@ using System.Threading.Tasks;
 using Neulib.Exceptions;
 using Neulib.Serializers;
 using static System.Math;
+using System.Collections;
 
 namespace Neulib.Neurons
 {
     /// <summary>
     /// Represents a neuron for use in a neural network.
     /// </summary>
-    public class Neuron : BaseObject
+    public class Neuron : BaseObject, IList<Connection>
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
+
+        /// <summary>
+        /// The connections with the neurons in the previous layer.
+        /// </summary>
+        private List<Connection> Connections { get; set; } = new List<Connection>();
+
+        public int Count { get => Connections.Count; }
+
+        public bool IsReadOnly => ((ICollection<Connection>)Connections).IsReadOnly;
+
+        public Connection this[int index] { get => Connections[index]; set => Connections[index] = value; }
 
         /// <summary>
         /// The bias value of this neuron.
@@ -38,11 +50,6 @@ namespace Neulib.Neurons
         /// </summary>
         public float Delta { get; set; } = 0f;
 
-        /// <summary>
-        /// The connections with the neurons in the previous layer.
-        /// </summary>
-        public List<Connection> Connections { get; private set; } = new List<Connection>();
-
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
@@ -52,14 +59,6 @@ namespace Neulib.Neurons
         /// </summary>
         public Neuron()
         {
-        }
-
-        /// <summary>
-        /// Creates a new neuron with a small random bias.
-        /// </summary>
-        public Neuron(Random random, float magnitude)
-        {
-            Bias = (float)(2d * random.NextDouble() - 1d) * magnitude;
         }
 
         /// <summary>
@@ -78,6 +77,59 @@ namespace Neulib.Neurons
             }
         }
 
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region IList
+
+        public int IndexOf(Connection item)
+        {
+            return Connections.IndexOf(item);
+        }
+
+        public void Insert(int index, Connection item)
+        {
+            Connections.Insert(index, item);
+        }
+
+        public void Add(Connection item)
+        {
+            Connections.Add(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            Connections.RemoveAt(index);
+        }
+
+        public bool Remove(Connection item)
+        {
+            return Connections.Remove(item);
+        }
+
+        public void Clear()
+        {
+            Connections.Clear();
+        }
+
+        public bool Contains(Connection item)
+        {
+            return Connections.Contains(item);
+        }
+
+        public void CopyTo(Connection[] array, int arrayIndex)
+        {
+            Connections.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<Connection> GetEnumerator()
+        {
+            return Connections.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Connections.GetEnumerator();
+        }
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -127,6 +179,14 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Neuron
 
+        public void Randomize(Random random, float biasMagnitude, float weightMagnitude)
+        {
+            Bias = (float)(2d * random.NextDouble() - 1d) * biasMagnitude;
+            int count = Connections.Count;
+            for (int i = 0; i < count; i++)
+                Connections[i].Weight = (float)(2d * random.NextDouble() - 1d) * weightMagnitude;
+        }
+
         public void ForEach(Action<Connection> action)
         {
             int count = Connections.Count;
@@ -165,7 +225,7 @@ namespace Neulib.Neurons
             float sum = Bias;
             for (int k = 0; k < count; k++)
             {
-                sum += Connections[k].Weight * prevLayer.Neurons[k].Activation;
+                sum += Connections[k].Weight * prevLayer[k].Activation;
             }
             Sum = sum; // zl
             Activation = ActivationFunction(sum); // sl

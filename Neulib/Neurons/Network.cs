@@ -5,23 +5,39 @@ using Neulib.Exceptions;
 using Neulib.Numerics;
 using Neulib.Serializers;
 using static Neulib.Extensions.FloatExtensions;
+using System.Collections;
 
 namespace Neulib.Neurons
 {
-    public class Network : BaseObject
+    public class Network : BaseObject, IList<Layer>
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        public List<Layer> Layers { get; private set; }
+        private List<Layer> Layers { get; set; } = new List<Layer>();
+
+        public int Count => Layers.Count;
+
+        public bool IsReadOnly => ((ICollection<Layer>)Layers).IsReadOnly;
+
+        public Layer this[int index]
+        {
+            get { return Layers[index]; }
+            set
+            {
+                Layers[index] = value;
+                if (index > 0) value.SetConnections(Layers[index - 1].Count);
+                if (index + 1 < Count) Layers[index + 1].SetConnections(value.Count);
+            }
+        }
 
         public Layer First { get => Layers.Count > 0 ? Layers[0] : null; }
 
         public Layer Last { get => Layers.Count > 0 ? Layers[Layers.Count - 1] : null; }
 
-        public int InputCount { get => First.Neurons.Count; }
+        public int InputCount { get => First.Count; }
 
-        public int OutputCount { get => Last.Neurons.Count; }
+        public int OutputCount { get => Last.Count; }
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -29,16 +45,77 @@ namespace Neulib.Neurons
 
         public Network()
         {
-            Layers = new List<Layer>();
         }
 
-        public Network(Stream stream, BinarySerializer serializer) : this()
+        public Network(Stream stream, BinarySerializer serializer)
         {
             int count = stream.ReadInt();
             for (int i = 0; i < count; i++)
             {
                 Layers.Add((Layer)stream.ReadValue(serializer));
             }
+        }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region IList
+
+        public int IndexOf(Layer layer)
+        {
+            return Layers.IndexOf(layer);
+        }
+
+        public void Insert(int index, Layer layer)
+        {
+            Layers.Insert(index, layer);
+            if (index > 0) layer.SetConnections(Layers[index - 1].Count);
+            if (index + 1 < Count) Layers[index + 1].SetConnections(layer.Count);
+        }
+
+        public void Add(Layer layer)
+        // Initializes the connections
+        {
+            Layers.Add(layer);
+            if (Count > 1) layer.SetConnections(Layers[Count - 2].Count);
+        }
+
+        public void RemoveAt(int index)
+        {
+            Layers.RemoveAt(index);
+            if (index > 0) Layers[index].SetConnections(Layers[index - 1].Count);
+        }
+
+        public bool Remove(Layer layer)
+        {
+            int index = Layers.IndexOf(layer);
+            if (index < 0) return false;
+            RemoveAt(index);
+            return true;
+        }
+
+        public void Clear()
+        {
+            Layers.Clear();
+        }
+
+        public bool Contains(Layer item)
+        {
+            return Layers.Contains(item);
+        }
+
+        public void CopyTo(Layer[] array, int arrayIndex)
+        {
+            Layers.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<Layer> GetEnumerator()
+        {
+            return Layers.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Layers.GetEnumerator();
         }
 
         #endregion
@@ -52,9 +129,7 @@ namespace Neulib.Neurons
             Layers.Clear();
             int count = value.Layers.Count;
             for (int i = 0; i < count; i++)
-            {
                 Layers.Add((Layer)value.Layers[i].Clone());
-            }
         }
 
         public override void WriteToStream(Stream stream, BinarySerializer serializer)
@@ -63,20 +138,18 @@ namespace Neulib.Neurons
             int count = Layers.Count;
             stream.WriteInt(count);
             for (int i = 0; i < count; i++)
-            {
                 stream.WriteValue(Layers[i], serializer);
-            }
         }
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Network
 
-        public void AddLayer(int count, Random random, float biasMagnitude, float weightMagnitude)
+        public void Randomize(Random random, float biasMagnitude, float weightMagnitude)
         {
-            Layer layer = new Layer();
-            layer.InitializeNeurons(count, Last, random, biasMagnitude, weightMagnitude);
-            Layers.Add(layer);
+            int count = Layers.Count;
+            for (int i = 0; i < count; i++)
+                Layers[i].Randomize(random, biasMagnitude, weightMagnitude);
         }
 
         public void FeedForward(Single1D xs, Single1D ys)
@@ -110,7 +183,7 @@ namespace Neulib.Neurons
         }
 
         public float GetCostAndDerivatives(
-            SampleList samples, Single1D derivatives, MeasurementList measurements, 
+            SampleList samples, Single1D derivatives, MeasurementList measurements,
             CalculationArguments arguments)
         {
             int nSamples = samples.Count;
@@ -202,7 +275,7 @@ namespace Neulib.Neurons
             {
                 layer.ForEach((Neuron neuron) =>
                 {
-                    h += neuron.Connections.Count + 1;
+                    h += neuron.Count + 1;
                 });
             }, true);
             return h;
@@ -280,7 +353,7 @@ namespace Neulib.Neurons
                     derivatives[h++] += delta; // dC/dbj
                     neuron.ForEach((connection, k) =>
                     {
-                        derivatives[h++] += prevLayer.Neurons[k].Activation * delta; // dC/dwjk
+                        derivatives[h++] += prevLayer[k].Activation * delta; // dC/dwjk
                     });
                 });
             }
