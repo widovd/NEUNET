@@ -23,7 +23,7 @@ namespace Neunet.Forms
 
         public static float FloatTest(int n)
         {
-            const float a = 1.11493569f, b = 0.175481986f, c = 2.682294563f;
+            float a = 1.11493569f, b = 0.175481986f, c = 2.682294563f;
             float x = 0f;
             for (int i = 0; i < n; i++)
             {
@@ -35,7 +35,7 @@ namespace Neunet.Forms
 
         public static double DoubleTest(int n)
         {
-            const double a = 1.11493569d, b = 0.175481986d, c = 2.682294563d;
+            double a = 1.11493569d, b = 0.175481986d, c = 2.682294563d;
             double x = 0d;
             for (int i = 0; i < n; i++)
             {
@@ -44,6 +44,20 @@ namespace Neunet.Forms
             }
             return x;
         }
+
+        public static double HybrideTest(int n)
+        {
+            float a = 1.11493569f, b = 0.175481986f, c = 2.682294563f;
+            double x = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                x = c;
+                x = a * x + b;
+            }
+            return x;
+        }
+
+
 
         private void RunButton_Click(object sender, EventArgs e)
         {
@@ -57,6 +71,10 @@ namespace Neunet.Forms
             timer.Restart();
             float yf = FloatTest(n);
             label2.Text = $"Float {yf} in {timer.Elapsed.TotalSeconds} s.";
+
+            timer.Restart();
+            double yh = HybrideTest(n);
+            label3.Text = $"Hybride {yh} in {timer.Elapsed.TotalSeconds} s.";
 
             timer.Stop();
         }

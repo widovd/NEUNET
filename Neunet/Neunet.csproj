@@ -185,27 +185,6 @@
     <Compile Include="Images\BaseImage.Designer.cs">
       <DependentUpon>BaseImage.cs</DependentUpon>
     </Compile>
-    <Compile Include="Images\Charts2D\CartesianImage.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Images\Charts2D\Chart2DImage.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Images\Charts2D\Chart2DImage.designer.cs">
-      <DependentUpon>Chart2DImage.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Images\Charts2D\DistributionToolStrip.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Images\Charts2D\DistributionToolStrip.Designer.cs">
-      <DependentUpon>DistributionToolStrip.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Images\Charts2D\GradientToolStrip.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Images\Charts2D\GradientToolStrip.Designer.cs">
-      <DependentUpon>GradientToolStrip.cs</DependentUpon>
-    </Compile>
     <Compile Include="Images\Charts3D\Chart3DImage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -306,15 +285,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Images\BaseImage.resx">
       <DependentUpon>BaseImage.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Images\Charts2D\Chart2DImage.resx">
-      <DependentUpon>Chart2DImage.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Images\Charts2D\DistributionToolStrip.resx">
-      <DependentUpon>DistributionToolStrip.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Images\Charts2D\GradientToolStrip.resx">
-      <DependentUpon>GradientToolStrip.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Images\Charts3D\Chart3DImage.resx">
       <DependentUpon>Chart3DImage.cs</DependentUpon>

@@ -202,15 +202,15 @@ namespace Neunet.Images
         public override void DrawImage(Bitmap bufferBitmap)
         {
             base.DrawImage(bufferBitmap);
-            GetMinMax(out float vMin, out float vMax);
-            vMin = 0f;
+            GetMinMax(out _, out float vMax);
+            float vMin = 0f;
             //if (vMin == vMax) vMin = 0f;
             if (vMin < vMax)
             {
                 vMax = vMin + (vMax - vMin) / Zoom;
-                float vMajor = (float)Chart2DImage.CalculateMajor(vMin, vMax);
-                vMin = (float)Chart2DImage.FloorMajor(vMajor, vMin);
-                vMax = (float)Chart2DImage.CeilingMajor(vMajor, vMax);
+                float vMajor = (float)CalculateMajor(vMin, vMax);
+                vMin = (float)FloorMajor(vMajor, vMin);
+                vMax = (float)CeilingMajor(vMajor, vMax);
                 DrawSeries(bufferBitmap, vMin, vMax);
                 DrawTicks(bufferBitmap, vMin, vMax, vMajor);
             }
@@ -220,6 +220,40 @@ namespace Neunet.Images
         #endregion
         // ----------------------------------------------------------------------------------------
         #region HistoryImage
+
+        private const double tiny = double.Epsilon; // compensate round-off errors
+
+        private static double FloorMajor(double major, double zLo)
+        {
+            return Floor(zLo / major + tiny) * major;
+        }
+
+        private static double CeilingMajor(double major, double zHi)
+        {
+            return Ceiling(zHi / major - tiny) * major;
+        }
+
+        private static double CalculateMajor(double lo, double hi)
+        {
+            double a = Log10(hi - lo);
+            double b = Floor(a);
+            double c = a - b;
+            double d = Pow(10d, b);
+            double e = Pow(10d, c);
+            double major;
+            if (e < 2) { major = 0.2d; }
+            else if (e < 5) { major = 0.5d; }
+            else { major = 1.0d; }
+            major *= d;
+            if (double.IsNaN(major)) major = 1d;
+            return major;
+        }
+
+        private static string MajorLabelFormat(double major, int minDigits = 0)
+        {
+            int a = ToInt32(Max(minDigits, -Floor(Log10(major))));
+            return $"F{a}";
+        }
 
         private void DrawConnection(Graphics graphics, Pen pen1, Pen pen2, PointF q1, PointF q2, ConnectionTypeEnum connection)
         {
@@ -371,7 +405,7 @@ namespace Neunet.Images
             int h = bufferBitmap.Height;
             float x1 = ChartPadding.Left, x2 = w - ChartPadding.Right;
             float y1 = ChartPadding.Top, y2 = h - ChartPadding.Bottom;
-            string format = Chart2DImage.MajorLabelFormat(vMajor, 1);
+            string format = MajorLabelFormat(vMajor, 1);
             Font font = DefaultFont;
             using (SolidBrush brush = new SolidBrush(Color.Black))
             using (Pen pen1 = new Pen(Color.Gray, 1f))
