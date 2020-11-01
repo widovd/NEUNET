@@ -203,7 +203,8 @@ namespace Neunet.Images
         {
             base.DrawImage(bufferBitmap);
             GetMinMax(out float vMin, out float vMax);
-            if (vMin == vMax) vMin = 0f;
+            vMin = 0f;
+            //if (vMin == vMax) vMin = 0f;
             if (vMin < vMax)
             {
                 vMax = vMin + (vMax - vMin) / Zoom;

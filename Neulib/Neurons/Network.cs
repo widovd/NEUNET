@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using Neulib.Exceptions;
@@ -210,6 +211,10 @@ namespace Neulib.Neurons
         public void Learn(SampleList samples, CalculationArguments arguments)
         // samples = yjks
         {
+            arguments.reporter?.WriteStart($"Learning the network using a subset of {samples.Count} random samples...");
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             int nSamples = samples.Count; // number of sample rows
             int nCoefficients = CoefficientCount();
             // Current biasses and weights of the neurons in this network:
@@ -224,7 +229,7 @@ namespace Neulib.Neurons
                 Eps = arguments.settings.Epsilon,
                 Tol = arguments.settings.Tolerance,
             };
-            minimization.SteepestDescent(coefficients, derivatives, (iter) =>
+            float finalCost = minimization.SteepestDescent(coefficients, derivatives, (iter) =>
             {
                 SetCoefficients(coefficients);
                 arguments.reporter?.ReportCoefficients(coefficients);
@@ -232,6 +237,7 @@ namespace Neulib.Neurons
                 arguments.reporter?.ReportCostAndDerivatives(cost, derivatives, measurements);
                 return cost;
             }, arguments.settings.LearningRate);
+            arguments.reporter?.WriteEnd($"The network has learned in {timer.Elapsed.TotalSeconds} s, and the final cost value is {finalCost:F4}.");
         }
 
 

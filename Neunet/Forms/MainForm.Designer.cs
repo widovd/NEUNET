@@ -37,7 +37,7 @@
             this.coefficientsLabel = new System.Windows.Forms.Label();
             this.derivativesLabel = new System.Windows.Forms.Label();
             this.nSampleTextBox = new Neunet.UserControls.IntegerTextBox();
-            this.randomSamplesButton = new System.Windows.Forms.Button();
+            this.calculateButton = new System.Windows.Forms.Button();
             this.learnButton = new System.Windows.Forms.Button();
             this.stopButton = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
@@ -50,6 +50,8 @@
             this.mainPanel = new System.Windows.Forms.Panel();
             this.historyImage = new Neunet.Images.HistoryImage();
             this.buttonPanel = new System.Windows.Forms.Panel();
+            this.newButton = new System.Windows.Forms.Button();
+            this.editButton = new System.Windows.Forms.Button();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.newMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,8 +73,6 @@
             this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.editButton = new System.Windows.Forms.Button();
-            this.newButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -195,15 +195,15 @@
             this.nSampleTextBox.Text = "25";
             this.nSampleTextBox.Value = 25;
             // 
-            // randomSamplesButton
+            // calculateButton
             // 
-            this.randomSamplesButton.Location = new System.Drawing.Point(330, 6);
-            this.randomSamplesButton.Name = "randomSamplesButton";
-            this.randomSamplesButton.Size = new System.Drawing.Size(75, 23);
-            this.randomSamplesButton.TabIndex = 0;
-            this.randomSamplesButton.Text = "Random";
-            this.randomSamplesButton.UseVisualStyleBackColor = true;
-            this.randomSamplesButton.Click += new System.EventHandler(this.RandomSamplesButton_Click);
+            this.calculateButton.Location = new System.Drawing.Point(330, 6);
+            this.calculateButton.Name = "calculateButton";
+            this.calculateButton.Size = new System.Drawing.Size(75, 23);
+            this.calculateButton.TabIndex = 0;
+            this.calculateButton.Text = "Calculate";
+            this.calculateButton.UseVisualStyleBackColor = true;
+            this.calculateButton.Click += new System.EventHandler(this.CalculateButton_Click);
             // 
             // learnButton
             // 
@@ -245,14 +245,14 @@
             // messageStatusLabel
             // 
             this.messageStatusLabel.Name = "messageStatusLabel";
-            this.messageStatusLabel.Size = new System.Drawing.Size(53, 17);
-            this.messageStatusLabel.Text = "message";
+            this.messageStatusLabel.Size = new System.Drawing.Size(56, 17);
+            this.messageStatusLabel.Text = "Message.";
             // 
             // changedStatusLabel
             // 
             this.changedStatusLabel.Name = "changedStatusLabel";
-            this.changedStatusLabel.Size = new System.Drawing.Size(53, 17);
-            this.changedStatusLabel.Text = "changed";
+            this.changedStatusLabel.Size = new System.Drawing.Size(145, 17);
+            this.changedStatusLabel.Text = "The network has changed.";
             this.changedStatusLabel.Visible = false;
             // 
             // folderBrowserDialog
@@ -286,7 +286,7 @@
             this.historyImage.PointSize = 14F;
             this.historyImage.Size = new System.Drawing.Size(837, 166);
             this.historyImage.TabIndex = 10;
-            this.historyImage.VAxisText = null;
+            this.historyImage.VAxisText = "Cost value";
             this.historyImage.ViewPoints = false;
             this.historyImage.Zoom = 0.95F;
             // 
@@ -297,13 +297,33 @@
             this.buttonPanel.Controls.Add(this.stopButton);
             this.buttonPanel.Controls.Add(this.nSampleTextBox);
             this.buttonPanel.Controls.Add(this.learnButton);
-            this.buttonPanel.Controls.Add(this.randomSamplesButton);
+            this.buttonPanel.Controls.Add(this.calculateButton);
             this.buttonPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.buttonPanel.Location = new System.Drawing.Point(0, 0);
             this.buttonPanel.Name = "buttonPanel";
             this.buttonPanel.Padding = new System.Windows.Forms.Padding(3);
             this.buttonPanel.Size = new System.Drawing.Size(837, 34);
             this.buttonPanel.TabIndex = 11;
+            // 
+            // newButton
+            // 
+            this.newButton.Location = new System.Drawing.Point(6, 6);
+            this.newButton.Name = "newButton";
+            this.newButton.Size = new System.Drawing.Size(75, 23);
+            this.newButton.TabIndex = 8;
+            this.newButton.Text = "New";
+            this.newButton.UseVisualStyleBackColor = true;
+            this.newButton.Click += new System.EventHandler(this.NewMenuItem_Click);
+            // 
+            // editButton
+            // 
+            this.editButton.Location = new System.Drawing.Point(87, 6);
+            this.editButton.Name = "editButton";
+            this.editButton.Size = new System.Drawing.Size(75, 23);
+            this.editButton.TabIndex = 7;
+            this.editButton.Text = "Edit";
+            this.editButton.UseVisualStyleBackColor = true;
+            this.editButton.Click += new System.EventHandler(this.EditMenuItem_Click);
             // 
             // mainMenuStrip
             // 
@@ -492,26 +512,6 @@
             this.splitContainer.SplitterDistance = 200;
             this.splitContainer.TabIndex = 13;
             // 
-            // editButton
-            // 
-            this.editButton.Location = new System.Drawing.Point(87, 6);
-            this.editButton.Name = "editButton";
-            this.editButton.Size = new System.Drawing.Size(75, 23);
-            this.editButton.TabIndex = 7;
-            this.editButton.Text = "Edit";
-            this.editButton.UseVisualStyleBackColor = true;
-            this.editButton.Click += new System.EventHandler(this.EditMenuItem_Click);
-            // 
-            // newButton
-            // 
-            this.newButton.Location = new System.Drawing.Point(6, 6);
-            this.newButton.Name = "newButton";
-            this.newButton.Size = new System.Drawing.Size(75, 23);
-            this.newButton.TabIndex = 8;
-            this.newButton.Text = "New";
-            this.newButton.UseVisualStyleBackColor = true;
-            this.newButton.Click += new System.EventHandler(this.NewMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -549,7 +549,7 @@
         private Images.Charts2D.SamplesImage samplesImage;
         private System.Windows.Forms.Label samplesLabel;
         private System.Windows.Forms.Button learnButton;
-        private System.Windows.Forms.Button randomSamplesButton;
+        private System.Windows.Forms.Button calculateButton;
         private System.Windows.Forms.Button stopButton;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripProgressBar progressBar;

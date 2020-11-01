@@ -415,7 +415,10 @@ namespace Neunet.Forms
                     if (!LoadTrainingSetLabelFileDialog()) Close();
 
                 if (File.Exists(NetworkFilePath))
+                {
                     LoadNetwork();
+                    Text = Path.GetFileNameWithoutExtension(NetworkFilePath);
+                }
                 else
                     NewNetwork();
                 SetStatusText(string.Empty);
@@ -651,7 +654,7 @@ namespace Neunet.Forms
             editButton.Enabled = !running;
             learnButton.Enabled = !running;
             stopButton.Enabled = stopenabled;
-            randomSamplesButton.Enabled = !running;
+            calculateButton.Enabled = !running;
         }
 
         #endregion
@@ -776,16 +779,22 @@ namespace Neunet.Forms
             if (nu * nv != nx) throw new UnequalValueException(nu * nv, nx, 292526);
             SampleList samples = new SampleList(nu, nv);
             int nSource = TrainingSetImages.GetLength(0);
+            List<int> Indices = new List<int>(nSource);
+            for (int index = 0; index < nSource; index++)
+                Indices.Add(index);
             for (int iSample = 0; iSample < nSample; iSample++)
             {
-                int h = Mersenne.Next(nSource);
+                // generate unique indices using Mersenne random numbers
+                int next = Mersenne.Next(Indices.Count);
+                int index = Indices[next];
+                Indices.RemoveAt(next); // remove the used index
                 Sample sample = new Sample(nx, ny)
                 {
-                    Index = h,
-                    Label = TrainingSetLabels[h],
+                    Index = index,
+                    Label = TrainingSetLabels[index],
                 };
-                GetXs(h, sample.Inputs);
-                GetYs(h, sample.Requirements);
+                GetXs(index, sample.Inputs);
+                GetYs(index, sample.Requirements);
                 samples.Add(sample);
             }
             return samples;
@@ -797,6 +806,7 @@ namespace Neunet.Forms
 
         private void Learn(CalculationArguments arguments)
         {
+            arguments.reporter?.WriteStart("Learning the network...");
             while (true)
             {
                 SampleList samples = GetRandomSamples(arguments.settings.SampleCount);
@@ -809,9 +819,11 @@ namespace Neunet.Forms
         {
             NetworkChanged = true;
             await RunAsync(arguments => Learn(arguments));
+            SetProgress(0);
+            SetStatusText(string.Empty);
         }
 
-        private async void RandomSamplesButton_Click(object sender, EventArgs e)
+        private async void CalculateButton_Click(object sender, EventArgs e)
         {
 
             try
@@ -825,11 +837,16 @@ namespace Neunet.Forms
                 await RunAsync(arguments =>
                 {
                     samples = GetRandomSamples(nSamples);
-                    Network.GetCostAndDerivatives(samples, derivatives, measurements, arguments);
+                    arguments.reporter?.WriteStart($"Calculating a subset of {samples.Count} random samples...");
+                    Stopwatch timer = new Stopwatch();
+                    timer.Start();
+                    float finalCost = Network.GetCostAndDerivatives(samples, derivatives, measurements, arguments);
+                    arguments.reporter?.WriteEnd($"The samples are calculated in {timer.Elapsed.TotalSeconds} s, and the final cost value is {finalCost:F4}.");
                 });
                 Samples = samples;
                 Derivatives = derivatives;
                 Measurements = measurements;
+                SetProgress(0);
             }
             catch (BaseException ex)
             {

@@ -131,7 +131,7 @@ namespace Neulib.Numerics
             return builder.ToString();
         }
 
-        public void SteepestDescent(Single1D p, Single1D df, Func<int, float> func, float alpha)
+        public float SteepestDescent(Single1D p, Single1D df, Func<int, float> func, float alpha)
         {
             int n = p.Count;
             if (n != df.Count) throw new UnequalValueException(n, df.Count, 750074);
@@ -142,9 +142,10 @@ namespace Neulib.Numerics
                 f2 = func(iter);
                 Console.WriteLine($"{iter:000}: f = {f2:E3}");
                 //Console.WriteLine($"{iter:000}: f({ArrayToString(p)}) = {f2:E3}");
-                if (EndCriteriumMet(f1, f2)) return;
+                if (EndCriteriumMet(f1, f2)) break;
                 for (int j = 0; j < n; j++) p[j] -= alpha * df[j];
             }
+            return f2;
         }
 
         #endregion
