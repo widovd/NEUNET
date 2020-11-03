@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,13 @@ using System.Threading.Tasks;
 using Neulib.Exceptions;
 using Neulib.Serializers;
 using static System.Math;
-using System.Collections;
 
 namespace Neulib.Neurons
 {
     /// <summary>
-    /// Represents a neuron for use in a neural network.
+    /// Represents a linear neuron for use in a neural network.
+    /// The activation function simply returns the sum of the weighted inputs.
+    /// Methods CalculateActivation and ActivationDerivative must be overwritten in a new class for different behaviour.
     /// </summary>
     public class Neuron : BaseObject, IList<Connection>
     {
@@ -24,10 +26,18 @@ namespace Neulib.Neurons
         /// </summary>
         private List<Connection> Connections { get; set; } = new List<Connection>();
 
+        /// <summary>
+        /// The number of connections of this neuron with the previous layer.
+        /// </summary>
         public int Count { get => Connections.Count; }
 
         public bool IsReadOnly => ((ICollection<Connection>)Connections).IsReadOnly;
 
+        /// <summary>
+        /// Returns the connection with the neuron in the previous layer.
+        /// </summary>
+        /// <param name="index">The index of the neuron in the previous layer.</param>
+        /// <returns>The connection with the neuron in the previous layer.</returns>
         public Connection this[int index] { get => Connections[index]; set => Connections[index] = value; }
 
         /// <summary>
@@ -41,7 +51,7 @@ namespace Neulib.Neurons
         public float Sum { get; private set; } = 0f;
 
         /// <summary>
-        /// The activation value of this neuron.
+        /// The activation value of this neuron calculated with the activation function and Sum.
         /// </summary>
         public float Activation { get; set; } = 0f;
 
@@ -179,12 +189,21 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Neuron
 
-        public void Randomize(Random random, float biasMagnitude, float weightMagnitude)
+        /// <summary>
+        /// Calculates Activation from Sum. Sum must have been calculated in FeedForward.
+        /// </summary>
+        protected virtual void CalculateActivation()
         {
-            Bias = (float)(2d * random.NextDouble() - 1d) * biasMagnitude;
-            int count = Connections.Count;
-            for (int i = 0; i < count; i++)
-                Connections[i].Weight = (float)(2d * random.NextDouble() - 1d) * weightMagnitude;
+            Activation = Sum;
+        }
+
+        /// <summary>
+        /// Calculates the derivative of the activation function with respect to Sum.
+        /// </summary>
+        /// <returns>The derivative of the activation function at Activation.</returns>
+        protected virtual float ActivationDerivative()
+        {
+            return 1f;
         }
 
         public void ForEach(Action<Connection> action)
@@ -205,15 +224,12 @@ namespace Neulib.Neurons
             }
         }
 
-        public static float ActivationFunction(float z)
+        public void Randomize(Random random, float biasMagnitude, float weightMagnitude)
         {
-            return 1f / (1f + (float)Exp(-z));
-        }
-
-        public static float ActivationDerivative(float a)
-        // a is the activation value
-        {
-            return a * (1f - a);
+            Bias = (float)(2d * random.NextDouble() - 1d) * biasMagnitude;
+            int count = Connections.Count;
+            for (int i = 0; i < count; i++)
+                Connections[i].Weight = (float)(2d * random.NextDouble() - 1d) * weightMagnitude;
         }
 
         /// <summary> 
@@ -224,24 +240,21 @@ namespace Neulib.Neurons
             int count = Connections.Count;
             float sum = Bias;
             for (int k = 0; k < count; k++)
-            {
                 sum += Connections[k].Weight * prevLayer[k].Activation;
-            }
-            Sum = sum; // zl
-            Activation = ActivationFunction(sum); // sl
+            Sum = sum;
+            CalculateActivation();
         }
 
         public void FeedBackward(Layer nextLayer, int j)
         {
-            float delta = 0f;
+            float d = 0f;
             int nextCount = nextLayer.Count;
             for (int k = 0; k < nextCount; k++)
             {
                 Neuron nextNeuron = nextLayer[k];
-                delta += nextNeuron[j].Weight * nextNeuron.Delta; // wji
+                d += nextNeuron[j].Weight * nextNeuron.Delta; // wji
             }
-            delta *= Neuron.ActivationDerivative(Activation);
-            Delta = delta;
+            Delta = d * ActivationDerivative(); 
         }
 
 
@@ -263,7 +276,7 @@ namespace Neulib.Neurons
                 CostFunctionEnum.Quadratic => (a - y),
                 _ => throw new InvalidCaseException(nameof(costFunction), costFunction, 150413),
             };
-            Delta = d * ActivationDerivative(a);
+            Delta = d * ActivationDerivative();
         }
 
         #endregion

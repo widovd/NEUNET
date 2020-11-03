@@ -14,13 +14,9 @@ namespace Neulib.Serializers
 
         public TypesDictionary()
         {
-            Add("Double3", typeof(Double3)); // ok
-            Add("Double3x3", typeof(Double3x3)); // ok
-            Add("ParamBounds", typeof(ParamBounds)); // ok
-            Add("Double2", typeof(Double2)); // ok
-            Add("ParamRange", typeof(ParamRange)); // ok
             Add("Connection", typeof(Connection));
             Add("Neuron", typeof(Neuron));
+            Add("Sigmoid", typeof(Sigmoid));
             Add("Layer", typeof(Layer));
             Add("Network", typeof(Network));
             TestCollisions();

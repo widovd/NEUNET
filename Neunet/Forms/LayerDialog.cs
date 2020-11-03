@@ -70,7 +70,7 @@ namespace Neunet.Forms
                 Layer.Clear();
                 for (int i = 0; i < n; i++)
                 {
-                    Layer.Add(new Neuron());
+                    Layer.Add(new Sigmoid());
                 }
             }
             catch (BaseException ex)

@@ -298,7 +298,7 @@ namespace Neunet.Forms
             Layer layer = new Layer();
             for (int i = 0; i < neuronCount; i++)
             {
-                layer.Add(new Neuron());
+                layer.Add(new Sigmoid());
             }
             return layer;
         }

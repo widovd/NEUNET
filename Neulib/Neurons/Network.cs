@@ -252,10 +252,7 @@ namespace Neulib.Neurons
             int h = 0;
             ForEach(layer =>
             {
-                layer.ForEach((Neuron neuron) =>
-                {
-                    h += neuron.Count + 1;
-                });
+                layer.ForEach(neuron => h += neuron.Count + 1);
             }, true);
             return h;
         }
@@ -274,13 +271,10 @@ namespace Neulib.Neurons
             int h = 0;
             ForEach(layer =>
             {
-                layer.ForEach((Neuron neuron) =>
+                layer.ForEach(neuron =>
                 {
                     neuron.Bias = coefficients[h++];
-                    neuron.ForEach(connection =>
-                    {
-                        connection.Weight = coefficients[h++];
-                    });
+                    neuron.ForEach(connection => connection.Weight = coefficients[h++]);
                 });
             }, true);
         }
@@ -297,10 +291,7 @@ namespace Neulib.Neurons
                 layer.ForEach((Neuron neuron) =>
                 {
                     coefficients[h++] = neuron.Bias;
-                    neuron.ForEach(connection =>
-                    {
-                        coefficients[h++] = connection.Weight;
-                    });
+                    neuron.ForEach(connection => coefficients[h++] = connection.Weight);
                 });
             }, true);
         }
@@ -311,7 +302,6 @@ namespace Neulib.Neurons
             GetCoefficients(coefficients);
             return coefficients;
         }
-
 
         private static float QuadraticCostFunction(Single1D aa, Single1D yy)
         {
@@ -351,7 +341,6 @@ namespace Neulib.Neurons
                     throw new InvalidCaseException(nameof(costFunction), costFunction, 386203);
             }
         }
-
 
         private void FeedBackward(Single1D ys, CostFunctionEnum costFunction)
         {

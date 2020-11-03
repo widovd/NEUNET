@@ -217,20 +217,7 @@ namespace Neulib.Neurons
         {
             if (nextLayer == null) throw new VarNullException(nameof(nextLayer), 384876);
             int count = Neurons.Count;
-            ParallelFor(0, count, j =>
-            {
-                Neurons[j].FeedBackward(nextLayer, j);
-                //Neuron neuron = Neurons[j];
-                //float delta = 0f;
-                //int nextCount = nextLayer.Neurons.Count;
-                //for (int k = 0; k < nextCount; k++)
-                //{
-                //    Neuron nextNeuron = nextLayer.Neurons[k];
-                //    delta += nextNeuron[j].Weight * nextNeuron.Delta; // wji
-                //}
-                //delta *= Neuron.ActivationDerivative(neuron.Activation);
-                //neuron.Delta = delta;
-            });
+            ParallelFor(0, count, j => Neurons[j].FeedBackward(nextLayer, j));
         }
 
         #endregion
