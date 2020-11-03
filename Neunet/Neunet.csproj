@@ -56,7 +56,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\Attr.cs" />
     <Compile Include="Attributes\ShowNameAttribute.cs" />
     <Compile Include="Attributes\XmlTextAttribute.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
@@ -407,8 +406,6 @@
     <Content Include="Icons\CumulativeFlux.png" />
     <Content Include="Icons\CurrentRayParams.png" />
     <Content Include="Icons\Cut.png" />
-    <Content Include="Icons\Cylinder.png" />
-    <Content Include="Icons\CylindricalCoordinates.png" />
     <Content Include="Icons\DecreasePerspective.png" />
     <Content Include="Icons\Delete.png" />
     <Content Include="Icons\DeleteDistribution.png" />
@@ -416,10 +413,11 @@
     <Content Include="Icons\DeleteRow.png" />
     <Content Include="Icons\DeltaRayParams.png" />
     <Content Include="Icons\Design.png" />
+    <None Include="Icons\Dices.png" />
     <Content Include="Icons\Distribution.png" />
     <Content Include="Icons\DoubleWindow.png" />
     <Content Include="Icons\Down.png" />
-    <Content Include="Icons\EllipseSurface.png" />
+    <None Include="Icons\Edit.png" />
     <Content Include="Icons\Error.png" />
     <Content Include="Icons\Exit.png" />
     <Content Include="Icons\ExpandTreeNode.png" />
@@ -446,7 +444,6 @@
     <Content Include="Icons\HyperboloidSurface.png" />
     <Content Include="Icons\ifx\if_ic_close_48px_352270.png" />
     <Content Include="Icons\ifx\LightToolsMedium.PNG" />
-    <Content Include="Icons\Images\ReceiverOrientationSettingExample.PNG" />
     <Content Include="Icons\ImportDistribution.png" />
     <Content Include="Icons\ImportFreeformSurface.png" />
     <Content Include="Icons\ImportFromLightTools.png" />
@@ -464,6 +461,7 @@
     <Content Include="Icons\InverseGradient.png" />
     <Content Include="Icons\InverseSurface.png" />
     <Content Include="Icons\KeepPoints.png" />
+    <None Include="Icons\Learn.png" />
     <Content Include="Icons\Left.png" />
     <Content Include="Icons\LightTools.png" />
     <Content Include="Icons\LightToolsGet.png" />
@@ -490,6 +488,9 @@
     <Content Include="Icons\MoveUpColumn.png" />
     <Content Include="Icons\MoveUpRow.png" />
     <Content Include="Icons\MoveUpTreeNode.png" />
+    <None Include="Icons\New.png" />
+    <None Include="Icons\Random.png" />
+    <None Include="Icons\Verify.png" />
     <Content Include="Neunet.ico" />
     <None Include="Icons\neural.png" />
     <Content Include="Icons\NewDistribution.png" />
@@ -632,6 +633,9 @@
       <Project>{dc2af5f8-d922-4ea1-a74b-28f2a17d8283}</Project>
       <Name>Neulib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Icons\Images\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

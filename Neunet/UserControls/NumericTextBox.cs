@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Neulib.Exceptions;
 using System.Globalization;
+using Neulib;
 using Neunet.Attributes;
 
 namespace Neunet.UserControls

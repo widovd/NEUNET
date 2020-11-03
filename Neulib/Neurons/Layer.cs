@@ -25,7 +25,7 @@ namespace Neulib.Neurons
         /// <summary>
         /// The neurons in this layer.
         /// </summary>
-        private List<Neuron> Neurons { get;  set; } = new List<Neuron>();
+        private List<Neuron> Neurons { get; set; } = new List<Neuron>();
 
         public int Count { get => Neurons.Count; }
 
@@ -195,11 +195,11 @@ namespace Neulib.Neurons
             ParallelFor(0, count, j => output[j] = Neurons[j].Activation);
         }
 
-        public void CalculateDeltas(Single1D ys)
+        public void CalculateDeltas(Single1D ys, CostFunctionEnum costFunction)
         {
             if (Neurons.Count != ys.Count) throw new UnequalValueException(Neurons.Count, ys.Count, 426337);
             int count = Neurons.Count;
-            ParallelFor(0, count, j => Neurons[j].CalculateDelta(ys[j]));
+            ParallelFor(0, count, j => Neurons[j].CalculateDelta(ys[j], costFunction));
         }
 
         /// <summary> 
@@ -219,16 +219,17 @@ namespace Neulib.Neurons
             int count = Neurons.Count;
             ParallelFor(0, count, j =>
             {
-                Neuron neuron = Neurons[j];
-                float delta = 0f;
-                int nextCount = nextLayer.Neurons.Count;
-                for (int k = 0; k < nextCount; k++)
-                {
-                    Neuron nextNeuron = nextLayer.Neurons[k];
-                    delta += nextNeuron[j].Weight * nextNeuron.Delta; // wji
-                }
-                delta *= Neuron.ActivationDerivative(neuron.Activation);
-                neuron.Delta = delta;
+                Neurons[j].FeedBackward(nextLayer, j);
+                //Neuron neuron = Neurons[j];
+                //float delta = 0f;
+                //int nextCount = nextLayer.Neurons.Count;
+                //for (int k = 0; k < nextCount; k++)
+                //{
+                //    Neuron nextNeuron = nextLayer.Neurons[k];
+                //    delta += nextNeuron[j].Weight * nextNeuron.Delta; // wji
+                //}
+                //delta *= Neuron.ActivationDerivative(neuron.Activation);
+                //neuron.Delta = delta;
             });
         }
 

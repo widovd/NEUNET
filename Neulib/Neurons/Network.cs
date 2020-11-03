@@ -7,6 +7,7 @@ using Neulib.Numerics;
 using Neulib.Serializers;
 using static Neulib.Extensions.FloatExtensions;
 using System.Collections;
+using static System.Math;
 
 namespace Neulib.Neurons
 {
@@ -171,22 +172,11 @@ namespace Neulib.Neurons
             layer.GetActivations(ys);
         }
 
-        private static float CostFunction(Single1D ys1, Single1D ys2)
-        {
-            float cost = 0;
-            int n = ys1.Count;
-            if (n != ys2.Count) throw new UnequalValueException(n, ys2.Count, 109047);
-            for (int i = 0; i < n; i++)
-            {
-                cost += Sqr(ys1[i] - ys2[i]);
-            }
-            return cost / (2f * n);
-        }
-
         public float GetCostAndDerivatives(
             SampleList samples, Single1D derivatives, MeasurementList measurements,
             CalculationArguments arguments)
         {
+            CostFunctionEnum costFunction = arguments.settings.CostFunction;
             int nSamples = samples.Count;
             int nCoeffs = derivatives.Count;
             float cost = 0f;
@@ -197,8 +187,8 @@ namespace Neulib.Neurons
                 Sample sample = samples[iSample];
                 Single1D measurement = measurements[iSample];
                 FeedForward(sample.Inputs, measurement);
-                cost += CostFunction(measurement, sample.Requirements);
-                FeedBackward(sample.Requirements);
+                cost += CostFunction(measurement, sample.Requirements, costFunction);
+                FeedBackward(sample.Requirements, costFunction);
                 AddDerivatives(derivatives);
                 arguments.reporter?.ReportProgress(iSample, nSamples);
             }
@@ -253,23 +243,6 @@ namespace Neulib.Neurons
                 action(Layers[i]);
             }
         }
-
-        private void FeedBackward(Single1D ys)
-        {
-            if (ys == null) throw new VarNullException(nameof(ys), 411263);
-            int count = Layers.Count;
-            Layer layer = null;
-            for (int i = count - 1; i >= 0; i--)
-            {
-                Layer nextLayer = layer;
-                layer = Layers[i];
-                if (nextLayer == null)
-                    layer.CalculateDeltas(ys);
-                else
-                    layer.FeedBackward(nextLayer);
-            }
-        }
-
 
         /// <summary>
         /// Returns the total number of biasses and weights of all neurons in this network except the first layer.
@@ -337,6 +310,63 @@ namespace Neulib.Neurons
             Single1D coefficients = CreateCoefficients();
             GetCoefficients(coefficients);
             return coefficients;
+        }
+
+
+        private static float QuadraticCostFunction(Single1D aa, Single1D yy)
+        {
+            float cost = 0;
+            int n = aa.Count;
+            if (n != yy.Count) throw new UnequalValueException(n, yy.Count, 109047);
+            for (int i = 0; i < n; i++)
+            {
+                cost += Sqr(aa[i] - yy[i]);
+            }
+            return cost / (2f * n);
+        }
+
+        private static float CrossEntropyCostFunction(Single1D aa, Single1D yy)
+        {
+            double cost = 0;
+            int n = aa.Count;
+            if (n != yy.Count) throw new UnequalValueException(n, yy.Count, 109047);
+            for (int i = 0; i < n; i++)
+            {
+                double a = aa[i];
+                double y = yy[i];
+                cost += y * Log(a) + (1 - y) * Log(1 - a);
+            }
+            return -(float)cost / n;
+        }
+
+        private static float CostFunction(Single1D aa, Single1D yy, CostFunctionEnum costFunction)
+        {
+            switch (costFunction)
+            {
+                case CostFunctionEnum.Quadratic:
+                    return QuadraticCostFunction(aa, yy);
+                case CostFunctionEnum.CrossEntropy:
+                    return CrossEntropyCostFunction(aa, yy);
+                default:
+                    throw new InvalidCaseException(nameof(costFunction), costFunction, 386203);
+            }
+        }
+
+
+        private void FeedBackward(Single1D ys, CostFunctionEnum costFunction)
+        {
+            if (ys == null) throw new VarNullException(nameof(ys), 411263);
+            int count = Layers.Count;
+            Layer layer = null;
+            for (int i = count - 1; i >= 0; i--)
+            {
+                Layer nextLayer = layer;
+                layer = Layers[i];
+                if (nextLayer == null)
+                    layer.CalculateDeltas(ys, costFunction);
+                else
+                    layer.FeedBackward(nextLayer);
+            }
         }
 
         /// <summary>

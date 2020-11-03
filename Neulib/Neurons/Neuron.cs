@@ -231,14 +231,39 @@ namespace Neulib.Neurons
             Activation = ActivationFunction(sum); // sl
         }
 
-
-        public void CalculateDelta(float y)
+        public void FeedBackward(Layer nextLayer, int j)
         {
-            // Calculates deltas of the last layer
-            // Chapter 2 page 9: BP1
-            // Assumes a quadratic cost function: C = 0.5 * Sumj((ajL - yj)^2) ==> dC/dajL = ajL - yj
-            // Assumes a sigmoid activation function
-            Delta = (Activation - y) * ActivationDerivative(Activation);
+            float delta = 0f;
+            int nextCount = nextLayer.Count;
+            for (int k = 0; k < nextCount; k++)
+            {
+                Neuron nextNeuron = nextLayer[k];
+                delta += nextNeuron[j].Weight * nextNeuron.Delta; // wji
+            }
+            delta *= Neuron.ActivationDerivative(Activation);
+            Delta = delta;
+        }
+
+
+        /// <summary>
+        /// Calculates Delta of this neuron which must be in the last layer.
+        /// </summary>
+        /// <param name="y">The required activation value.</param>
+        /// <param name="costFunction">Defines the cost function.</param>
+        /// <remarks>
+        /// See chapter 2 BP1, chapter 3 eq 75
+        /// Assumes a sigmoid activation function
+        /// </remarks>
+        public void CalculateDelta(float y, CostFunctionEnum costFunction)
+        {
+            float a = Activation;
+            float d = costFunction switch
+            {
+                CostFunctionEnum.CrossEntropy => (a - y) / (a * (1 - a)),
+                CostFunctionEnum.Quadratic => (a - y),
+                _ => throw new InvalidCaseException(nameof(costFunction), costFunction, 150413),
+            };
+            Delta = d * ActivationDerivative(a);
         }
 
         #endregion

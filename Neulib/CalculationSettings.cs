@@ -7,20 +7,41 @@ using Neulib.Serializers;
 
 namespace Neulib
 {
+    public enum CostFunctionEnum
+    {
+        Quadratic,
+        CrossEntropy,
+    }
+
     public class CalculationSettings : BaseObject
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
 
         [
-            Category("Minimization"),
+            RandomizeCategory,
+            DisplayName("Bias magnitude"),
+            Description("The neuron bias values are initialized as a random number with this magnitude."),
+        ]
+        public float BiasMagnitude { get; set; } = 0.1f;
+
+        [
+            RandomizeCategory,
+            DisplayName("Weight magnitude"),
+            Description("The connection weight values are initialized as a random number with this magnitude."),
+        ]
+        public float WeightMagnitude { get; set; } = 0.1f;
+
+
+        [
+            LearnCategory,
             DisplayName("Max iter"),
             Description("The maximum number of iterations."),
         ]
         public int MaxIter { get; set; } = 100;
 
         [
-            Category("Minimization"),
+            LearnCategory,
             DisplayName("Epsilon"),
             Description("The iteration will stop when 2 * Abs(f2 - f1) <= Tolerance * (Abs(f1) + Abs(f2) + Epsilon)."),
         ]
@@ -28,40 +49,41 @@ namespace Neulib
 
 
         [
-            Category("Minimization"),
+            Category("Learning"),
             DisplayName("Tolerance"),
             Description("The iteration will stop when 2 * Abs(f2 - f1) <= Tolerance * (Abs(f1) + Abs(f2) + Epsilon)."),
         ]
         public float Tolerance { get; set; } = (float)1e-5;
 
         [
-            Category("Calculation"),
-            DisplayName("Sample count"),
-            Description("The number of random samples."),
+            LearnCategory,
+            DisplayName("Cost function"),
+            Description("The learning algorithm aims to minimize the cost function values."),
         ]
-        public int SampleCount { get; set; } = 100;
+        public CostFunctionEnum CostFunction { get; set; } = CostFunctionEnum.CrossEntropy;
 
 
         [
-            Category("Calculation"),
+            LearnCategory,
+            DisplayName("Sample count"),
+            Description("The number of unique random samples for learning."),
+        ]
+        public int LearningSampleCount { get; set; } = 100;
+
+
+        [
+            LearnCategory,
             DisplayName("Learning rate"),
             Description("The rate at which learning occurs."),
         ]
         public float LearningRate { get; set; } = 1f;
 
         [
-            Category("Initialization"),
-            DisplayName("Bias magnitude"),
-            Description("The neuron bias values are initialized as a random number with this magnitude."),
+            VerifyCategory,
+            DisplayName("Sample count"),
+            Description("The number of unique random samples for verification."),
         ]
-        public float BiasMagnitude { get; set; } = 0.1f;
-
-        [
-            Category("Initialization"),
-            DisplayName("Weight magnitude"),
-            Description("The connection weight values are initialized as a random number with this magnitude."),
-        ]
-        public float WeightMagnitude { get; set; } = 0.1f;
+        public int VerificationSampleCount { get; set; } = 100;
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -79,13 +101,15 @@ namespace Neulib
         {
             base.CopyFrom(o);
             CalculationSettings value = o as CalculationSettings ?? throw new InvalidTypeException(o, nameof(CalculationSettings), 473835);
+            BiasMagnitude = value.BiasMagnitude;
+            WeightMagnitude = value.WeightMagnitude;
             MaxIter = value.MaxIter;
             Epsilon = value.Epsilon;
             Tolerance = value.Tolerance;
-            SampleCount = value.SampleCount;
+            CostFunction = value.CostFunction;
+            LearningSampleCount = value.LearningSampleCount;
             LearningRate = value.LearningRate;
-            BiasMagnitude = value.BiasMagnitude;
-            WeightMagnitude = value.WeightMagnitude;
+            VerificationSampleCount = value.VerificationSampleCount;
         }
 
 
@@ -93,34 +117,40 @@ namespace Neulib
         // ----------------------------------------------------------------------------------------
         #region CalculationSettings
 
+        private const string _BiasMagnitudeId = "BiasMagnitude";
+        private const string _WeightMagnitudeId = "WeightMagnitude";
         private const string _MaxIterId = "MaxIter";
         private const string _EpsilonId = "Epsilon";
         private const string _ToleranceId = "Tolerance";
-        private const string _SampleCountId = "SampleCount";
+        private const string _CostFunctionId = "CostFunction";
+        private const string _LearningSampleCountId = "LearningSampleCount";
         private const string _LearningRateId = "LearningRate";
-        private const string _BiasMagnitudeId = "BiasMagnitude";
-        private const string _WeightMagnitudeId = "WeightMagnitude";
+        private const string _VerificationSampleCountId = "VerificationSampleCount";
 
         public void LoadFromSettings(XmlElement rootElement)
         {
+            BiasMagnitude = rootElement.ReadSingle(_BiasMagnitudeId, BiasMagnitude);
+            WeightMagnitude = rootElement.ReadSingle(_WeightMagnitudeId, WeightMagnitude);
             MaxIter = rootElement.ReadInt(_MaxIterId, MaxIter);
             Epsilon = rootElement.ReadSingle(_EpsilonId, Epsilon);
             Tolerance = rootElement.ReadSingle(_ToleranceId, Tolerance);
-            SampleCount = rootElement.ReadInt(_SampleCountId, SampleCount);
+            CostFunction = rootElement.ReadEnum(_CostFunctionId, CostFunction);
+            LearningSampleCount = rootElement.ReadInt(_LearningSampleCountId, LearningSampleCount);
             LearningRate = rootElement.ReadSingle(_LearningRateId, LearningRate);
-            BiasMagnitude = rootElement.ReadSingle(_BiasMagnitudeId, BiasMagnitude);
-            WeightMagnitude = rootElement.ReadSingle(_WeightMagnitudeId, WeightMagnitude);
+            VerificationSampleCount = rootElement.ReadInt(_VerificationSampleCountId, VerificationSampleCount);
         }
 
         public void SaveToSettings(XmlElement rootElement)
         {
+            rootElement.WriteSingle(_BiasMagnitudeId, BiasMagnitude);
+            rootElement.WriteSingle(_WeightMagnitudeId, WeightMagnitude);
             rootElement.WriteInt(_MaxIterId, MaxIter);
             rootElement.WriteSingle(_EpsilonId, Epsilon);
             rootElement.WriteSingle(_ToleranceId, Tolerance);
-            rootElement.WriteInt(_SampleCountId, SampleCount);
+            rootElement.WriteEnum(_CostFunctionId, CostFunction);
+            rootElement.WriteInt(_LearningSampleCountId, LearningSampleCount);
             rootElement.WriteSingle(_LearningRateId, LearningRate);
-            rootElement.WriteSingle(_BiasMagnitudeId, BiasMagnitude);
-            rootElement.WriteSingle(_WeightMagnitudeId, WeightMagnitude);
+            rootElement.WriteInt(_VerificationSampleCountId, VerificationSampleCount);
         }
 
         #endregion

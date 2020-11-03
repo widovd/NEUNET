@@ -98,14 +98,14 @@ namespace Neunet.Forms
 
         private Mersenne Mersenne { get; set; } = new Mersenne();
 
-        private bool _networkChanged = false;
-        private bool NetworkChanged
+        private bool _saveReminder = false;
+        private bool SaveReminder
         {
-            get { return _networkChanged; }
+            get { return _saveReminder; }
             set
             {
-                _networkChanged = value;
-                changedStatusLabel.Visible = value;
+                _saveReminder = value;
+                saveReminderLabel.Visible = value;
             }
         }
 
@@ -116,7 +116,6 @@ namespace Neunet.Forms
             set
             {
                 _network = value;
-                NetworkChanged = true;
                 Coefficients = value.GetCoefficients();
                 historyImage.ClearItems();
                 Derivatives = null;
@@ -141,7 +140,7 @@ namespace Neunet.Forms
             get
             {
                 int nSource = TrainingSetImages.GetLength(0);
-                int nSamples = nSampleTextBox.Value;
+                int nSamples = Settings.VerificationSampleCount;
                 if (nSamples < 1) nSamples = 1; else if (nSamples > nSource) nSamples = nSource;
                 return nSamples;
             }
@@ -224,6 +223,7 @@ namespace Neunet.Forms
         #region BaseForm
 
         private const string _SplitterDistanceId = "SplitterDistance";
+        private const string _SampleCountId = "SampleCount";
         private const string _CalculationSettingsId = "CalculationSettings";
 
         public override void LoadFromSettings(XmlElement rootElement)
@@ -303,35 +303,10 @@ namespace Neunet.Forms
             return layer;
         }
 
-        private void NewNetwork()
-        {
-            Network network = new Network
-            {
-                NewLayer(28 * 28),
-                NewLayer(50),
-                NewLayer(10)
-            };
-            network.Randomize(Mersenne, Settings.BiasMagnitude, Settings.WeightMagnitude);
-            Network = network;
-        }
-
-        private void EditNetwork()
-        {
-            using (NetworkDialog dialog = new NetworkDialog() { Network = (Network)Network.Clone() })
-            {
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    Network network = dialog.Network;
-                    network.Randomize(Mersenne, Settings.BiasMagnitude, Settings.WeightMagnitude);
-                    Network = network;
-                }
-            }
-        }
-
         private void LoadNetwork()
         {
             Network = (Network)LoadFileForm.LoadFile(NetworkFilePath, out Version fileVersion);
-            NetworkChanged = false;
+            SaveReminder = false;
         }
 
         private void LoadNetworkDialog()
@@ -355,7 +330,7 @@ namespace Neunet.Forms
         private void SaveNetwork()
         {
             SaveFileForm.SaveFile(NetworkFilePath, Network);
-            NetworkChanged = false;
+            SaveReminder = false;
         }
 
         private void SaveNetworkDialog()
@@ -420,9 +395,12 @@ namespace Neunet.Forms
                     Text = Path.GetFileNameWithoutExtension(NetworkFilePath);
                 }
                 else
+                {
                     NewNetwork();
+                    RandomizeNetwork();
+                }
                 SetStatusText(string.Empty);
-                Samples = GetRandomSamples(nSampleTextBox.Value);
+                Samples = GetRandomSamples(RequiredSampleCount);
             }
             catch (Exception ex)
             {
@@ -434,7 +412,7 @@ namespace Neunet.Forms
         {
             try
             {
-                e.Cancel = NetworkChanged && CancelOnClose();
+                e.Cancel = SaveReminder && CancelOnClose();
             }
             catch (BaseException ex)
             {
@@ -442,42 +420,6 @@ namespace Neunet.Forms
                 e.Cancel = false;
             }
         }
-
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            try
-            {
-            }
-            catch (Exception ex)
-            {
-                ExceptionDialog.Show(ex);
-            }
-        }
-
-        private void NewMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                NewNetwork();
-            }
-            catch (Exception ex)
-            {
-                ExceptionDialog.Show(ex);
-            }
-        }
-
-        private void EditMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                EditNetwork();
-            }
-            catch (Exception ex)
-            {
-                ExceptionDialog.Show(ex);
-            }
-        }
-
 
         private void OpenMenuItem_Click(object sender, EventArgs e)
         {
@@ -546,6 +488,161 @@ namespace Neunet.Forms
                 Close();
             }
             catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void NewNetwork()
+        {
+            Network network = new Network
+                {
+                    NewLayer(28 * 28),
+                    NewLayer(10)
+                };
+            network.Randomize(Mersenne, Settings.BiasMagnitude, Settings.WeightMagnitude);
+            Network = network;
+            SaveReminder = false;
+        }
+
+        private void NewMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (SaveReminder && CancelOnClose()) return;
+                NewNetwork();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void EditNetwork()
+        {
+            using (NetworkDialog dialog = new NetworkDialog() { Network = (Network)Network.Clone() })
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    Network = dialog.Network;
+                    SaveReminder = false;
+                }
+            }
+        }
+
+        private void Edit_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (SaveReminder && CancelOnClose()) return;
+                EditNetwork();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void RandomizeNetwork()
+        {
+            Network network = (Network)Network.Clone();
+            network.Randomize(Mersenne, Settings.BiasMagnitude, Settings.WeightMagnitude);
+            Network = network;
+            SaveReminder = false;
+        }
+
+        private void RandomizeMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (SaveReminder && CancelOnClose()) return;
+                RandomizeNetwork();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void Learn(CalculationArguments arguments)
+        {
+            arguments.reporter?.WriteStart("Learning the network...");
+            while (true)
+            {
+                SampleList samples = GetRandomSamples(arguments.settings.LearningSampleCount);
+                arguments.reporter?.ReportSamples(samples);
+                Network.Learn(samples, arguments);
+            }
+        }
+
+        private async Task LearnAsync()
+        {
+            SaveReminder = true;
+            await RunAsync(arguments => Learn(arguments));
+            SetProgress(0);
+            SetStatusText(string.Empty);
+        }
+
+        private async void LearnButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                await LearnAsync();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private async Task VerifyAsync()
+        {
+            int nSamples = RequiredSampleCount;
+            int nCoefficients = Network.CoefficientCount();
+            Single1D derivatives = new Single1D(nCoefficients);
+            int ny = Network.OutputCount;
+            MeasurementList measurements = new MeasurementList(nSamples, ny);
+            SampleList samples = null;
+            await RunAsync(arguments =>
+            {
+                samples = GetRandomSamples(nSamples);
+                arguments.reporter?.WriteStart($"Calculating a subset of {samples.Count} random samples...");
+                Stopwatch timer = new Stopwatch();
+                timer.Start();
+                float finalCost = Network.GetCostAndDerivatives(samples, derivatives, measurements, arguments);
+                arguments.reporter?.WriteEnd($"The samples are calculated in {timer.Elapsed.TotalSeconds} s, and the final cost value is {finalCost:F4}.");
+            });
+            Samples = samples;
+            Derivatives = derivatives;
+            Measurements = measurements;
+            SetProgress(0);
+        }
+
+        private async void VerifyButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                await VerifyAsync();
+            }
+            catch (BaseException ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void Stop()
+        {
+            if (_tokenSource != null && !_tokenSource.IsCancellationRequested)
+                _tokenSource.Cancel();
+        }
+
+        private void StopButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Stop();
+            }
+            catch (BaseException ex)
             {
                 ExceptionDialog.Show(ex);
             }
@@ -642,19 +739,31 @@ namespace Neunet.Forms
         {
             base.Idle();
             bool running = _tokenSource != null;
-            bool stopenabled = running && !_tokenSource.IsCancellationRequested;
+            bool stopEnabled = running && !_tokenSource.IsCancellationRequested;
+            // File menu
             newMenuItem.Enabled = !running;
+            newToolStripButton.Enabled = !running;
             openMenuItem.Enabled = !running;
+            openToolStripButton.Enabled = !running;
             saveMenuItem.Enabled = !running;
             saveAsMenuItem.Enabled = !running;
             openTrainingSetImageFileMenuItem.Enabled = !running;
             openTrainingSetLabelFileMenuItem.Enabled = !running;
             exitMenuItem.Enabled = !running;
-            newButton.Enabled = !running;
-            editButton.Enabled = !running;
-            learnButton.Enabled = !running;
-            stopButton.Enabled = stopenabled;
-            calculateButton.Enabled = !running;
+            // Edit menu
+            editToolStripMenuItem1.Enabled = !running;
+            editToolStripButton.Enabled = !running;
+            // Run menu
+            randomizeToolStripMenuItem.Enabled = !running;
+            randomizeToolStripButton.Enabled = !running;
+            learnToolStripMenuItem.Enabled = !running;
+            learnToolStripButton.Enabled = !running;
+            verifyToolStripButton.Enabled = !running;
+            verifyToolStripMenuItem.Enabled = !running;
+            stopToolStripMenuItem.Enabled = stopEnabled;
+            stopToolStripButton.Enabled = stopEnabled;
+            settingsToolStripMenuItem.Enabled = !running;
+            settingsToolStripButton.Enabled = !running;
         }
 
         #endregion
@@ -719,7 +828,7 @@ namespace Neunet.Forms
         {
             try
             {
-                NetworkChanged = true;
+                SaveReminder = true;
                 _tokenSource = new CancellationTokenSource();
                 Exception ex = await Task.Run(() =>
                 {
@@ -803,69 +912,6 @@ namespace Neunet.Forms
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Learn
-
-        private void Learn(CalculationArguments arguments)
-        {
-            arguments.reporter?.WriteStart("Learning the network...");
-            while (true)
-            {
-                SampleList samples = GetRandomSamples(arguments.settings.SampleCount);
-                arguments.reporter?.ReportSamples(samples);
-                Network.Learn(samples, arguments);
-            }
-        }
-
-        private async void LearnButton_Click(object sender, EventArgs e)
-        {
-            NetworkChanged = true;
-            await RunAsync(arguments => Learn(arguments));
-            SetProgress(0);
-            SetStatusText(string.Empty);
-        }
-
-        private async void CalculateButton_Click(object sender, EventArgs e)
-        {
-
-            try
-            {
-                int nSamples = RequiredSampleCount;
-                int nCoefficients = Network.CoefficientCount();
-                Single1D derivatives = new Single1D(nCoefficients);
-                int ny = Network.OutputCount;
-                MeasurementList measurements = new MeasurementList(nSamples, ny);
-                SampleList samples = null;
-                await RunAsync(arguments =>
-                {
-                    samples = GetRandomSamples(nSamples);
-                    arguments.reporter?.WriteStart($"Calculating a subset of {samples.Count} random samples...");
-                    Stopwatch timer = new Stopwatch();
-                    timer.Start();
-                    float finalCost = Network.GetCostAndDerivatives(samples, derivatives, measurements, arguments);
-                    arguments.reporter?.WriteEnd($"The samples are calculated in {timer.Elapsed.TotalSeconds} s, and the final cost value is {finalCost:F4}.");
-                });
-                Samples = samples;
-                Derivatives = derivatives;
-                Measurements = measurements;
-                SetProgress(0);
-            }
-            catch (BaseException ex)
-            {
-                ExceptionDialog.Show(ex);
-            }
-        }
-
-        private void StopButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_tokenSource != null && !_tokenSource.IsCancellationRequested)
-                    _tokenSource.Cancel();
-            }
-            catch (BaseException ex)
-            {
-                ExceptionDialog.Show(ex);
-            }
-        }
 
         #endregion
 

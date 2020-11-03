@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Neulib
 {
-    public struct CalculationArguments
+    public class CalculationArguments
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
