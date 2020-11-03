@@ -86,6 +86,8 @@
             this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.openTestSetImageFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openTestSetLabelFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -430,6 +432,8 @@
             this.toolStripSeparator1,
             this.openTrainingSetImageFileMenuItem,
             this.openTrainingSetLabelFileMenuItem,
+            this.openTestSetImageFileMenuItem,
+            this.openTestSetLabelFileMenuItem,
             this.toolStripSeparator4,
             this.exitMenuItem});
             this.fileMenu.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
@@ -522,7 +526,7 @@
             // editToolStripMenuItem1
             // 
             this.editToolStripMenuItem1.Name = "editToolStripMenuItem1";
-            this.editToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.editToolStripMenuItem1.Size = new System.Drawing.Size(94, 22);
             this.editToolStripMenuItem1.Text = "Edit";
             this.editToolStripMenuItem1.Click += new System.EventHandler(this.Edit_Click);
             // 
@@ -657,6 +661,20 @@
             this.splitContainer.SplitterDistance = 200;
             this.splitContainer.TabIndex = 13;
             // 
+            // openTestSetImageFileMenuItem
+            // 
+            this.openTestSetImageFileMenuItem.Name = "openTestSetImageFileMenuItem";
+            this.openTestSetImageFileMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.openTestSetImageFileMenuItem.Text = "Open test set image file";
+            this.openTestSetImageFileMenuItem.Click += new System.EventHandler(this.OpenTestSetImageFileMenuItem_Click);
+            // 
+            // openTestSetLabelFileMenuItem
+            // 
+            this.openTestSetLabelFileMenuItem.Name = "openTestSetLabelFileMenuItem";
+            this.openTestSetLabelFileMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.openTestSetLabelFileMenuItem.Text = "Open test set label file";
+            this.openTestSetLabelFileMenuItem.Click += new System.EventHandler(this.OpenTestSetLabelFileMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -748,6 +766,8 @@
         private System.Windows.Forms.ToolStripButton editToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem openTestSetImageFileMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openTestSetLabelFileMenuItem;
     }
 }
 

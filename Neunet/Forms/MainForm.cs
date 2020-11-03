@@ -54,7 +54,7 @@ namespace Neunet.Forms
 
         private string TrainingSetImageFilePath
         {
-            get { return Program.XmlSettings.GlobalsElement.ReadString(_trainingSetImageFilePathId, string.Empty); }
+            get { return Program.XmlSettings.GlobalsElement.ReadString(_trainingSetImageFilePathId, "train-images.idx3-ubyte"); }
             set { Program.XmlSettings.GlobalsElement.WriteString(_trainingSetImageFilePathId, value); }
         }
 
@@ -62,7 +62,7 @@ namespace Neunet.Forms
 
         private string TrainingSetLabelFilePath
         {
-            get { return Program.XmlSettings.GlobalsElement.ReadString(_trainingSetLabelFilePathId, string.Empty); }
+            get { return Program.XmlSettings.GlobalsElement.ReadString(_trainingSetLabelFilePathId, "train-labels.idx1-ubyte"); }
             set { Program.XmlSettings.GlobalsElement.WriteString(_trainingSetLabelFilePathId, value); }
         }
 
@@ -86,13 +86,39 @@ namespace Neunet.Forms
             }
         }
 
-        private SingleArray _trainingSetResults;
-        private SingleArray TrainingSetResults
+        private readonly string _testSetImageFilePathId = "TestSetImageFilePath";
+
+        private string TestSetImageFilePath
         {
-            get { return _trainingSetResults; }
+            get { return Program.XmlSettings.GlobalsElement.ReadString(_testSetImageFilePathId, "t10k-images.idx3-ubyte"); }
+            set { Program.XmlSettings.GlobalsElement.WriteString(_testSetImageFilePathId, value); }
+        }
+
+        private readonly string _testSetLabelFilePathId = "TestSetLabelFilePath";
+
+        private string TestSetLabelFilePath
+        {
+            get { return Program.XmlSettings.GlobalsElement.ReadString(_testSetLabelFilePathId, "t10k-labels.idx1-ubyte"); }
+            set { Program.XmlSettings.GlobalsElement.WriteString(_testSetLabelFilePathId, value); }
+        }
+
+        private ByteArray _testSetImages;
+        private ByteArray TestSetImages
+        {
+            get { return _testSetImages; }
             set
             {
-                _trainingSetResults = value ?? throw new VarNullException(nameof(TrainingSetResults), 134871);
+                _testSetImages = value ?? throw new VarNullException(nameof(TestSetImages), 229440);
+            }
+        }
+
+        private ByteArray _testSetLabels;
+        private ByteArray TestSetLabels
+        {
+            get { return _testSetLabels; }
+            set
+            {
+                _testSetLabels = value ?? throw new VarNullException(nameof(TestSetLabels), 682702);
             }
         }
 
@@ -244,7 +270,7 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region MainForm events
 
-        private void LoadTraingSetImageFile()
+        private void LoadTrainingSetImageFile()
         {
             // train-images.idx3-ubyte
             using (FileStream stream = new FileStream(TrainingSetImageFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
@@ -264,11 +290,11 @@ namespace Neunet.Forms
                 TrainingSetImageFilePath = openFileDialog.FileName;
             }
             while (!File.Exists(TrainingSetImageFilePath));
-            LoadTraingSetImageFile();
+            LoadTrainingSetImageFile();
             return true;
         }
 
-        private void LoadTraingSetLabelFile()
+        private void LoadTrainingSetLabelFile()
         {
             using (FileStream stream = new FileStream(TrainingSetLabelFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
             {
@@ -288,10 +314,57 @@ namespace Neunet.Forms
                 TrainingSetLabelFilePath = openFileDialog.FileName;
             }
             while (!File.Exists(TrainingSetLabelFilePath));
-            LoadTraingSetLabelFile();
+            LoadTrainingSetLabelFile();
             return true;
         }
 
+        private void LoadTestSetImageFile()
+        {
+            // train-images.idx3-ubyte
+            using (FileStream stream = new FileStream(TestSetImageFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                TestSetImages = BaseArray.ReadFromStream(stream) as ByteArray;
+            }
+        }
+
+        private bool LoadTestSetImageFileDialog()
+        {
+            do
+            {
+                openFileDialog.Filter = "idx3-ubyte files|*.idx3-ubyte|All files|*.*";
+                openFileDialog.Title = "Open test set image file";
+                openFileDialog.FileName = TestSetImageFilePath;
+                if (openFileDialog.ShowDialog(this) != DialogResult.OK) return false;
+                TestSetImageFilePath = openFileDialog.FileName;
+            }
+            while (!File.Exists(TestSetImageFilePath));
+            LoadTestSetImageFile();
+            return true;
+        }
+
+        private void LoadTestSetLabelFile()
+        {
+            using (FileStream stream = new FileStream(TestSetLabelFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                TestSetLabels = BaseArray.ReadFromStream(stream) as ByteArray;
+            }
+        }
+
+        private bool LoadTestSetLabelFileDialog()
+        {
+            do
+            {
+                // train-labels.idx1-ubyte
+                openFileDialog.Filter = "idx1-ubyte files|*.idx1-ubyte|All files|*.*";
+                openFileDialog.Title = "Open test set label file";
+                openFileDialog.FileName = TestSetLabelFilePath;
+                if (openFileDialog.ShowDialog(this) != DialogResult.OK) return false;
+                TestSetLabelFilePath = openFileDialog.FileName;
+            }
+            while (!File.Exists(TestSetLabelFilePath));
+            LoadTestSetLabelFile();
+            return true;
+        }
 
         private Layer NewLayer(int neuronCount)
         {
@@ -380,14 +453,24 @@ namespace Neunet.Forms
             try
             {
                 if (File.Exists(TrainingSetImageFilePath))
-                    LoadTraingSetImageFile();
+                    LoadTrainingSetImageFile();
                 else
                     if (!LoadTrainingSetImageFileDialog()) Close();
 
                 if (File.Exists(TrainingSetLabelFilePath))
-                    LoadTraingSetLabelFile();
+                    LoadTrainingSetLabelFile();
                 else
                     if (!LoadTrainingSetLabelFileDialog()) Close();
+
+                if (File.Exists(TestSetImageFilePath))
+                    LoadTestSetImageFile();
+                else
+                    if (!LoadTestSetImageFileDialog()) Close();
+
+                if (File.Exists(TestSetLabelFilePath))
+                    LoadTestSetLabelFile();
+                else
+                    if (!LoadTestSetLabelFileDialog()) Close();
 
                 if (File.Exists(NetworkFilePath))
                 {
@@ -474,6 +557,30 @@ namespace Neunet.Forms
             try
             {
                 LoadTrainingSetLabelFileDialog();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void OpenTestSetImageFileMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LoadTestSetImageFileDialog();
+            }
+            catch (Exception ex)
+            {
+                ExceptionDialog.Show(ex);
+            }
+        }
+
+        private void OpenTestSetLabelFileMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                LoadTestSetLabelFileDialog();
             }
             catch (Exception ex)
             {
@@ -749,6 +856,8 @@ namespace Neunet.Forms
             saveAsMenuItem.Enabled = !running;
             openTrainingSetImageFileMenuItem.Enabled = !running;
             openTrainingSetLabelFileMenuItem.Enabled = !running;
+            openTestSetImageFileMenuItem.Enabled = !running;
+            openTestSetLabelFileMenuItem.Enabled = !running;
             exitMenuItem.Enabled = !running;
             // Edit menu
             editToolStripMenuItem1.Enabled = !running;

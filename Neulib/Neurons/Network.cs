@@ -331,15 +331,12 @@ namespace Neulib.Neurons
 
         private static float CostFunction(Single1D aa, Single1D yy, CostFunctionEnum costFunction)
         {
-            switch (costFunction)
+            return costFunction switch
             {
-                case CostFunctionEnum.Quadratic:
-                    return QuadraticCostFunction(aa, yy);
-                case CostFunctionEnum.CrossEntropy:
-                    return CrossEntropyCostFunction(aa, yy);
-                default:
-                    throw new InvalidCaseException(nameof(costFunction), costFunction, 386203);
-            }
+                CostFunctionEnum.Quadratic => QuadraticCostFunction(aa, yy),
+                CostFunctionEnum.CrossEntropy => CrossEntropyCostFunction(aa, yy),
+                _ => throw new InvalidCaseException(nameof(costFunction), costFunction, 386203),
+            };
         }
 
         private void FeedBackward(Single1D ys, CostFunctionEnum costFunction)
