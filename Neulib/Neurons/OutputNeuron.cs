@@ -13,17 +13,12 @@ using static System.Math;
 namespace Neulib.Neurons
 {
     /// <summary>
-    /// Represents the input neuron for use in the first layer of a neural network.
+    /// Represents the output neuron for use in the last layer of a neural network.
     /// </summary>
-    public class Neuron : BaseObject
+    public class OutputNeuron : HiddenNeuron
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
-
-        /// <summary>
-        /// The activation value.
-        /// </summary>
-        public float Activation { get; set; } = 0f;
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -32,16 +27,15 @@ namespace Neulib.Neurons
         /// <summary>
         /// Creates a new input neuron.
         /// </summary>
-        public Neuron()
+        public OutputNeuron()
         {
         }
 
         /// <summary>
         /// Creates a new input neuron from the stream.
         /// </summary>
-        public Neuron(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public OutputNeuron(Stream stream, BinarySerializer serializer) : base(stream, serializer)
         {
-            Activation = stream.ReadSingle();
         }
 
         #endregion
@@ -50,7 +44,7 @@ namespace Neulib.Neurons
 
         public override string ToString()
         {
-            return $"activation = {Activation:F3}";
+            return base.ToString();
         }
 
         #endregion
@@ -60,39 +54,36 @@ namespace Neulib.Neurons
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            Neuron value = o as Neuron ?? throw new InvalidTypeException(o, nameof(Neuron), 154123);
-            Activation = value.Activation;
         }
 
         public override void WriteToStream(Stream stream, BinarySerializer serializer)
         {
             base.WriteToStream(stream, serializer);
-            stream.WriteSingle(Activation);
         }
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region InputNeuron
 
-        public virtual void Randomize(Random random, float biasMagnitude, float weightMagnitude)
+        public override void Randomize(Random random, float biasMagnitude, float weightMagnitude)
         {
-            throw new InvalidCallException(nameof(Randomize), 937762);
+            base.Randomize(random, biasMagnitude, weightMagnitude);
         }
 
         /// <summary> 
         /// Calculates the activation value of this neuron from the previous layer.
         /// </summary>
-        public virtual void FeedForward(Layer prevLayer)
+        public override void FeedForward(Layer prevLayer)
         {
-            throw new InvalidCallException(nameof(FeedForward), 569595);
+            base.FeedForward(prevLayer);
         }
 
         /// <summary> 
         /// Calculates the error or delta value of this neuron from the next layer.
         /// </summary>
-        public virtual void FeedBackward(Layer nextLayer, int j)
+        public override void FeedBackward(Layer nextLayer, int j)
         {
-            throw new InvalidCallException(nameof(FeedBackward), 806703);
+            base.FeedBackward(nextLayer, j);
         }
 
         /// <summary>
@@ -100,9 +91,9 @@ namespace Neulib.Neurons
         /// </summary>
         /// <param name="y">The required activation value.</param>
         /// <param name="costFunction">Defines the cost function.</param>
-        public virtual void CalculateDelta(float y, CostFunctionEnum costFunction)
+        public override void CalculateDelta(float y, CostFunctionEnum costFunction)
         {
-            throw new InvalidCallException(nameof(CalculateDelta), 827839);
+            base.CalculateDelta(y, costFunction);
         }
 
         #endregion

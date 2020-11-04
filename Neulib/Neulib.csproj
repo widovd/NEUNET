@@ -51,8 +51,12 @@
     <Compile Include="BaseObject.cs" />
     <Compile Include="CalculationArguments.cs" />
     <Compile Include="CalculationSettings.cs" />
+    <Compile Include="Exceptions\InvalidCallException.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Neurons\MeasurementList.cs" />
+    <Compile Include="Neurons\InputNeuron.cs" />
+    <Compile Include="Neurons\OutputNeuron.cs" />
+    <Compile Include="Neurons\Neuron.cs" />
     <Compile Include="Neurons\Sigmoid.cs" />
     <Compile Include="ProgressInterval.cs" />
     <Compile Include="ProgressReporter.cs" />
@@ -88,7 +92,7 @@
     <Compile Include="Numerics\Multifunc.cs" />
     <Compile Include="Numerics\SingleN.cs" />
     <Compile Include="Neurons\Network.cs" />
-    <Compile Include="Neurons\Neuron.cs" />
+    <Compile Include="Neurons\HiddenNeuron.cs" />
     <Compile Include="Neurons\Layer.cs" />
     <Compile Include="Numerics\Double2.cs" />
     <Compile Include="Numerics\Double3.cs" />

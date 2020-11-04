@@ -17,7 +17,7 @@ namespace Neulib.Neurons
     /// <summary>
     /// Represents a layer of neurons in a neural network.
     /// </summary>
-    public class Layer : BaseObject, IList<Neuron>
+    public class Layer : BaseObject, IList<HiddenNeuron>
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -25,13 +25,13 @@ namespace Neulib.Neurons
         /// <summary>
         /// The neurons in this layer.
         /// </summary>
-        private List<Neuron> Neurons { get; set; } = new List<Neuron>();
+        private List<HiddenNeuron> Neurons { get; set; } = new List<HiddenNeuron>();
 
         public int Count { get => Neurons.Count; }
 
-        public bool IsReadOnly => ((ICollection<Neuron>)Neurons).IsReadOnly;
+        public bool IsReadOnly => ((ICollection<HiddenNeuron>)Neurons).IsReadOnly;
 
-        public Neuron this[int index] { get => Neurons[index]; set => Neurons[index] = value; }
+        public HiddenNeuron this[int index] { get => Neurons[index]; set => Neurons[index] = value; }
 
 
         #endregion
@@ -53,7 +53,7 @@ namespace Neulib.Neurons
             int count = stream.ReadInt();
             for (int i = 0; i < count; i++)
             {
-                Neurons.Add((Neuron)stream.ReadValue(serializer));
+                Neurons.Add((HiddenNeuron)stream.ReadValue(serializer));
             }
         }
 
@@ -61,17 +61,17 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region IList
 
-        public int IndexOf(Neuron item)
+        public int IndexOf(HiddenNeuron item)
         {
             return Neurons.IndexOf(item);
         }
 
-        public void Insert(int index, Neuron item)
+        public void Insert(int index, HiddenNeuron item)
         {
             Neurons.Insert(index, item);
         }
 
-        public void Add(Neuron item)
+        public void Add(HiddenNeuron item)
         {
             Neurons.Add(item);
         }
@@ -81,7 +81,7 @@ namespace Neulib.Neurons
             Neurons.RemoveAt(index);
         }
 
-        public bool Remove(Neuron item)
+        public bool Remove(HiddenNeuron item)
         {
             return Neurons.Remove(item);
         }
@@ -91,19 +91,19 @@ namespace Neulib.Neurons
             Neurons.Clear();
         }
 
-        public bool Contains(Neuron item)
+        public bool Contains(HiddenNeuron item)
         {
             return Neurons.Contains(item);
         }
 
-        public void CopyTo(Neuron[] array, int arrayIndex)
+        public void CopyTo(HiddenNeuron[] array, int arrayIndex)
         {
             Neurons.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<Neuron> GetEnumerator()
+        public IEnumerator<HiddenNeuron> GetEnumerator()
         {
-            return ((IEnumerable<Neuron>)Neurons).GetEnumerator();
+            return ((IEnumerable<HiddenNeuron>)Neurons).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -132,7 +132,7 @@ namespace Neulib.Neurons
             Neurons.Clear();
             for (int i = 0; i < count; i++)
             {
-                Neurons.Add((Neuron)value.Neurons[i].Clone());
+                Neurons.Add((HiddenNeuron)value.Neurons[i].Clone());
             }
         }
 
@@ -156,7 +156,7 @@ namespace Neulib.Neurons
             int count = Neurons.Count;
             for (int i = 0; i < count; i++)
             {
-                Neuron neuron = Neurons[i];
+                HiddenNeuron neuron = Neurons[i];
                 neuron.Clear();
                 for (int j = 0; j < connections; j++)
                 {
@@ -172,7 +172,7 @@ namespace Neulib.Neurons
                 Neurons[i].Randomize(random, biasMagnitude, weightMagnitude);
         }
 
-        public void ForEach(Action<Neuron> action, bool parallel = false)
+        public void ForEach(Action<HiddenNeuron> action, bool parallel = false)
         {
             int count = Neurons.Count;
             if (parallel)

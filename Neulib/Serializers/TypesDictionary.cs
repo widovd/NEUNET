@@ -16,6 +16,9 @@ namespace Neulib.Serializers
         {
             Add("Connection", typeof(Connection));
             Add("Neuron", typeof(Neuron));
+            Add("InputNeuron", typeof(InputNeuron));
+            Add("HiddenNeuron", typeof(HiddenNeuron));
+            Add("OutputNeuron", typeof(OutputNeuron));
             Add("Sigmoid", typeof(Sigmoid));
             Add("Layer", typeof(Layer));
             Add("Network", typeof(Network));
