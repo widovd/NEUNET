@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.samplesImage = new Neunet.Images.Charts2D.SamplesImage();
+            this.trainingSamplesImage = new Neunet.Images.Charts2D.SamplesImage();
             this.coefficientsImage = new Neunet.Images.CoefficientsImage();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.samplesLabel = new System.Windows.Forms.Label();
+            this.trainingSamplesLabel = new System.Windows.Forms.Label();
             this.derivativesImage = new Neunet.Images.CoefficientsImage();
             this.coefficientsLabel = new System.Windows.Forms.Label();
             this.derivativesLabel = new System.Windows.Forms.Label();
@@ -105,7 +105,7 @@
             this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.InsetDouble;
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.samplesImage, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.trainingSamplesImage, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.coefficientsImage, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.derivativesImage, 0, 5);
@@ -128,13 +128,13 @@
             // 
             // samplesImage
             // 
-            this.samplesImage.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.samplesImage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.samplesImage.Location = new System.Drawing.Point(3, 26);
-            this.samplesImage.Margin = new System.Windows.Forms.Padding(0);
-            this.samplesImage.Name = "samplesImage";
-            this.samplesImage.Size = new System.Drawing.Size(831, 181);
-            this.samplesImage.TabIndex = 0;
+            this.trainingSamplesImage.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.trainingSamplesImage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trainingSamplesImage.Location = new System.Drawing.Point(3, 26);
+            this.trainingSamplesImage.Margin = new System.Windows.Forms.Padding(0);
+            this.trainingSamplesImage.Name = "samplesImage";
+            this.trainingSamplesImage.Size = new System.Drawing.Size(831, 181);
+            this.trainingSamplesImage.TabIndex = 0;
             // 
             // coefficientsImage
             // 
@@ -149,7 +149,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.samplesLabel);
+            this.panel1.Controls.Add(this.trainingSamplesLabel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
@@ -159,13 +159,13 @@
             // 
             // samplesLabel
             // 
-            this.samplesLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.samplesLabel.Location = new System.Drawing.Point(0, 0);
-            this.samplesLabel.Name = "samplesLabel";
-            this.samplesLabel.Size = new System.Drawing.Size(831, 20);
-            this.samplesLabel.TabIndex = 7;
-            this.samplesLabel.Text = "Samples";
-            this.samplesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.trainingSamplesLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trainingSamplesLabel.Location = new System.Drawing.Point(0, 0);
+            this.trainingSamplesLabel.Name = "samplesLabel";
+            this.trainingSamplesLabel.Size = new System.Drawing.Size(831, 20);
+            this.trainingSamplesLabel.TabIndex = 7;
+            this.trainingSamplesLabel.Text = "Samples";
+            this.trainingSamplesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // derivativesImage
             // 
@@ -377,7 +377,7 @@
             this.verifyToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.verifyToolStripButton.Text = "Verify";
             this.verifyToolStripButton.ToolTipText = "Verify the network";
-            this.verifyToolStripButton.Click += new System.EventHandler(this.VerifyButton_Click);
+            this.verifyToolStripButton.Click += new System.EventHandler(this.TestButton_Click);
             // 
             // stopToolStripButton
             // 
@@ -566,7 +566,7 @@
             this.verifyToolStripMenuItem.Name = "verifyToolStripMenuItem";
             this.verifyToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.verifyToolStripMenuItem.Text = "Verify";
-            this.verifyToolStripMenuItem.Click += new System.EventHandler(this.VerifyButton_Click);
+            this.verifyToolStripMenuItem.Click += new System.EventHandler(this.TestButton_Click);
             // 
             // stopToolStripMenuItem
             // 
@@ -709,8 +709,8 @@
 
         #endregion
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private Images.Charts2D.SamplesImage samplesImage;
-        private System.Windows.Forms.Label samplesLabel;
+        private Images.Charts2D.SamplesImage trainingSamplesImage;
+        private System.Windows.Forms.Label trainingSamplesLabel;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripProgressBar progressBar;
         private System.Windows.Forms.ToolStripStatusLabel messageStatusLabel;

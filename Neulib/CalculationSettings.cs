@@ -65,10 +65,10 @@ namespace Neulib
 
         [
             LearnCategory,
-            DisplayName("Sample count"),
-            Description("The number of unique random samples for learning."),
+            DisplayName("Training sample count"),
+            Description("The number of unique random samples for training."),
         ]
-        public int LearningSampleCount { get; set; } = 100;
+        public int TrainingSampleCount { get; set; } = 100;
 
 
         [
@@ -79,11 +79,11 @@ namespace Neulib
         public float LearningRate { get; set; } = 1f;
 
         [
-            VerifyCategory,
-            DisplayName("Sample count"),
-            Description("The number of unique random samples for verification."),
+            TestCategory,
+            DisplayName("Test sample count"),
+            Description("The number of unique random samples for testing."),
         ]
-        public int VerificationSampleCount { get; set; } = 100;
+        public int TestSampleCount { get; set; } = 100;
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -107,9 +107,9 @@ namespace Neulib
             Epsilon = value.Epsilon;
             Tolerance = value.Tolerance;
             CostFunction = value.CostFunction;
-            LearningSampleCount = value.LearningSampleCount;
+            TrainingSampleCount = value.TrainingSampleCount;
             LearningRate = value.LearningRate;
-            VerificationSampleCount = value.VerificationSampleCount;
+            TestSampleCount = value.TestSampleCount;
         }
 
 
@@ -135,9 +135,9 @@ namespace Neulib
             Epsilon = rootElement.ReadSingle(_EpsilonId, Epsilon);
             Tolerance = rootElement.ReadSingle(_ToleranceId, Tolerance);
             CostFunction = rootElement.ReadEnum(_CostFunctionId, CostFunction);
-            LearningSampleCount = rootElement.ReadInt(_LearningSampleCountId, LearningSampleCount);
+            TrainingSampleCount = rootElement.ReadInt(_LearningSampleCountId, TrainingSampleCount);
             LearningRate = rootElement.ReadSingle(_LearningRateId, LearningRate);
-            VerificationSampleCount = rootElement.ReadInt(_VerificationSampleCountId, VerificationSampleCount);
+            TestSampleCount = rootElement.ReadInt(_VerificationSampleCountId, TestSampleCount);
         }
 
         public void SaveToSettings(XmlElement rootElement)
@@ -148,9 +148,9 @@ namespace Neulib
             rootElement.WriteSingle(_EpsilonId, Epsilon);
             rootElement.WriteSingle(_ToleranceId, Tolerance);
             rootElement.WriteEnum(_CostFunctionId, CostFunction);
-            rootElement.WriteInt(_LearningSampleCountId, LearningSampleCount);
+            rootElement.WriteInt(_LearningSampleCountId, TrainingSampleCount);
             rootElement.WriteSingle(_LearningRateId, LearningRate);
-            rootElement.WriteInt(_VerificationSampleCountId, VerificationSampleCount);
+            rootElement.WriteInt(_VerificationSampleCountId, TestSampleCount);
         }
 
         #endregion

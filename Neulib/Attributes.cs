@@ -14,9 +14,9 @@ namespace Neulib
         { }
     }
 
-    public sealed class VerifyCategory : CategoryAttribute
+    public sealed class TestCategory : CategoryAttribute
     {
-        public VerifyCategory() : base("Verify")
+        public TestCategory() : base("Test")
         { }
     }
 

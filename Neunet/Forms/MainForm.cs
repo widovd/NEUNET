@@ -149,26 +149,25 @@ namespace Neunet.Forms
             }
         }
 
-        private SampleList _samples;
-        public SampleList Samples
+        private SampleList _trainingSamples;
+        public SampleList TrainingSamples
         {
-            get { return _samples; }
+            get { return _trainingSamples; }
             set
             {
-                _samples = value;
-                samplesImage.Samples = value;
-                samplesLabel.Text = $"{value.Count} samples";
+                _trainingSamples = value;
+                trainingSamplesImage.Samples = value;
+                trainingSamplesLabel.Text = $"{value.Count} training samples";
             }
         }
 
-        private int RequiredSampleCount
+        private SampleList _testSamples;
+        public SampleList TestSamples
         {
-            get
+            get { return _testSamples; }
+            set
             {
-                int nSource = TrainingSetImages.GetLength(0);
-                int nSamples = Settings.VerificationSampleCount;
-                if (nSamples < 1) nSamples = 1; else if (nSamples > nSource) nSamples = nSource;
-                return nSamples;
+                _testSamples = value;
             }
         }
 
@@ -182,15 +181,15 @@ namespace Neunet.Forms
         private void SetMeasurements(MeasurementList value)
         {
             _measurements = value;
-            samplesImage.Measurements = value;
+            trainingSamplesImage.Measurements = value;
             if (value == null) return;
-            int nSample = Samples.Count;
+            int nSample = TrainingSamples.Count;
             if (nSample != Measurements.Count) throw new UnequalValueException(nSample, Measurements.Count, 703443);
             int okCount = 0;
             int nokCount = 0;
             for (int iSample = 0; iSample < nSample; iSample++)
             {
-                Sample sample = Samples[iSample];
+                Sample sample = TrainingSamples[iSample];
                 Single1D measurement = Measurements[iSample];
                 int ny = sample.Requirements.Count;
                 if (ny != measurement.Count) throw new UnequalValueException(ny, measurement.Count, 331388);
@@ -207,7 +206,7 @@ namespace Neunet.Forms
             string text = $"{value.Count} samples";
             if (totalCount > 0)
                 text += $"; {okCount}/{totalCount} = {(float)okCount / totalCount:P1} is ok, and {nokCount}/{totalCount} =  {(float)nokCount / totalCount:P1} is not ok";
-            samplesLabel.Text = text;
+            trainingSamplesLabel.Text = text;
         }
 
 
@@ -483,7 +482,9 @@ namespace Neunet.Forms
                     RandomizeNetwork();
                 }
                 SetStatusText(string.Empty);
-                Samples = GetRandomSamples(RequiredSampleCount);
+                TrainingSamples = GetRandomSamples(
+                    TrainingSetImages, TrainingSetLabels,
+                    Settings.TrainingSampleCount, Network.OutputCount, Mersenne);
             }
             catch (Exception ex)
             {
@@ -676,7 +677,10 @@ namespace Neunet.Forms
             arguments.reporter?.WriteStart("Learning the network...");
             while (true)
             {
-                SampleList samples = GetRandomSamples(arguments.settings.LearningSampleCount);
+                SampleList samples = GetRandomSamples(
+                    TrainingSetImages, TrainingSetLabels,
+                    Settings.TrainingSampleCount, Network.OutputCount, Mersenne);
+
                 arguments.reporter?.ReportSamples(samples);
                 Network.Learn(samples, arguments);
             }
@@ -702,34 +706,35 @@ namespace Neunet.Forms
             }
         }
 
-        private async Task VerifyAsync()
+        private async Task TestAsync()
         {
-            int nSamples = RequiredSampleCount;
             int nCoefficients = Network.CoefficientCount();
             Single1D derivatives = new Single1D(nCoefficients);
             int ny = Network.OutputCount;
-            MeasurementList measurements = new MeasurementList(nSamples, ny);
-            SampleList samples = null;
+            SampleList samples = GetRandomSamples(
+                TestSetImages, TestSetLabels,
+                Settings.TestSampleCount, ny, Mersenne);
+
+            MeasurementList measurements = new MeasurementList(samples.Count, ny);
             await RunAsync(arguments =>
             {
-                samples = GetRandomSamples(nSamples);
-                arguments.reporter?.WriteStart($"Calculating a subset of {samples.Count} random samples...");
+                arguments.reporter?.WriteStart($"Calculating {samples.Count} test samples...");
                 Stopwatch timer = new Stopwatch();
                 timer.Start();
                 float finalCost = Network.GetCostAndDerivatives(samples, derivatives, measurements, arguments);
                 arguments.reporter?.WriteEnd($"The samples are calculated in {timer.Elapsed.TotalSeconds} s, and the final cost value is {finalCost:F4}.");
             });
-            Samples = samples;
+            TrainingSamples = samples;
             Derivatives = derivatives;
             Measurements = measurements;
             SetProgress(0);
         }
 
-        private async void VerifyButton_Click(object sender, EventArgs e)
+        private async void TestButton_Click(object sender, EventArgs e)
         {
             try
             {
-                await VerifyAsync();
+                await TestAsync();
             }
             catch (BaseException ex)
             {
@@ -907,7 +912,7 @@ namespace Neunet.Forms
             }
             else if (reportData is SamplesReportData samplesData)
             {
-                Samples = samplesData.Samples;
+                TrainingSamples = samplesData.Samples;
             }
             else if (reportData is CoefficientsReportData coefficientsData)
             {
@@ -967,60 +972,58 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Samples
 
-        private void GetXs(int h, Single1D xs)
+        private static void GetXs(ByteArray images, int h, Single1D xs)
         {
-            int nu = TrainingSetImages.GetLength(1);
-            int nv = TrainingSetImages.GetLength(2);
+            int nu = images.GetLength(1);
+            int nv = images.GetLength(2);
             int k = 0;
             for (int i = 0; i < nu; i++)
                 for (int j = 0; j < nv; j++)
                 {
-                    xs[k++] = (float)TrainingSetImages[h, i, j] / 255f;
+                    xs[k++] = (float)images[h, i, j] / 255f;
                 }
         }
 
-        private void GetYs(int h, Single1D ys)
+        private static void GetYs(ByteArray labels, int h, Single1D ys)
         {
             int ny = ys.Count;
             for (int i = 0; i < ny; i++)
             {
-                ys[i] = TrainingSetLabels[h] == i ? 1f : 0f;
+                ys[i] = labels[h] == i ? 1f : 0f;
             }
         }
 
-        private SampleList GetRandomSamples(int nSample)
+        private static SampleList GetRandomSamples(
+            ByteArray images, ByteArray labels, int nSample,
+            int ny, Random random)
         {
-            int nx = Network.InputCount;
-            int ny = Network.OutputCount;
-            int nu = TrainingSetImages.GetLength(1);
-            int nv = TrainingSetImages.GetLength(2);
+            int nSource = images.GetLength(0);
+            if (nSample < 1) nSample = 1; else if (nSample > nSource) nSample = nSource;
+            int nu = images.GetLength(1);
+            int nv = images.GetLength(2);
+            int nx = nu * nv;
             if (nu * nv != nx) throw new UnequalValueException(nu * nv, nx, 292526);
             SampleList samples = new SampleList(nu, nv);
-            int nSource = TrainingSetImages.GetLength(0);
             List<int> Indices = new List<int>(nSource);
             for (int index = 0; index < nSource; index++)
                 Indices.Add(index);
             for (int iSample = 0; iSample < nSample; iSample++)
             {
                 // generate unique indices using Mersenne random numbers
-                int next = Mersenne.Next(Indices.Count);
+                int next = random.Next(Indices.Count);
                 int index = Indices[next];
                 Indices.RemoveAt(next); // remove the used index
                 Sample sample = new Sample(nx, ny)
                 {
                     Index = index,
-                    Label = TrainingSetLabels[index],
+                    Label = labels[index],
                 };
-                GetXs(index, sample.Inputs);
-                GetYs(index, sample.Requirements);
+                GetXs(images, index, sample.Inputs);
+                GetYs(labels, index, sample.Requirements);
                 samples.Add(sample);
             }
             return samples;
         }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Learn
 
         #endregion
 
