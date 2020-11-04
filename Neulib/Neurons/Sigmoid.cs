@@ -11,7 +11,7 @@ using static System.Math;
 
 namespace Neulib.Neurons
 {
-    public class Sigmoid : HiddenNeuron
+    public class Sigmoid : Neuron
     {
         // ----------------------------------------------------------------------------------------
         #region Properties

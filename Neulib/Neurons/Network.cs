@@ -288,7 +288,7 @@ namespace Neulib.Neurons
             int h = 0;
             ForEach(layer =>
             {
-                layer.ForEach((HiddenNeuron neuron) =>
+                layer.ForEach((Neuron neuron) =>
                 {
                     coefficients[h++] = neuron.Bias;
                     neuron.ForEach(connection => coefficients[h++] = connection.Weight);

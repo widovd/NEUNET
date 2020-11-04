@@ -13,35 +13,133 @@ using static System.Math;
 namespace Neulib.Neurons
 {
     /// <summary>
-    /// Represents the input neuron for use in the first layer of a neural network.
+    /// Represents a linear neuron for use in a neural network.
+    /// The activation function simply returns the sum of the weighted inputs.
+    /// Methods CalculateActivation and ActivationDerivative must be overwritten in a new class for different behaviour.
     /// </summary>
-    public class Neuron : BaseObject
+    public class Neuron : BaseObject, IList<Connection>
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
 
         /// <summary>
-        /// The activation value.
+        /// The connections with the neurons in the previous layer.
+        /// </summary>
+        private List<Connection> Connections { get; set; } = new List<Connection>();
+
+        /// <summary>
+        /// The number of connections of this neuron with the previous layer.
+        /// </summary>
+        public int Count { get => Connections.Count; }
+
+        public bool IsReadOnly => ((ICollection<Connection>)Connections).IsReadOnly;
+
+        /// <summary>
+        /// Returns the connection with the neuron in the previous layer.
+        /// </summary>
+        /// <param name="index">The index of the neuron in the previous layer.</param>
+        /// <returns>The connection with the neuron in the previous layer.</returns>
+        public Connection this[int index] { get => Connections[index]; set => Connections[index] = value; }
+
+        /// <summary>
+        /// The bias value of this neuron.
+        /// </summary>
+        public float Bias { get; set; } = 0f;
+
+        /// <summary>
+        /// The weighted input value of this neuron.
+        /// </summary>
+        public float Sum { get; private set; } = 0f;
+
+        /// <summary>
+        /// The activation value of this neuron calculated with the activation function and Sum.
         /// </summary>
         public float Activation { get; set; } = 0f;
+
+        /// <summary>
+        /// The delta error value of this neuron.
+        /// </summary>
+        public float Delta { get; set; } = 0f;
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
         /// <summary>
-        /// Creates a new input neuron.
+        /// Creates a new neuron.
         /// </summary>
         public Neuron()
         {
         }
 
         /// <summary>
-        /// Creates a new input neuron from the stream.
+        /// Creates a new neuron from the stream.
         /// </summary>
         public Neuron(Stream stream, BinarySerializer serializer) : base(stream, serializer)
         {
+            Bias = stream.ReadSingle();
+            Sum = stream.ReadSingle();
             Activation = stream.ReadSingle();
+            Delta = stream.ReadSingle();
+            int count = stream.ReadInt();
+            for (int i = 0; i < count; i++)
+            {
+                Connections.Add((Connection)stream.ReadValue(serializer));
+            }
+        }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region IList
+
+        public int IndexOf(Connection item)
+        {
+            return Connections.IndexOf(item);
+        }
+
+        public void Insert(int index, Connection item)
+        {
+            Connections.Insert(index, item);
+        }
+
+        public void Add(Connection item)
+        {
+            Connections.Add(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            Connections.RemoveAt(index);
+        }
+
+        public bool Remove(Connection item)
+        {
+            return Connections.Remove(item);
+        }
+
+        public void Clear()
+        {
+            Connections.Clear();
+        }
+
+        public bool Contains(Connection item)
+        {
+            return Connections.Contains(item);
+        }
+
+        public void CopyTo(Connection[] array, int arrayIndex)
+        {
+            Connections.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<Connection> GetEnumerator()
+        {
+            return Connections.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Connections.GetEnumerator();
         }
 
         #endregion
@@ -50,7 +148,7 @@ namespace Neulib.Neurons
 
         public override string ToString()
         {
-            return $"activation = {Activation:F3}";
+            return $"bias = {Bias:F3}, sum = {Sum:F3}, activation = {Activation:F3}, delta = {Delta:F3}";
         }
 
         #endregion
@@ -60,49 +158,131 @@ namespace Neulib.Neurons
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            Neuron value = o as Neuron ?? throw new InvalidTypeException(o, nameof(Neuron), 154123);
+            Neuron value = o as Neuron ?? throw new InvalidTypeException(o, nameof(Neuron), 166408);
+            Bias = value.Bias;
+            Sum = value.Sum;
             Activation = value.Activation;
+            Delta = value.Delta;
+            int count = value.Connections.Count;
+            Connections.Clear();
+            for (int i = 0; i < count; i++)
+            {
+                Connections.Add((Connection)value.Connections[i].Clone());
+            }
         }
 
         public override void WriteToStream(Stream stream, BinarySerializer serializer)
         {
             base.WriteToStream(stream, serializer);
+            stream.WriteSingle(Bias);
+            stream.WriteSingle(Sum);
             stream.WriteSingle(Activation);
+            stream.WriteSingle(Delta);
+            int count = Connections.Count;
+            stream.WriteInt(count);
+            for (int i = 0; i < count; i++)
+            {
+                stream.WriteValue(Connections[i], serializer);
+            }
         }
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region InputNeuron
+        #region Neuron
 
-        public virtual void Randomize(Random random, float biasMagnitude, float weightMagnitude)
+        /// <summary>
+        /// Calculates Activation from Sum. Sum must have been calculated in FeedForward.
+        /// </summary>
+        protected virtual void CalculateActivation()
         {
-            throw new InvalidCallException(nameof(Randomize), 937762);
+            Activation = Sum;
+        }
+
+        /// <summary>
+        /// Calculates the derivative of the activation function with respect to Sum.
+        /// </summary>
+        /// <returns>The derivative of the activation function at Activation.</returns>
+        protected virtual float ActivationDerivative()
+        {
+            return 1f;
+        }
+
+        public void ForEach(Action<Connection> action)
+        {
+            int count = Connections.Count;
+            for (int i = 0; i < count; i++)
+            {
+                action(Connections[i]);
+            }
+        }
+
+        public void ForEach(Action<Connection, int> action)
+        {
+            int count = Connections.Count;
+            for (int i = 0; i < count; i++)
+            {
+                action(Connections[i], i);
+            }
+        }
+
+        public void Randomize(Random random, float biasMagnitude, float weightMagnitude)
+        {
+            (double b, _) = random.BoxMuller(biasMagnitude);
+            Bias = (float)b;
+            int count = Connections.Count;
+            double sigma = weightMagnitude / Sqrt(count);
+            for (int i = 0; i < count; i++)
+            {
+                (double w, _) = random.BoxMuller(sigma);
+                Connections[i].Weight = (float)w;
+            }
         }
 
         /// <summary> 
-        /// Calculates the activation value of this neuron from the previous layer.
+        /// Calculates the activation value of this neuron from the neurons in the previous layer, the bias, and the activation function.
         /// </summary>
-        public virtual void FeedForward(Layer prevLayer)
+        public void FeedForward(Layer prevLayer)
         {
-            throw new InvalidCallException(nameof(FeedForward), 569595);
+            int count = Connections.Count;
+            float sum = Bias;
+            for (int k = 0; k < count; k++)
+                sum += Connections[k].Weight * prevLayer[k].Activation;
+            Sum = sum;
+            CalculateActivation();
         }
 
-        /// <summary> 
-        /// Calculates the error or delta value of this neuron from the next layer.
-        /// </summary>
-        public virtual void FeedBackward(Layer nextLayer, int j)
+        public void FeedBackward(Layer nextLayer, int j)
         {
-            throw new InvalidCallException(nameof(FeedBackward), 806703);
+            float d = 0f;
+            int nextCount = nextLayer.Count;
+            for (int k = 0; k < nextCount; k++)
+            {
+                Neuron nextNeuron = nextLayer[k];
+                d += nextNeuron[j].Weight * nextNeuron.Delta; // wji
+            }
+            Delta = d * ActivationDerivative(); 
         }
+
 
         /// <summary>
         /// Calculates Delta of this neuron which must be in the last layer.
         /// </summary>
         /// <param name="y">The required activation value.</param>
         /// <param name="costFunction">Defines the cost function.</param>
-        public virtual void CalculateDelta(float y, CostFunctionEnum costFunction)
+        /// <remarks>
+        /// See chapter 2 BP1, chapter 3 eq 75
+        /// Assumes a sigmoid activation function
+        /// </remarks>
+        public void CalculateDelta(float y, CostFunctionEnum costFunction)
         {
-            throw new InvalidCallException(nameof(CalculateDelta), 827839);
+            float a = Activation;
+            float d = costFunction switch
+            {
+                CostFunctionEnum.CrossEntropy => (a - y) / (a * (1 - a)),
+                CostFunctionEnum.Quadratic => (a - y),
+                _ => throw new InvalidCaseException(nameof(costFunction), costFunction, 150413),
+            };
+            Delta = d * ActivationDerivative();
         }
 
         #endregion
