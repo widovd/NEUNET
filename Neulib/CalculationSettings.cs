@@ -21,16 +21,16 @@ namespace Neulib
         [
             RandomizeCategory,
             DisplayName("Bias magnitude"),
-            Description("The neuron bias values are initialized as a random number with this magnitude."),
+            Description("The standard deviation of the gaussian distribution used to generate the initial bias values."),
         ]
-        public float BiasMagnitude { get; set; } = 0.1f;
+        public float BiasMagnitude { get; set; } = 1f;
 
         [
             RandomizeCategory,
             DisplayName("Weight magnitude"),
-            Description("The connection weight values are initialized as a random number with this magnitude."),
+            Description("Sqrt(connection_count) standard deviations of the gaussian distribution used to generate the initial weight values."),
         ]
-        public float WeightMagnitude { get; set; } = 0.1f;
+        public float WeightMagnitude { get; set; } = 1f;
 
 
         [

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Neulib.Exceptions;
+using Neulib.Extensions;
 using Neulib.Serializers;
 using static System.Math;
 
@@ -226,10 +227,15 @@ namespace Neulib.Neurons
 
         public void Randomize(Random random, float biasMagnitude, float weightMagnitude)
         {
-            Bias = (float)(2d * random.NextDouble() - 1d) * biasMagnitude;
+            (double b, _) = random.BoxMuller(biasMagnitude);
+            Bias = (float)b;
             int count = Connections.Count;
+            double sigma = weightMagnitude / Sqrt(count);
             for (int i = 0; i < count; i++)
-                Connections[i].Weight = (float)(2d * random.NextDouble() - 1d) * weightMagnitude;
+            {
+                (double w, _) = random.BoxMuller(sigma);
+                Connections[i].Weight = (float)w;
+            }
         }
 
         /// <summary> 
