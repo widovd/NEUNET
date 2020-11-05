@@ -223,6 +223,8 @@ namespace Neulib.Neurons
             Single1D coefficients = new Single1D(nCoefficients);
             // The derivatives of the cost with respect to the biasses and weights:
             Single1D derivatives = new Single1D(nCoefficients);
+            Single1D velocities = new Single1D(nCoefficients);
+            velocities.Clear();
             MeasurementList measurements = new MeasurementList(nSamples, OutputCount);
             GetCoefficients(coefficients);
             Minimization minimization = new Minimization()
@@ -231,14 +233,15 @@ namespace Neulib.Neurons
                 Eps = arguments.settings.Epsilon,
                 Tol = arguments.settings.Tolerance,
             };
-            float finalCost = minimization.SteepestDescent(coefficients, derivatives, (iter) =>
-            {
-                SetCoefficients(coefficients);
-                arguments.reporter?.ReportCoefficients(coefficients);
-                float cost = GetCostAndDerivatives(samples, derivatives, measurements, arguments);
-                arguments.reporter?.ReportCostAndDerivatives(cost, derivatives, measurements);
-                return cost;
-            }, arguments.settings.LearningRate);
+            float finalCost = minimization.MomentumBasedGradientDescent(coefficients, derivatives, velocities,
+                (iter) =>
+                {
+                    SetCoefficients(coefficients);
+                    arguments.reporter?.ReportCoefficients(coefficients);
+                    float cost = GetCostAndDerivatives(samples, derivatives, measurements, arguments);
+                    arguments.reporter?.ReportCostAndDerivatives(cost, derivatives, measurements);
+                    return cost;
+                }, arguments.settings.LearningRate, arguments.settings.MomentumCoefficient);
             arguments.reporter?.WriteEnd($"The network has learned in {timer.Elapsed.TotalSeconds} s, and the final cost value is {finalCost:F4}.");
         }
 

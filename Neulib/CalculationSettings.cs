@@ -80,6 +80,14 @@ namespace Neulib
 
         [
             LearnCategory,
+            DisplayName("Momentum coefficient"),
+            Description("Amount of friction in the gradient descent is 1 - value. Use 0 for no friction"),
+        ]
+        public float MomentumCoefficient { get; set; } = 0.2f;
+
+
+        [
+            LearnCategory,
             DisplayName("Lambda"),
             Description("The rate at which weight regularization occurs."),
         ]
@@ -116,6 +124,7 @@ namespace Neulib
             CostFunction = value.CostFunction;
             TrainingSampleCount = value.TrainingSampleCount;
             LearningRate = value.LearningRate;
+            MomentumCoefficient = value.MomentumCoefficient;
             Lambda = value.Lambda;
             TestSampleCount = value.TestSampleCount;
         }
@@ -133,6 +142,7 @@ namespace Neulib
         private const string _CostFunctionId = "CostFunction";
         private const string _LearningSampleCountId = "LearningSampleCount";
         private const string _LearningRateId = "LearningRate";
+        private const string _MomentumCoefficientId = "MomentumCoefficient";
         private const string _LambdaId = "Lambda";
         private const string _VerificationSampleCountId = "VerificationSampleCount";
 
@@ -146,6 +156,7 @@ namespace Neulib
             CostFunction = rootElement.ReadEnum(_CostFunctionId, CostFunction);
             TrainingSampleCount = rootElement.ReadInt(_LearningSampleCountId, TrainingSampleCount);
             LearningRate = rootElement.ReadSingle(_LearningRateId, LearningRate);
+            MomentumCoefficient = rootElement.ReadSingle(_MomentumCoefficientId, MomentumCoefficient);
             Lambda = rootElement.ReadSingle(_LambdaId, Lambda);
             TestSampleCount = rootElement.ReadInt(_VerificationSampleCountId, TestSampleCount);
         }
@@ -160,6 +171,7 @@ namespace Neulib
             rootElement.WriteEnum(_CostFunctionId, CostFunction);
             rootElement.WriteInt(_LearningSampleCountId, TrainingSampleCount);
             rootElement.WriteSingle(_LearningRateId, LearningRate);
+            rootElement.WriteSingle(_MomentumCoefficientId, MomentumCoefficient);
             rootElement.WriteSingle(_LambdaId, Lambda);
             rootElement.WriteInt(_VerificationSampleCountId, TestSampleCount);
         }

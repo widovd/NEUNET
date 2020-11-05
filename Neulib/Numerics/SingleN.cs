@@ -236,6 +236,13 @@ namespace Neulib.Numerics
             }
         }
 
+        public void Clear()
+        {
+            int count = Count;
+            for (int i = 0; i < count; i++)
+                _values[i] = 0f;
+        }
+
         public void Assign(Single1D value)
         {
             int count = Count;

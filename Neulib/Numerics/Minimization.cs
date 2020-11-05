@@ -43,32 +43,53 @@ namespace Neulib.Numerics
         // ----------------------------------------------------------------------------------------
         #region Minimization
 
-        public static (float, float, float) DBrentPlus(float x1, float x2, float tol, Func<float, (float, float)> func)
+
+        public float GradientDescent(Single1D p, Single1D df, Func<int, float> func, float eta)
         {
-            Mnbrak(x1, x2, out float ax, out float bx, out float cx, out float fa, out float fb, out float fc,
-                (x0) =>
+            int n = p.Count;
+            if (n != df.Count) throw new UnequalValueException(n, df.Count, 750074);
+            float f2 = float.NaN;
+            for (int iter = 0; iter < MaxIter; iter++)
+            {
+                float f1 = f2;
+                f2 = func(iter);
+                if (EndCriteriumMet(f1, f2)) break;
+                for (int j = 0; j < n; j++) p[j] -= eta * df[j];
+            }
+            return f2;
+        }
+
+
+        public float MomentumBasedGradientDescent(Single1D p, Single1D df, Single1D v, Func<int, float> func, float eta, float mu)
+        {
+            int n = p.Count;
+            if (n != df.Count) throw new UnequalValueException(n, df.Count, 750074);
+            float f2 = float.NaN;
+            for (int iter = 0; iter < MaxIter; iter++)
+            {
+                float f1 = f2;
+                v = mu * v - eta * df;
+                f2 = func(iter);
+                if (EndCriteriumMet(f1, f2)) break;
+                for (int j = 0; j < n; j++)
                 {
-                    (float fx0, float dx0) = func(x0); 
-                    return fx0;
-                });
-            return DBrent(ax, bx, cx, tol, func);
+                    float temp = mu * v[j] - eta * df[j];
+                    v[j] = temp;
+                    p[j] += temp;
+                }
+            }
+            return f2;
         }
 
-        public bool EndCriteriumMet(float f1, float f2)
-        {
-            return 2f * Abs(f2 - f1) <= Tol * (Abs(f1) + Abs(f2) + Eps);
-        }
-
-        public void ConjugateGradient(Single1D p2, Func<Single1D, Single1D, float> func, float alpha)
+        public float ConjugateGradient(Single1D p2, Single1D df2, Func<int, float> func, float alpha)
         // Frprmn
         {
             int n = p2.Count;
             float[] p1 = new float[n];
             float[] df1 = new float[n];
-            Single1D df2 = new Single1D(n);
             float[] g = new float[n];
             float[] h = new float[n];
-            float f2 = func(p2, df2);
+            float f2 = func(0);
             Console.WriteLine($"{0:000}: f({ArrayToString(p2)}) = {f2:E3}");
             for (int j = 0; j < n; j++)
             {
@@ -82,15 +103,15 @@ namespace Neulib.Numerics
                 float xmin, dfmin;
                 (xmin, f2, dfmin) = DBrentPlus(0f, alpha, DBrentTol, x1 =>
                 {
-                    for (int j = 0; j < n; j++) p2[j] = p1[j] - x1 * df1[j]; 
-                    float fx = func(p2, df2);
+                    for (int j = 0; j < n; j++) p2[j] = p1[j] - x1 * df1[j];
+                    float fx = func(iter);
                     Console.WriteLine($"   x1 = {x1:F3}: f({ArrayToString(p2)}) = {fx:E3}");
                     float dfx = 0;
                     for (int j = 0; j < n; j++) dfx += df2[j] * df1[j];
                     return (fx, dfx);
                 });
                 Console.WriteLine($"{iter + 1:000}: f({ArrayToString(p2)}) = {f2:E3}");
-                if (EndCriteriumMet(f1, f2)) return;
+                if (EndCriteriumMet(f1, f2)) break;
 
                 float gg = 0f, dgg = 0f;
                 for (int j = 0; j < n; j++)
@@ -108,7 +129,7 @@ namespace Neulib.Numerics
                             throw new InvalidCaseException(nameof(MinimizationAlgorithm), MinimizationAlgorithm, 374911);
                     }
                 }
-                if (gg == 0f) return;
+                if (gg == 0f) break;
                 float gam = dgg / gg;
                 for (int j = 0; j < n; j++)
                 {
@@ -117,6 +138,7 @@ namespace Neulib.Numerics
                     df1[j] = h[j];
                 }
             }
+            return f2;
         }
 
         public static string ArrayToString(Single1D x)
@@ -131,24 +153,26 @@ namespace Neulib.Numerics
             return builder.ToString();
         }
 
-        public float SteepestDescent(Single1D p, Single1D df, Func<int, float> func, float alpha)
-        {
-            int n = p.Count;
-            if (n != df.Count) throw new UnequalValueException(n, df.Count, 750074);
-            float f2 = float.NaN;
-            for (int iter = 0; iter < MaxIter; iter++)
-            {
-                float f1 = f2;
-                f2 = func(iter);
-                if (EndCriteriumMet(f1, f2)) break;
-                for (int j = 0; j < n; j++) p[j] -= alpha * df[j];
-            }
-            return f2;
-        }
-
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region Minimization1D
+        #region private methods
+
+        private static (float, float, float) DBrentPlus(float x1, float x2, float tol, Func<float, (float, float)> func)
+        {
+            Mnbrak(x1, x2, out float ax, out float bx, out float cx, out float fa, out float fb, out float fc,
+                (x0) =>
+                {
+                    (float fx0, float dx0) = func(x0);
+                    return fx0;
+                });
+            return DBrent(ax, bx, cx, tol, func);
+        }
+
+        private bool EndCriteriumMet(float f1, float f2)
+        {
+            return 2f * Abs(f2 - f1) <= Tol * (Abs(f1) + Abs(f2) + Eps);
+        }
+
 
         private static float Sign2(float a, float b)
         {
@@ -454,6 +478,9 @@ namespace Neulib.Numerics
 
             return (x, fx, dfx);
         }
+
+
+
 
         #endregion
     }

@@ -95,7 +95,7 @@ namespace Neunet.Forms
             Single1D p = new Single1D(n);
             Single1D df = new Single1D(n);
             for (int i = 0; i < n; i++) p[i] = _point[i];
-            minimization.SteepestDescent(p, df, (iter) =>
+            minimization.GradientDescent(p, df, (iter) =>
             {
                 return multifunc.Calculate(p, df);
             }, alpha);
@@ -123,7 +123,8 @@ namespace Neunet.Forms
             int n = multifunc.N;
             Single1D p = new Single1D(n);
             for (int i = 0; i < n; i++) p[i] = _point[i];
-            minimization.ConjugateGradient(p, multifunc.Calculate, alpha);
+            Single1D df = new Single1D(n);
+            float cost = minimization.ConjugateGradient(p, df, (iter) => multifunc.Calculate(p, df), alpha);
             Console.WriteLine();
         }
 
