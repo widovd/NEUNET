@@ -51,6 +51,7 @@
     <Compile Include="BaseObject.cs" />
     <Compile Include="CalculationArguments.cs" />
     <Compile Include="CalculationSettings.cs" />
+    <Compile Include="Exceptions\InvalidCallException.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Neurons\MeasurementList.cs" />
     <Compile Include="Neurons\Sigmoid.cs" />

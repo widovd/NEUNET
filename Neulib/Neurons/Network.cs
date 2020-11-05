@@ -120,6 +120,15 @@ namespace Neulib.Neurons
             return Layers.GetEnumerator();
         }
 
+        public void ForEach(Action<Layer> action, bool skipFirst)
+        {
+            int count = Layers.Count;
+            for (int i = skipFirst ? 1 : 0; i < count; i++)
+            {
+                action(Layers[i]);
+            }
+        }
+
         #endregion
         // ----------------------------------------------------------------------------------------
         #region BaseObject
@@ -149,9 +158,10 @@ namespace Neulib.Neurons
 
         public void Randomize(Random random, float biasMagnitude, float weightMagnitude)
         {
-            int count = Layers.Count;
-            for (int i = 0; i < count; i++)
-                Layers[i].Randomize(random, biasMagnitude, weightMagnitude);
+            ForEach(layer =>
+            {
+                layer.Randomize(random, biasMagnitude, weightMagnitude);
+            }, true);
         }
 
         public void FeedForward(Single1D xs, Single1D ys)
@@ -177,6 +187,7 @@ namespace Neulib.Neurons
             CalculationArguments arguments)
         {
             CostFunctionEnum costFunction = arguments.settings.CostFunction;
+            float lambda = arguments.settings.Lambda;
             int nSamples = samples.Count;
             int nCoeffs = derivatives.Count;
             float cost = 0f;
@@ -188,8 +199,9 @@ namespace Neulib.Neurons
                 Single1D measurement = measurements[iSample];
                 FeedForward(sample.Inputs, measurement);
                 cost += CostFunction(measurement, sample.Requirements, costFunction);
+                cost += 0.5f * lambda * MeanWeightSqr(out int nWeight); // regularization
                 FeedBackward(sample.Requirements, costFunction);
-                AddDerivatives(derivatives);
+                AddDerivatives(derivatives, lambda / nWeight);
                 arguments.reporter?.ReportProgress(iSample, nSamples);
             }
             arguments.reporter?.ReportProgress(0, nSamples);
@@ -228,20 +240,6 @@ namespace Neulib.Neurons
                 return cost;
             }, arguments.settings.LearningRate);
             arguments.reporter?.WriteEnd($"The network has learned in {timer.Elapsed.TotalSeconds} s, and the final cost value is {finalCost:F4}.");
-        }
-
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Network
-
-        public void ForEach(Action<Layer> action, bool skipFirst)
-        {
-            int count = Layers.Count;
-            for (int i = skipFirst ? 1 : 0; i < count; i++)
-            {
-                action(Layers[i]);
-            }
         }
 
         /// <summary>
@@ -359,7 +357,7 @@ namespace Neulib.Neurons
         /// Fills a float array with the biasses and weights of all neurons in this network.
         /// </summary>
         /// <param name="derivatives">The float array which must have been created.</param>
-        private void AddDerivatives(Single1D derivatives)
+        private void AddDerivatives(Single1D derivatives, float lambdaDivN)
         {
             int h = 0;
             Layer layer = null;
@@ -375,12 +373,22 @@ namespace Neulib.Neurons
                     derivatives[h++] += delta; // dC/dbj
                     neuron.ForEach((connection, k) =>
                     {
-                        derivatives[h++] += prevLayer[k].Activation * delta; // dC/dwjk
+                        // dC/dwjk + L2 regularization:
+                        derivatives[h++] += prevLayer[k].Activation * delta + lambdaDivN * connection.Weight;
                     });
                 });
             }
         }
 
+        private float MeanWeightSqr(out int n)
+        {
+            float sum = 0f;
+            n = 0;
+            int count = Layers.Count;
+            for (int i = 1; i < count; i++)
+                sum += Layers[i].SumWeightSqr(ref n);
+            return sum / n;
+        }
 
         #endregion
     }

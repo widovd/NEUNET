@@ -220,6 +220,17 @@ namespace Neulib.Neurons
             ParallelFor(0, count, j => Neurons[j].FeedBackward(nextLayer, j));
         }
 
+        public float SumWeightSqr(ref int n)
+        {
+            float sum = 0f;
+            int count = Neurons.Count;
+            for (int i = 0; i < count; i++)
+            {
+                sum  += Neurons[i].SumWeightSqr(ref n);
+            }
+            return sum;
+        }
+
         #endregion
     }
 }

@@ -142,6 +142,24 @@ namespace Neulib.Neurons
             return Connections.GetEnumerator();
         }
 
+        public void ForEach(Action<Connection> action)
+        {
+            int count = Connections.Count;
+            for (int i = 0; i < count; i++)
+            {
+                action(Connections[i]);
+            }
+        }
+
+        public void ForEach(Action<Connection, int> action)
+        {
+            int count = Connections.Count;
+            for (int i = 0; i < count; i++)
+            {
+                action(Connections[i], i);
+            }
+        }
+
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Object
@@ -207,24 +225,6 @@ namespace Neulib.Neurons
             return 1f;
         }
 
-        public void ForEach(Action<Connection> action)
-        {
-            int count = Connections.Count;
-            for (int i = 0; i < count; i++)
-            {
-                action(Connections[i]);
-            }
-        }
-
-        public void ForEach(Action<Connection, int> action)
-        {
-            int count = Connections.Count;
-            for (int i = 0; i < count; i++)
-            {
-                action(Connections[i], i);
-            }
-        }
-
         public void Randomize(Random random, float biasMagnitude, float weightMagnitude)
         {
             (double b, _) = random.BoxMuller(biasMagnitude);
@@ -239,7 +239,7 @@ namespace Neulib.Neurons
         }
 
         /// <summary> 
-        /// Calculates the activation value of this neuron from the neurons in the previous layer, the bias, and the activation function.
+        /// Calculates the activation value of this neuron from the neurons in the previous layer.
         /// </summary>
         public void FeedForward(Layer prevLayer)
         {
@@ -283,6 +283,18 @@ namespace Neulib.Neurons
                 _ => throw new InvalidCaseException(nameof(costFunction), costFunction, 150413),
             };
             Delta = d * ActivationDerivative();
+        }
+
+        public float SumWeightSqr(ref int n)
+        {
+            float sum = 0f;
+            int count = Connections.Count;
+            for (int i = 0; i < count; i++)
+            {
+                sum += Connections[i].Weight.Sqr();
+                n++;
+            }
+            return sum;
         }
 
         #endregion

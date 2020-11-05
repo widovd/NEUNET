@@ -79,6 +79,13 @@ namespace Neulib
         public float LearningRate { get; set; } = 1f;
 
         [
+            LearnCategory,
+            DisplayName("Lambda"),
+            Description("The rate at which weight regularization occurs."),
+        ]
+        public float Lambda { get; set; } = 0.1f;
+
+        [
             TestCategory,
             DisplayName("Test sample count"),
             Description("The number of unique random samples for testing."),
@@ -109,6 +116,7 @@ namespace Neulib
             CostFunction = value.CostFunction;
             TrainingSampleCount = value.TrainingSampleCount;
             LearningRate = value.LearningRate;
+            Lambda = value.Lambda;
             TestSampleCount = value.TestSampleCount;
         }
 
@@ -125,6 +133,7 @@ namespace Neulib
         private const string _CostFunctionId = "CostFunction";
         private const string _LearningSampleCountId = "LearningSampleCount";
         private const string _LearningRateId = "LearningRate";
+        private const string _LambdaId = "Lambda";
         private const string _VerificationSampleCountId = "VerificationSampleCount";
 
         public void LoadFromSettings(XmlElement rootElement)
@@ -137,6 +146,7 @@ namespace Neulib
             CostFunction = rootElement.ReadEnum(_CostFunctionId, CostFunction);
             TrainingSampleCount = rootElement.ReadInt(_LearningSampleCountId, TrainingSampleCount);
             LearningRate = rootElement.ReadSingle(_LearningRateId, LearningRate);
+            Lambda = rootElement.ReadSingle(_LambdaId, Lambda);
             TestSampleCount = rootElement.ReadInt(_VerificationSampleCountId, TestSampleCount);
         }
 
@@ -150,6 +160,7 @@ namespace Neulib
             rootElement.WriteEnum(_CostFunctionId, CostFunction);
             rootElement.WriteInt(_LearningSampleCountId, TrainingSampleCount);
             rootElement.WriteSingle(_LearningRateId, LearningRate);
+            rootElement.WriteSingle(_LambdaId, Lambda);
             rootElement.WriteInt(_VerificationSampleCountId, TestSampleCount);
         }
 

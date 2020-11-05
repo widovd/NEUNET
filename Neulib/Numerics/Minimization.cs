@@ -140,8 +140,6 @@ namespace Neulib.Numerics
             {
                 float f1 = f2;
                 f2 = func(iter);
-                Console.WriteLine($"{iter:000}: f = {f2:E3}");
-                //Console.WriteLine($"{iter:000}: f({ArrayToString(p)}) = {f2:E3}");
                 if (EndCriteriumMet(f1, f2)) break;
                 for (int j = 0; j < n; j++) p[j] -= alpha * df[j];
             }

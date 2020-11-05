@@ -708,8 +708,7 @@ namespace Neunet.Forms
 
         private async Task TestAsync()
         {
-            int nCoefficients = Network.CoefficientCount();
-            Single1D derivatives = new Single1D(nCoefficients);
+            Single1D derivatives = Network.CreateCoefficients();
             int ny = Network.OutputCount;
             SampleList samples = GetRandomSamples(
                 TestSetImages, TestSetLabels,
@@ -913,6 +912,7 @@ namespace Neunet.Forms
             else if (reportData is SamplesReportData samplesData)
             {
                 TrainingSamples = samplesData.Samples;
+                Measurements = null;
             }
             else if (reportData is CoefficientsReportData coefficientsData)
             {
