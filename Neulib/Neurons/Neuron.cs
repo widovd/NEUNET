@@ -246,21 +246,14 @@ namespace Neulib.Neurons
             int count = Connections.Count;
             float sum = Bias;
             for (int k = 0; k < count; k++)
-                sum += Connections[k].Weight * prevLayer[k].Activation;
+                sum += Connections[k].Weight * prevLayer.GetActivationLastLayer(k); // prevLayer[k].Activation;
             Sum = sum;
             CalculateActivation();
         }
 
         public void FeedBackward(Layer nextLayer, int j)
         {
-            float d = 0f;
-            int nextCount = nextLayer.Count;
-            for (int k = 0; k < nextCount; k++)
-            {
-                Neuron nextNeuron = nextLayer[k];
-                d += nextNeuron[j].Weight * nextNeuron.Delta; // wji
-            }
-            Delta = d * ActivationDerivative(); 
+            Delta = nextLayer.SumWeightDeltaFirstLayer(j) * ActivationDerivative(); 
         }
 
 

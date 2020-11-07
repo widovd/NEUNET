@@ -42,12 +42,12 @@ namespace Neunet.Forms
             layersListBox.Items.Clear();
             for (int i = 0; i < count; i++)
             {
-                Layer layer = Network[i];
+                SingleLayer layer = Network[i];
                 layersListBox.Items.Add(layer);
             }
         }
 
-        private Layer Layer { get; set; } = new Layer();
+        private SingleLayer Layer { get; set; } = new SingleLayer();
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ namespace Neunet.Forms
 
         private void Delete(int index)
         {
-            Layer = (Layer)layersListBox.Items[index];
+            Layer = (SingleLayer)layersListBox.Items[index];
             Network.Remove(Layer);
             layersListBox.Items.Remove(Layer);
         }
@@ -103,8 +103,8 @@ namespace Neunet.Forms
 
         private void Edit(int index)
         {
-            Layer layer = (Layer)layersListBox.Items[index];
-            using (LayerDialog dialog = new LayerDialog() { Layer = (Layer)layer.Clone() })
+            SingleLayer layer = (SingleLayer)layersListBox.Items[index];
+            using (LayerDialog dialog = new LayerDialog() { Layer = (SingleLayer)layer.Clone() })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {

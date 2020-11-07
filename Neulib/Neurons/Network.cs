@@ -11,31 +11,39 @@ using static System.Math;
 
 namespace Neulib.Neurons
 {
-    public class Network : BaseObject, IList<Layer>
+    public class Network : BaseObject, IList<SingleLayer>
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        private List<Layer> Layers { get; set; } = new List<Layer>();
+        private List<SingleLayer> Layers { get; set; } = new List<SingleLayer>();
 
         public int Count => Layers.Count;
 
-        public bool IsReadOnly => ((ICollection<Layer>)Layers).IsReadOnly;
+        public bool IsReadOnly => ((ICollection<SingleLayer>)Layers).IsReadOnly;
 
-        public Layer this[int index]
+        public SingleLayer this[int index]
         {
             get { return Layers[index]; }
             set
             {
                 Layers[index] = value;
-                if (index > 0) value.SetConnections(Layers[index - 1].Count);
-                if (index + 1 < Count) Layers[index + 1].SetConnections(value.Count);
+                if (index > 0)
+                {
+                    SingleLayer prevLayer = Layers[index - 1];
+                    prevLayer.Next = value;
+                }
+                if (index + 1 < Count)
+                {
+                    SingleLayer nextLayer = Layers[index + 1];
+                    nextLayer.Previous = value;
+                }
             }
         }
 
-        public Layer First { get => Layers.Count > 0 ? Layers[0] : null; }
+        public SingleLayer First { get => Layers.Count > 0 ? Layers[0] : null; }
 
-        public Layer Last { get => Layers.Count > 0 ? Layers[Layers.Count - 1] : null; }
+        public SingleLayer Last { get => Layers.Count > 0 ? Layers[Layers.Count - 1] : null; }
 
         public int InputCount { get => First.Count; }
 
@@ -54,7 +62,7 @@ namespace Neulib.Neurons
             int count = stream.ReadInt();
             for (int i = 0; i < count; i++)
             {
-                Layers.Add((Layer)stream.ReadValue(serializer));
+                Layers.Add((SingleLayer)stream.ReadValue(serializer));
             }
         }
 
@@ -62,32 +70,46 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region IList
 
-        public int IndexOf(Layer layer)
+        public int IndexOf(SingleLayer layer)
         {
             return Layers.IndexOf(layer);
         }
 
-        public void Insert(int index, Layer layer)
+        public void Insert(int index, SingleLayer layer)
         {
             Layers.Insert(index, layer);
-            if (index > 0) layer.SetConnections(Layers[index - 1].Count);
-            if (index + 1 < Count) Layers[index + 1].SetConnections(layer.Count);
+            if (index > 0)
+            {
+                SingleLayer prevLayer = Layers[index - 1];
+                prevLayer.Next = layer;
+            }
+            if (index + 1 < Count)
+            {
+                SingleLayer nextLayer = Layers[index + 1];
+                nextLayer.Previous = layer;
+            }
         }
 
-        public void Add(Layer layer)
-        // Initializes the connections
+        public void Add(SingleLayer layer)
         {
             Layers.Add(layer);
-            if (Count > 1) layer.SetConnections(Layers[Count - 2].Count);
+            if (Count > 1)
+            {
+                SingleLayer prevLayer = Layers[Count - 2];
+                prevLayer.Next = layer;
+            }
         }
 
         public void RemoveAt(int index)
+        // HIER VERDER
         {
+            SingleLayer oldLayer = Layers[index];
             Layers.RemoveAt(index);
-            if (index > 0) Layers[index].SetConnections(Layers[index - 1].Count);
+            if (oldLayer.Previous != null) oldLayer.Previous.Next = oldLayer.Next;
+            if (oldLayer.Next != null) oldLayer.Next.Previous = oldLayer.Previous;
         }
 
-        public bool Remove(Layer layer)
+        public bool Remove(SingleLayer layer)
         {
             int index = Layers.IndexOf(layer);
             if (index < 0) return false;
@@ -100,17 +122,17 @@ namespace Neulib.Neurons
             Layers.Clear();
         }
 
-        public bool Contains(Layer item)
+        public bool Contains(SingleLayer item)
         {
             return Layers.Contains(item);
         }
 
-        public void CopyTo(Layer[] array, int arrayIndex)
+        public void CopyTo(SingleLayer[] array, int arrayIndex)
         {
             Layers.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<Layer> GetEnumerator()
+        public IEnumerator<SingleLayer> GetEnumerator()
         {
             return Layers.GetEnumerator();
         }
@@ -120,7 +142,7 @@ namespace Neulib.Neurons
             return Layers.GetEnumerator();
         }
 
-        public void ForEach(Action<Layer> action, bool skipFirst)
+        public void ForEach(Action<SingleLayer> action, bool skipFirst)
         {
             int count = Layers.Count;
             for (int i = skipFirst ? 1 : 0; i < count; i++)
@@ -140,7 +162,7 @@ namespace Neulib.Neurons
             Layers.Clear();
             int count = value.Layers.Count;
             for (int i = 0; i < count; i++)
-                Layers.Add((Layer)value.Layers[i].Clone());
+                Layers.Add((SingleLayer)value.Layers[i].Clone());
         }
 
         public override void WriteToStream(Stream stream, BinarySerializer serializer)
@@ -169,17 +191,17 @@ namespace Neulib.Neurons
             if (xs == null) throw new VarNullException(nameof(xs), 850330);
 
             int count = Layers.Count;
-            Layer layer = null;
+            SingleLayer layer = null;
             for (int i = 0; i < count; i++)
             {
-                Layer prevLayer = layer;
+                SingleLayer prevLayer = layer;
                 layer = Layers[i];
                 if (prevLayer == null)
-                    layer.SetActivations(xs);
+                    layer.SetActivationsFirstLayer(xs);
                 else
-                    layer.Calculate(prevLayer);
+                    layer.FeedForward(); // FeedForward(prevLayer)
             }
-            layer.GetActivations(ys);
+            layer.GetActivationsLastLayer(ys);
         }
 
         public float GetCostAndDerivatives(
@@ -344,15 +366,15 @@ namespace Neulib.Neurons
         {
             if (ys == null) throw new VarNullException(nameof(ys), 411263);
             int count = Layers.Count;
-            Layer layer = null;
+            SingleLayer layer = null;
             for (int i = count - 1; i >= 0; i--)
             {
-                Layer nextLayer = layer;
+                SingleLayer nextLayer = layer;
                 layer = Layers[i];
                 if (nextLayer == null)
-                    layer.CalculateDeltas(ys, costFunction);
+                    layer.CalculateDeltasLastLayer(ys, costFunction);
                 else
-                    layer.FeedBackward(nextLayer);
+                    layer.FeedBackward(); // FeedBackward(nextLayer)
             }
         }
 
@@ -363,11 +385,11 @@ namespace Neulib.Neurons
         private void AddDerivatives(Single1D derivatives, float lambdaDivN)
         {
             int h = 0;
-            Layer layer = null;
+            SingleLayer layer = null;
             int count = Layers.Count;
             for (int i = 0; i < count; i++)
             {
-                Layer prevLayer = layer;
+                SingleLayer prevLayer = layer;
                 layer = Layers[i];
                 if (prevLayer == null) continue;
                 layer.ForEach(neuron =>

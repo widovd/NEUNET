@@ -365,9 +365,9 @@ namespace Neunet.Forms
             return true;
         }
 
-        private Layer NewLayer(int neuronCount)
+        private SingleLayer NewLayer(int neuronCount)
         {
-            Layer layer = new Layer();
+            SingleLayer layer = new SingleLayer();
             for (int i = 0; i < neuronCount; i++)
             {
                 layer.Add(new Sigmoid());
