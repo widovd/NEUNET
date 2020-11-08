@@ -146,7 +146,68 @@ namespace Neulib.Neurons
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region AutonomousLayer
+        #region Unit
+
+        public override int CoefficientCount()
+        {
+            int count = 0;
+            ForEach(neuron => count += neuron.CoefficientCount());
+            return count;
+        }
+
+        public override int SetCoefficients(Single1D coefficients, int index)
+        {
+            ForEach(neuron => index = neuron.SetCoefficients(coefficients, index));
+            return index;
+        }
+
+        public override int GetCoefficients(Single1D coefficients, int index)
+        {
+            ForEach(neuron => index = neuron.GetCoefficients(coefficients, index));
+            return index;
+        }
+
+        public override int AddDerivatives(Single1D derivatives, int index, float lambdaDivN)
+        {
+            ForEach(neuron => index = neuron.AddDerivatives(derivatives, index, lambdaDivN));
+            return index;
+        }
+
+        public override void Randomize(Random random, float biasMagnitude, float weightMagnitude)
+        {
+            ForEach(neuron => neuron.Randomize(random, biasMagnitude, weightMagnitude));
+        }
+
+        public override int CountWeight()
+        {
+            int count = 0;
+            ForEach(neuron => count += neuron.CountWeight());
+            return count;
+        }
+
+        public override float SumWeightSqr()
+        {
+            float sum = 0f;
+            ForEach(neuron => sum += neuron.SumWeightSqr());
+            return sum;
+        }
+
+        public override int SetActivations(Single1D activations, int index)
+        {
+            ForEach(neuron => index = neuron.SetActivations(activations, index));
+            return index;
+        }
+
+        public override int GetActivations(Single1D activations, int index)
+        {
+            ForEach(neuron => index = neuron.GetActivations(activations, index));
+            return index;
+        }
+
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Layer
 
         public override float SumWeightDeltaFirstLayer(int j)
         {
@@ -166,37 +227,10 @@ namespace Neulib.Neurons
             return Neurons[i].Activation;
         }
 
-        public override void GetActivationsLastLayer(Single1D output)
-        {
-            if (Neurons.Count != output.Count) throw new UnequalValueException(Neurons.Count, output.Count, 953472);
-            int count = Neurons.Count;
-            ParallelFor(0, count, j => output[j] = Neurons[j].Activation);
-        }
 
-        public override void SetActivationsFirstLayer(Single1D xs)
+        public override void SetConnections(Layer prevLayer)
         {
-            if (Neurons.Count != xs.Count) throw new UnequalValueException(Neurons.Count, xs.Count, 480461);
-            int count = Neurons.Count;
-            ParallelFor(0, count, j => Neurons[j].Activation = xs[j]);
-        }
-
-        public override void CalculateDeltasLastLayer(Single1D ys, CostFunctionEnum costFunction)
-        {
-            if (Neurons.Count != ys.Count) throw new UnequalValueException(Neurons.Count, ys.Count, 426337);
-            int count = Neurons.Count;
-            ParallelFor(0, count, j => Neurons[j].CalculateDelta(ys[j], costFunction));
-        }
-
-
-        public override void SetConnections(Layer layer)
-        {
-        }
-
-        public override void Randomize(Random random, float biasMagnitude, float weightMagnitude)
-        {
-            int count = Neurons.Count;
-            for (int i = 0; i < count; i++)
-                Neurons[i].Randomize(random, biasMagnitude, weightMagnitude);
+            ForEach(neuron => neuron.SetConnections(prevLayer));
         }
 
         public override void FeedForward()
@@ -210,24 +244,22 @@ namespace Neulib.Neurons
         {
             int count = Neurons.Count;
             Layer nextLayer = Next;
+            if (nextLayer == null) throw new VarNullException(nameof(nextLayer), 409108);
             ParallelFor(0, count, j => Neurons[j].FeedBackward(nextLayer, j));
         }
 
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region Layer
+        #region SingleLayer
 
-        public float SumWeightSqr(ref int n)
+        public void CalculateDeltasLastLayer(Single1D ys, CostFunctionEnum costFunction)
+        // This must be the last layer in the network
         {
-            float sum = 0f;
-            int count = Neurons.Count;
-            for (int i = 0; i < count; i++)
-            {
-                sum += Neurons[i].SumWeightSqr(ref n);
-            }
-            return sum;
+            int j = 0;
+            ForEach(neuron => neuron.CalculateDelta(ys[j++], costFunction));
         }
+
 
         #endregion
     }

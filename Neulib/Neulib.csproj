@@ -57,6 +57,7 @@
     <Compile Include="Neurons\MeasurementList.cs" />
     <Compile Include="Neurons\Sigmoid.cs" />
     <Compile Include="Neurons\SingleLayer.cs" />
+    <Compile Include="Neurons\Unit.cs" />
     <Compile Include="ProgressInterval.cs" />
     <Compile Include="ProgressReporter.cs" />
     <Compile Include="ReportData.cs" />

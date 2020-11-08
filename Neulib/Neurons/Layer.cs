@@ -14,14 +14,14 @@ using static System.Math;
 
 namespace Neulib.Neurons
 {
-    public class Layer : BaseObject
+    public class Layer : Unit
     {
         // Recursive, autonomous
         // ----------------------------------------------------------------------------------------
         #region Properties
 
         private Layer _previous;
-        public virtual Layer Previous
+        public Layer Previous
         {
             get { return _previous; }
             set
@@ -32,15 +32,29 @@ namespace Neulib.Neurons
         }
 
         private Layer _next;
-        public virtual Layer Next
+        public Layer Next
         {
             get { return _next; }
             set
             {
                 _next = value;
-                value.SetConnections(this);
+                //value.SetConnections(this);
             }
         }
+
+        public virtual int InputCount
+        {
+            get; 
+        }
+
+        public virtual int OutputCount
+        {
+            get;
+        }
+
+        public virtual SingleLayer FirstSingleLayer { get; }
+
+        public virtual SingleLayer LastSingleLayer { get; }
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -67,7 +81,11 @@ namespace Neulib.Neurons
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region AutonomousLayer
+        #region Unit
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Layer
 
         public virtual float SumWeightDeltaFirstLayer(int j)
         {
@@ -79,27 +97,6 @@ namespace Neulib.Neurons
             return 0f;
         }
 
-        public virtual void GetActivationsLastLayer(Single1D output)
-        {
-        }
-
-
-        public virtual void SetActivationsFirstLayer(Single1D xs)
-        {
-        }
-
-        public virtual void CalculateDeltasLastLayer(Single1D ys, CostFunctionEnum costFunction)
-        {
-        }
-
-
-        public virtual void SetConnections(Layer layer)
-        {
-        }
-
-        public virtual void Randomize(Random random, float biasMagnitude, float weightMagnitude)
-        {
-        }
 
         public virtual void FeedForward()
         {
@@ -107,6 +104,28 @@ namespace Neulib.Neurons
 
         public virtual void FeedBackward()
         {
+        }
+
+        public void Insert(Layer layer)
+        {
+            layer.Previous = Previous;
+            layer.Next = this;
+            if (Previous != null) Previous.Next = layer;
+            Previous = layer;
+        }
+
+        public void Remove()
+        {
+            if (Previous != null) Previous.Next = Next;
+            if (Next != null) Next.Previous = Previous;
+        }
+
+        public void Replace(Layer layer)
+        {
+            if (Previous != null) Previous.Next = layer;
+            layer.Previous = Previous;
+            if (Next != null) Next.Previous = layer;
+            layer.Next = Next;
         }
 
         #endregion

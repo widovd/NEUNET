@@ -365,16 +365,6 @@ namespace Neunet.Forms
             return true;
         }
 
-        private SingleLayer NewLayer(int neuronCount)
-        {
-            SingleLayer layer = new SingleLayer();
-            for (int i = 0; i < neuronCount; i++)
-            {
-                layer.Add(new Sigmoid());
-            }
-            return layer;
-        }
-
         private void LoadNetwork()
         {
             Network = (Network)LoadFileForm.LoadFile(NetworkFilePath, out Version fileVersion);
@@ -601,13 +591,23 @@ namespace Neunet.Forms
             }
         }
 
+        private SingleLayer NewLayer(int neuronCount)
+        {
+            SingleLayer layer = new SingleLayer();
+            for (int i = 0; i < neuronCount; i++)
+            {
+                layer.Add(new Sigmoid());
+            }
+            return layer;
+        }
+
         private void NewNetwork()
         {
-            Network network = new Network
-                {
-                    NewLayer(28 * 28),
-                    NewLayer(10)
-                };
+            Network network = new Network();
+            Layer layer1 = NewLayer(28 * 28);
+            network.Add(layer1);
+            Layer layer2 = NewLayer(10);
+            network.Add(layer2);
             network.Randomize(Mersenne, Settings.BiasMagnitude, Settings.WeightMagnitude);
             Network = network;
             SaveReminder = false;

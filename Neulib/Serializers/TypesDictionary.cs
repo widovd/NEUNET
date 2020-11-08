@@ -15,9 +15,11 @@ namespace Neulib.Serializers
         public TypesDictionary()
         {
             Add("Connection", typeof(Connection));
+            Add("Unit", typeof(Unit));
             Add("Neuron", typeof(Neuron));
             Add("Sigmoid", typeof(Sigmoid));
-            Add("Layer", typeof(SingleLayer));
+            Add("Layer", typeof(Layer));
+            Add("SingleLayer", typeof(SingleLayer));
             Add("Network", typeof(Network));
             TestCollisions();
         }

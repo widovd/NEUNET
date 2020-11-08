@@ -4,11 +4,14 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Neulib.Exceptions;
 using Neulib.Extensions;
 using Neulib.Serializers;
+using Neulib.Numerics;
 using static System.Math;
+using static Neulib.Extensions.FloatExtensions;
 
 namespace Neulib.Neurons
 {
@@ -17,7 +20,7 @@ namespace Neulib.Neurons
     /// The activation function simply returns the sum of the weighted inputs.
     /// Methods CalculateActivation and ActivationDerivative must be overwritten in a new class for different behaviour.
     /// </summary>
-    public class Neuron : BaseObject, IList<Connection>
+    public class Neuron : Unit, IList<Connection>
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -151,15 +154,6 @@ namespace Neulib.Neurons
             }
         }
 
-        public void ForEach(Action<Connection, int> action)
-        {
-            int count = Connections.Count;
-            for (int i = 0; i < count; i++)
-            {
-                action(Connections[i], i);
-            }
-        }
-
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Object
@@ -206,6 +200,82 @@ namespace Neulib.Neurons
 
         #endregion
         // ----------------------------------------------------------------------------------------
+        #region Unit
+
+        public override int CoefficientCount()
+        {
+            return Count + 1;
+        }
+
+        public override int SetCoefficients(Single1D coefficients, int index)
+        {
+            Bias = coefficients[index++];
+            ForEach(connection => connection.Weight = coefficients[index++]);
+            return index;
+        }
+
+        public override int GetCoefficients(Single1D coefficients, int index)
+        {
+            coefficients[index++] = Bias;
+            ForEach(connection => coefficients[index++] = connection.Weight);
+            return index;
+        }
+
+        public override void Randomize(Random random, float biasMagnitude, float weightMagnitude)
+        {
+            (double b, _) = random.BoxMuller(biasMagnitude);
+            Bias = (float)b;
+            int count = Connections.Count;
+            double sigma = weightMagnitude / Sqrt(count);
+            for (int i = 0; i < count; i++)
+            {
+                (double w, _) = random.BoxMuller(sigma);
+                Connections[i].Weight = (float)w;
+            }
+        }
+
+        public override int CountWeight()
+        {
+            return Count;
+        }
+
+        public override float SumWeightSqr()
+        {
+            float sum = 0f;
+            ForEach(connection => sum += connection.Weight.Sqr());
+            return sum;
+        }
+
+        public override int AddDerivatives(Single1D derivatives, int index, float lambdaDivN)
+        {
+            float delta = Delta;
+            // dC/dbj:
+            derivatives[index++] += delta;
+            // dC/dwjk + L2 regularization:
+            ForEach(connection =>
+                derivatives[index++] += connection.Neuron.Activation * delta + lambdaDivN * connection.Weight);
+            return index;
+        }
+
+        public override void SetConnections(Layer prevLayer)
+        {
+            prevLayer.LastSingleLayer.ForEach(neuron => Add(new Connection() { Neuron = neuron }));
+        }
+
+        public override int SetActivations(Single1D activations, int index)
+        {
+            Activation = activations[index++];
+            return index;
+        }
+
+        public override int GetActivations(Single1D activations, int index)
+        {
+            activations[index++] = Activation;
+            return index;
+        }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
         #region Neuron
 
         /// <summary>
@@ -225,18 +295,6 @@ namespace Neulib.Neurons
             return 1f;
         }
 
-        public void Randomize(Random random, float biasMagnitude, float weightMagnitude)
-        {
-            (double b, _) = random.BoxMuller(biasMagnitude);
-            Bias = (float)b;
-            int count = Connections.Count;
-            double sigma = weightMagnitude / Sqrt(count);
-            for (int i = 0; i < count; i++)
-            {
-                (double w, _) = random.BoxMuller(sigma);
-                Connections[i].Weight = (float)w;
-            }
-        }
 
         /// <summary> 
         /// Calculates the activation value of this neuron from the neurons in the previous layer.
@@ -253,7 +311,7 @@ namespace Neulib.Neurons
 
         public void FeedBackward(Layer nextLayer, int j)
         {
-            Delta = nextLayer.SumWeightDeltaFirstLayer(j) * ActivationDerivative(); 
+            Delta = nextLayer.SumWeightDeltaFirstLayer(j) * ActivationDerivative();
         }
 
 
@@ -278,17 +336,6 @@ namespace Neulib.Neurons
             Delta = d * ActivationDerivative();
         }
 
-        public float SumWeightSqr(ref int n)
-        {
-            float sum = 0f;
-            int count = Connections.Count;
-            for (int i = 0; i < count; i++)
-            {
-                sum += Connections[i].Weight.Sqr();
-                n++;
-            }
-            return sum;
-        }
 
         #endregion
     }

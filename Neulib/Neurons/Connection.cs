@@ -23,6 +23,11 @@ namespace Neulib.Neurons
         /// </summary>
         public float Weight { get; set; } = 1f;
 
+        /// <summary>
+        /// The neuron in the previous layer.
+        /// </summary>
+        public Neuron Neuron { get; set; }
+
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
@@ -70,7 +75,8 @@ namespace Neulib.Neurons
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region Connection
+        #region Unit
+
 
         #endregion
     }

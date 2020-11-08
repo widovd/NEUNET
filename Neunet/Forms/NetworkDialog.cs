@@ -38,13 +38,8 @@ namespace Neunet.Forms
         private void SetNetwork(Network value)
         {
             _network = value;
-            int count = Network.Count;
             layersListBox.Items.Clear();
-            for (int i = 0; i < count; i++)
-            {
-                SingleLayer layer = Network[i];
-                layersListBox.Items.Add(layer);
-            }
+            Network.ForEach(layer => layersListBox.Items.Add(layer));
         }
 
         private SingleLayer Layer { get; set; } = new SingleLayer();
@@ -80,20 +75,19 @@ namespace Neunet.Forms
             clearButton.Enabled = layersListBox.Items.Count > 0;
         }
 
-        private void Delete(int index)
+        private void Delete(Layer layer)
         {
-            Layer = (SingleLayer)layersListBox.Items[index];
-            Network.Remove(Layer);
-            layersListBox.Items.Remove(Layer);
+            layer.Remove();
+            layersListBox.Items.Remove(layer);
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
             try
             {
-                int index = layersListBox.SelectedIndex;
-                if (index < 0) return;
-                Delete(index);
+                Layer layer = (Layer)layersListBox.SelectedItem;
+                if (layer == null) return;
+                Delete(layer);
             }
             catch (BaseException ex)
             {
@@ -101,15 +95,14 @@ namespace Neunet.Forms
             }
         }
 
-        private void Edit(int index)
+        private void Edit(Layer layer)
         {
-            SingleLayer layer = (SingleLayer)layersListBox.Items[index];
-            using (LayerDialog dialog = new LayerDialog() { Layer = (SingleLayer)layer.Clone() })
+            using (LayerDialog dialog = new LayerDialog() { Layer = layer.Clone() as SingleLayer })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    Network[index] = dialog.Layer;
-                    layersListBox.Items[index] = dialog.Layer;
+                    layer.Replace(dialog.Layer);
+                    layersListBox.Items[layersListBox.Items.IndexOf(layer)] = dialog.Layer;
                 }
             }
         }
@@ -118,9 +111,9 @@ namespace Neunet.Forms
         {
             try
             {
-                int index = layersListBox.SelectedIndex;
-                if (index < 0) return;
-                Edit(index);
+                Layer layer = (Layer)layersListBox.SelectedItem;
+                if (layer == null) return;
+                Edit(layer);
             }
             catch (BaseException ex)
             {
@@ -128,14 +121,14 @@ namespace Neunet.Forms
             }
         }
 
-        private void Insert(int index)
+        private void Insert(Layer layer)
         {
             using (LayerDialog dialog = new LayerDialog() { Layer = Layer })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    Network.Insert(index, dialog.Layer);
-                    layersListBox.Items.Insert(index, dialog.Layer);
+                    layer.Insert(dialog.Layer);
+                    layersListBox.Items.Insert(layersListBox.Items.IndexOf(layer), dialog.Layer);
                 }
             }
         }
@@ -144,9 +137,9 @@ namespace Neunet.Forms
         {
             try
             {
-                int index = layersListBox.SelectedIndex;
-                if (index < 0) return;
-                Insert(index);
+                Layer layer = (Layer)layersListBox.SelectedItem;
+                if (layer == null) return;
+                Insert(layer);
             }
             catch (BaseException ex)
             {
