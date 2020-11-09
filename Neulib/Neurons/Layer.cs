@@ -27,34 +27,15 @@ namespace Neulib.Neurons
             set
             {
                 _previous = value;
-                SetConnections(value);
+                ClearConnections();
+                AddConnections(value.OutputLayer);
             }
         }
 
-        private Layer _next;
-        public Layer Next
-        {
-            get { return _next; }
-            set
-            {
-                _next = value;
-                //value.SetConnections(this);
-            }
-        }
+        public Layer Next { get; set; }
 
-        public virtual int InputCount
-        {
-            get; 
-        }
 
-        public virtual int OutputCount
-        {
-            get;
-        }
-
-        public virtual SingleLayer FirstSingleLayer { get; }
-
-        public virtual SingleLayer LastSingleLayer { get; }
+        public virtual SingleLayer OutputLayer { get; }
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -87,22 +68,16 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Layer
 
-        public virtual float SumWeightDeltaFirstLayer(int j)
-        {
-            return 0f;
-        }
-
-        public virtual float GetActivationLastLayer(int i)
-        {
-            return 0f;
-        }
-
-
-        public virtual void FeedForward()
+        public virtual void FeedForward(bool parallel)
         {
         }
 
-        public virtual void FeedBackward()
+        public virtual void CalculateDeltas(Single1D ys, CostFunctionEnum costFunction)
+        // This must be the last layer in the network
+        {
+        }
+
+        public virtual void FeedBackward(bool parallel)
         {
         }
 

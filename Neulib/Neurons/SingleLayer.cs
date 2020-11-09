@@ -30,6 +30,7 @@ namespace Neulib.Neurons
 
         public Neuron this[int index] { get => Neurons[index]; set => Neurons[index] = value; }
 
+        public override SingleLayer OutputLayer { get => this; }
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -43,6 +44,16 @@ namespace Neulib.Neurons
         }
 
         /// <summary>
+        /// Creates a new layer with count sigmoid neurons.
+        /// </summary>
+        /// <param name="count">The required number of sigmoid neurons.</param>
+        public SingleLayer(int count)
+        {
+            for (int i = 0; i < count; i++)
+                Add(new Sigmoid());
+        }
+
+        /// <summary>
         /// Creates a new layer from the stream.
         /// </summary>
         public SingleLayer(Stream stream, BinarySerializer serializer) : base(stream, serializer)
@@ -50,7 +61,7 @@ namespace Neulib.Neurons
             int count = stream.ReadInt();
             for (int i = 0; i < count; i++)
             {
-                Neurons.Add((Neuron)stream.ReadValue(serializer));
+                Add((Neuron)stream.ReadValue(serializer));
             }
         }
 
@@ -209,55 +220,52 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Layer
 
-        public override float SumWeightDeltaFirstLayer(int j)
+
+        public override void ClearConnections()
         {
-            float d = 0f;
-            int count = Count;
-            for (int k = 0; k < count; k++)
-            {
-                Neuron neuron = Neurons[k]; // GetNeuronFirstLayer(k);
-                d += neuron[j].Weight * neuron.Delta; // wji
-            }
-            return d;
-            //Delta = d * ActivationDerivative();
+            ForEach(neuron => neuron.ClearConnections());
         }
 
-        public override float GetActivationLastLayer(int i)
+        public override void AddConnections(SingleLayer prevLayer)
         {
-            return Neurons[i].Activation;
+            ForEach(neuron => neuron.AddConnections(prevLayer));
         }
 
-
-        public override void SetConnections(Layer prevLayer)
+        public override void FeedForward(bool parallel)
         {
-            ForEach(neuron => neuron.SetConnections(prevLayer));
+            ParallelFor(0, Neurons.Count, j => Neurons[j].FeedForward(), parallel);
         }
 
-        public override void FeedForward()
+        public override void CalculateDeltas(Single1D ys, CostFunctionEnum costFunction)
+        // This must be the last layer in the network
         {
-            int count = Neurons.Count;
-            Layer prevLayer = Previous;
-            ParallelFor(0, count, j => Neurons[j].FeedForward(prevLayer));
+            int j = 0;
+            ForEach(neuron => neuron.CalculateDelta(ys[j++], costFunction));
         }
 
-        public override void FeedBackward()
+        public override void FeedBackward(bool parallel)
         {
             int count = Neurons.Count;
-            Layer nextLayer = Next;
-            if (nextLayer == null) throw new VarNullException(nameof(nextLayer), 409108);
-            ParallelFor(0, count, j => Neurons[j].FeedBackward(nextLayer, j));
+            // ToDo: dit gaat niet goed wanneer de vorige laag geen SingleLayer is
+            SingleLayer previous = Previous as SingleLayer ??
+                throw new VarNullException(nameof(previous), 409108);
+            ParallelFor(0, count, j => previous[j].FeedBackward(this, j));
         }
-
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region SingleLayer
 
-        public void CalculateDeltasLastLayer(Single1D ys, CostFunctionEnum costFunction)
-        // This must be the last layer in the network
+        public float SumWeightDelta(int j)
         {
-            int j = 0;
-            ForEach(neuron => neuron.CalculateDelta(ys[j++], costFunction));
+            float d = 0f;
+            int count = Count;
+            for (int k = 0; k < count; k++)
+            {
+                Neuron neuron = Neurons[k];
+                d += neuron[j].Weight * neuron.Delta; // wji
+            }
+            return d;
         }
 
 

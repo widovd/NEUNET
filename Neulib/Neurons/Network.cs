@@ -16,16 +16,7 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Layer properties
 
-        public override int InputCount
-        {
-            get { Layer first = First; return first != null ? first.InputCount : 0; }
-        }
-
-        public override int OutputCount
-        {
-            get { Layer last = Last; return last != null ? last.OutputCount : 0; }
-        }
-
+        public override SingleLayer OutputLayer { get => Last?.OutputLayer; }
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -109,7 +100,9 @@ namespace Neulib.Neurons
         {
             Layer last = Last;
             if (last == null)
+            {
                 First = layer;
+            }
             else
             {
                 last.Next = layer;
@@ -217,14 +210,24 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Layer
 
-        public override void FeedForward()
+        public override void FeedForward(bool parallel)
         {
-            ForEach(layer => layer.FeedForward());
+            ForEach(layer => layer.FeedForward(parallel));
         }
 
-        public override void FeedBackward()
+        public override void CalculateDeltas(Single1D ys, CostFunctionEnum costFunction)
+        // This must be the last layer in the network
         {
-            ForEach(layer => layer.FeedBackward());
+        }
+
+        public override void FeedBackward(bool parallel)
+        {
+            Layer layer = Last;
+            while (layer != null)
+            {
+                layer.FeedBackward(parallel);
+                layer = layer.Previous;
+            }
         }
 
 
@@ -241,45 +244,22 @@ namespace Neulib.Neurons
             int nSamples = samples.Count;
             int nCoeffs = derivatives.Count;
             float cost = 0f;
-            for (int i = 0; i < nCoeffs; i++) derivatives[i] = 0f;
-
-            Layer first = First;
-            if (first == null) throw new VarNullException(nameof(first), 327908);
-                // Aparte laag voor dit netwerk:
-            SingleLayer inputLayer = first.Previous as SingleLayer ??
-                throw new VarNullException(nameof(inputLayer), 110382);
             Layer last = Last;
-            if (last == null) throw new VarNullException(nameof(last), 609765);
-            SingleLayer outputLayer = last.Next as SingleLayer ??
-                throw new VarNullException(nameof(outputLayer), 401447);
-
+            for (int i = 0; i < nCoeffs; i++) derivatives[i] = 0f;
             for (int iSample = 0; iSample < nSamples; iSample++)
             {
                 arguments.ThrowIfCancellationRequested();
                 Sample sample = samples[iSample];
                 Single1D measurement = measurements[iSample];
-
-                inputLayer.SetActivations(sample.Inputs, 0);
-
-                FeedForward();
-                outputLayer.FeedForward();
-
-                outputLayer.GetActivations(measurement, 0);
+                Previous.SetActivations(sample.Inputs, 0);
+                FeedForward(true);
+                last.GetActivations(measurement, 0);
                 cost += CostFunction(measurement, sample.Requirements, costFunction);
-
                 int weightCount = CountWeight();
                 cost += 0.5f * lambda * SumWeightSqr() / weightCount; // regularization
-
-
-                // ToDo: outputLayer geen aparte laag
-
-                outputLayer.CalculateDeltasLastLayer(sample.Requirements, costFunction);
-
-                FeedBackward();
+                last.CalculateDeltas(sample.Requirements, costFunction);
+                FeedBackward(true);
                 AddDerivatives(derivatives, 0, lambda / weightCount);
-                outputLayer.AddDerivatives(derivatives, 0, lambda / weightCount);
-
-
                 arguments.reporter?.ReportProgress(iSample, nSamples);
             }
             arguments.reporter?.ReportProgress(0, nSamples);
@@ -288,7 +268,8 @@ namespace Neulib.Neurons
             return cost;
         }
 
-        public void Learn(SampleList samples, CalculationArguments arguments)
+        public void Learn(
+            SampleList samples, CalculationArguments arguments)
         // samples = yjks
         {
             arguments.reporter?.WriteStart($"Learning the network using a subset of {samples.Count} random samples...");
@@ -303,7 +284,7 @@ namespace Neulib.Neurons
             Single1D derivatives = new Single1D(nCoefficients);
             Single1D velocities = new Single1D(nCoefficients);
             velocities.Clear();
-            MeasurementList measurements = new MeasurementList(nSamples, OutputCount);
+            MeasurementList measurements = new MeasurementList(nSamples, OutputLayer.Count);
             GetCoefficients(coefficients, 0);
             Minimization minimization = new Minimization()
             {

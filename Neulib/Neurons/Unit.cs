@@ -14,6 +14,9 @@ using static System.Math;
 
 namespace Neulib.Neurons
 {
+    /// <summary>
+    /// The ancestor of any part of the neural network containing neurons.
+    /// </summary>
     public class Unit : BaseObject
     {
         // ----------------------------------------------------------------------------------------
@@ -45,41 +48,73 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Unit
 
-        public virtual void Randomize(Random random, float biasMagnitude, float weightMagnitude)
+        /// <summary>
+        /// Reads the activation values from the neurons and writes the values to the activations array.
+        /// </summary>
+        /// <param name="activations">The activation values array.</param>
+        /// <param name="index">The start index of the array.</param>
+        /// <returns>The updated start index.</returns>
+        public virtual int GetActivations(Single1D activations, int index)
         {
+            return index;
         }
 
         /// <summary>
-        /// Returns the total number of biasses and weights of all neurons in this network.
+        /// Reads the activation values from the activations array and writes the values to the neurons.
         /// </summary>
-        public virtual int CoefficientCount()
+        /// <param name="activations">The activation values array.</param>
+        /// <param name="index">The start index of the array.</param>
+        /// <returns>The updated start index.</returns>
+        public virtual int SetActivations(Single1D activations, int index)
         {
-            return 0;
-        }
-
-        public Single1D CreateCoefficients()
-        {
-            return new Single1D(CoefficientCount());
+            return index;
         }
 
         /// <summary>
-        /// Sets the biasses and weights of all neurons in this layer.
+        /// Reads the bias and weight values from the neurons and writes the values to the coefficients array.
         /// </summary>
-        /// <param name="coefficients">The coefficients.</param>
+        /// <param name="coefficients">The bias and weight values array.</param>
+        /// <param name="index">The start index of the array.</param>
+        /// <returns>The updated start index.</returns>
+        public virtual int GetCoefficients(Single1D coefficients, int index)
+        {
+            return index;
+        }
+
+        /// <summary>
+        /// Reads the bias and weight values from the activations array and writes the values to the neurons.
+        /// </summary>
+        /// <param name="activations">The bias and weight values array.</param>
+        /// <param name="index">The start index of the array.</param>
+        /// <returns>The updated start index.</returns>
         public virtual int SetCoefficients(Single1D coefficients, int index)
         {
             return index;
         }
 
         /// <summary>
-        /// Gets the biasses and weights of all neurons in this layer.
+        /// Returns the number of bias and weight values.
         /// </summary>
-        /// <param name="coefficients">The coefficients.</param>
-        public virtual int GetCoefficients(Single1D coefficients, int index)
+        /// <returns>The number of bias and weight values.</returns>
+        public virtual int CoefficientCount()
         {
-            return index;
+            return 0;
         }
 
+        /// <summary>
+        /// Creates a new array which can hold the bias and weight values.
+        /// </summary>
+        /// <returns>The new array.</returns>
+        public Single1D CreateCoefficients()
+        {
+            return new Single1D(CoefficientCount());
+        }
+
+
+        /// <summary>
+        /// Creates a new array which holds the bias and weight values.
+        /// </summary>
+        /// <returns>The new array which holds the bias and weight values.</returns>
         public Single1D GetCoefficients()
         {
             Single1D coefficients = CreateCoefficients();
@@ -87,35 +122,61 @@ namespace Neulib.Neurons
             return coefficients;
         }
 
+        /// <summary>
+        /// Calculates the partial derivatives of the cost function with respect to the bias and weight values
+        /// and and adds the values to the derivatives array.
+        /// </summary>
+        /// <param name="coefficients">The derivatives array will be updated.</param>
+        /// <param name="index">The start index of the array.</param>
+        /// <param name="lambdaDivN">The regularization parameter lambda / number of weights.</param>
+        /// <returns>The updated start index.</returns>
         public virtual int AddDerivatives(Single1D derivatives, int index, float lambdaDivN)
         {
             return index;
         }
 
+        /// <summary>
+        /// Randomizes the bias and weight values of the neurons.
+        /// </summary>
+        /// <param name="random">The random number generator.</param>
+        /// <param name="biasMagnitude">The magnitude of the random bias values.</param>
+        /// <param name="weightMagnitude">The magnitude of the random weight values.</param>
+        public virtual void Randomize(Random random, float biasMagnitude, float weightMagnitude)
+        {
+        }
+
+        /// <summary>
+        /// Returns the number of weight values.
+        /// </summary>
+        /// <returns>The number of weight values.</returns>
         public virtual int CountWeight()
         {
             return 0;
         }
 
+        /// <summary>
+        /// Returns the sum of the weight^2 values.
+        /// </summary>
+        /// <returns>The sum of the weight^2 values.</returns>
         public virtual float SumWeightSqr()
         {
             return 0f;
         }
 
-        public virtual void SetConnections(Layer prevLayer)
+        /// <summary>
+        /// Clears all connections to any previous layers.
+        /// </summary>
+        public virtual void ClearConnections()
         {
         }
 
-        public virtual int SetActivations(Single1D activations, int index)
+        /// <summary>
+        /// Adds connections to a previous layer.
+        /// </summary>
+        /// <param name="prevLayer">The previous layer.</param>
+        public virtual void AddConnections(SingleLayer prevLayer)
         {
-            return index;
         }
-
-        public virtual int GetActivations(Single1D activations, int index)
-        {
-            return index;
-        }
-
 
         #endregion
     }

@@ -257,9 +257,14 @@ namespace Neulib.Neurons
             return index;
         }
 
-        public override void SetConnections(Layer prevLayer)
+        public override void ClearConnections()
         {
-            prevLayer.LastSingleLayer.ForEach(neuron => Add(new Connection() { Neuron = neuron }));
+            Clear();
+        }
+
+        public override void AddConnections(SingleLayer prevLayer)
+        {
+            prevLayer.ForEach(neuron => Add(new Connection() { Neuron = neuron }));
         }
 
         public override int SetActivations(Single1D activations, int index)
@@ -295,23 +300,20 @@ namespace Neulib.Neurons
             return 1f;
         }
 
-
         /// <summary> 
         /// Calculates the activation value of this neuron from the neurons in the previous layer.
         /// </summary>
-        public void FeedForward(Layer prevLayer)
+        public void FeedForward()
         {
-            int count = Connections.Count;
             float sum = Bias;
-            for (int k = 0; k < count; k++)
-                sum += Connections[k].Weight * prevLayer.GetActivationLastLayer(k); // prevLayer[k].Activation;
+            ForEach(connection => sum += connection.Activation);
             Sum = sum;
             CalculateActivation();
         }
 
-        public void FeedBackward(Layer nextLayer, int j)
+        public void FeedBackward(SingleLayer nextLayer, int j)
         {
-            Delta = nextLayer.SumWeightDeltaFirstLayer(j) * ActivationDerivative();
+            Delta = nextLayer.SumWeightDelta(j) * ActivationDerivative();
         }
 
 

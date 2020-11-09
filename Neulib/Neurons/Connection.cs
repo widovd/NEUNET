@@ -12,6 +12,7 @@ namespace Neulib.Neurons
 {
     /// <summary>
     /// Represents a connection between two neurons.
+    /// This class is not derived from Unit because it does not contain a neuron.
     /// </summary>
     public class Connection : BaseObject
     {
@@ -19,15 +20,19 @@ namespace Neulib.Neurons
         #region Properties
 
         /// <summary>
+        /// The neuron in the previous layer which is the source of the activation.
+        /// </summary>
+        public Neuron Neuron { get; set; }
+
+        /// <summary>
         /// The weight value of the connection.
         /// </summary>
         public float Weight { get; set; } = 1f;
 
-        /// <summary>
-        /// The neuron in the previous layer.
-        /// </summary>
-        public Neuron Neuron { get; set; }
-
+        public float Activation
+        {
+            get => Neuron != null ? Weight * Neuron.Activation : throw new VarNullException(nameof(Neuron), 367776);
+        }
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
@@ -42,6 +47,7 @@ namespace Neulib.Neurons
         /// <summary>
         /// Creates a new connection from the stream.
         /// </summary>
+        /// <remarks>Neuron can not be read from stream. Must be set by the parent network.</remarks>
         public Connection(Stream stream, BinarySerializer serializer) : base(stream, serializer)
         {
             Weight = stream.ReadSingle();
