@@ -28,14 +28,14 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        private SingleLayer _layer = new SingleLayer();
-        public SingleLayer Layer
+        private Layer _layer = new Layer();
+        public Layer Layer
         {
             get { return _layer; }
             set { SetLayer(value); }
         }
 
-        private void SetLayer(SingleLayer value)
+        private void SetLayer(Layer value)
         {
             _layer = value;
             neuronsTextBox.Value = value.Count;

@@ -262,7 +262,7 @@ namespace Neulib.Neurons
             Clear();
         }
 
-        public override void AddConnections(SingleLayer prevLayer)
+        public override void AddConnections(Layer prevLayer)
         {
             prevLayer.ForEach(neuron => Add(new Connection() { Neuron = neuron }));
         }
@@ -311,7 +311,7 @@ namespace Neulib.Neurons
             CalculateActivation();
         }
 
-        public void FeedBackward(SingleLayer nextLayer, int j)
+        public void FeedBackward(Layer nextLayer, int j)
         {
             Delta = nextLayer.SumWeightDelta(j) * ActivationDerivative();
         }

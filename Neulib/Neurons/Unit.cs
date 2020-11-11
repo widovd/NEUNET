@@ -15,7 +15,7 @@ using static System.Math;
 namespace Neulib.Neurons
 {
     /// <summary>
-    /// The ancestor of any part of the neural network containing neurons.
+    /// Contains one or more neurons.
     /// </summary>
     public class Unit : BaseObject
     {
@@ -174,7 +174,7 @@ namespace Neulib.Neurons
         /// Adds connections to a previous layer.
         /// </summary>
         /// <param name="prevLayer">The previous layer.</param>
-        public virtual void AddConnections(SingleLayer prevLayer)
+        public virtual void AddConnections(Layer prevLayer)
         {
         }
 

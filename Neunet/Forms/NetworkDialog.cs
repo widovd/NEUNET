@@ -28,7 +28,7 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        private Network _network = new Network();
+        private Network _network;
         public Network Network
         {
             get { return _network; }
@@ -38,11 +38,10 @@ namespace Neunet.Forms
         private void SetNetwork(Network value)
         {
             _network = value;
-            layersListBox.Items.Clear();
-            Network.ForEach(layer => layersListBox.Items.Add(layer));
+            UpdateItems();
         }
 
-        private SingleLayer Layer { get; set; } = new SingleLayer();
+        private Layer LayerX { get; set; } = new Layer(50);
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -65,6 +64,15 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region NetworkDialog
 
+        private void UpdateItems()
+        {
+            int index = layersListBox.SelectedIndex;
+            layersListBox.Items.Clear();
+            Network.ForEach(layer => layersListBox.Items.Add(layer));
+            if (index >= layersListBox.Items.Count) index = layersListBox.Items.Count - 1;
+            if (index >= 0) layersListBox.SelectedIndex = index;
+        }
+
         private void IdleTimer_Tick(object sender, EventArgs e)
         {
             bool isSelected = layersListBox.SelectedIndex >= 0;
@@ -77,8 +85,8 @@ namespace Neunet.Forms
 
         private void Delete(Layer layer)
         {
-            layer.Remove();
-            layersListBox.Items.Remove(layer);
+            Network.Remove(layer);
+            UpdateItems();
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
@@ -97,12 +105,12 @@ namespace Neunet.Forms
 
         private void Edit(Layer layer)
         {
-            using (LayerDialog dialog = new LayerDialog() { Layer = layer.Clone() as SingleLayer })
+            using (LayerDialog dialog = new LayerDialog() { Layer = layer.Clone() as Layer })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    layer.Replace(dialog.Layer);
-                    layersListBox.Items[layersListBox.Items.IndexOf(layer)] = dialog.Layer;
+                    Network.Replace(layer, dialog.Layer);
+                    UpdateItems();
                 }
             }
         }
@@ -121,14 +129,14 @@ namespace Neunet.Forms
             }
         }
 
-        private void Insert(Layer layer)
+        private void Insert(Layer before)
         {
-            using (LayerDialog dialog = new LayerDialog() { Layer = Layer })
+            using (LayerDialog dialog = new LayerDialog() { Layer = (Layer)LayerX.Clone() })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    layer.Insert(dialog.Layer);
-                    layersListBox.Items.Insert(layersListBox.Items.IndexOf(layer), dialog.Layer);
+                    Network.Insert(before, dialog.Layer);
+                    UpdateItems();
                 }
             }
         }
@@ -149,12 +157,12 @@ namespace Neunet.Forms
 
         private void Add()
         {
-            using (LayerDialog dialog = new LayerDialog() { Layer = Layer })
+            using (LayerDialog dialog = new LayerDialog() { Layer = (Layer)LayerX.Clone() })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
                     Network.Add(dialog.Layer);
-                    layersListBox.Items.Add(dialog.Layer);
+                    UpdateItems();
                 }
             }
         }
@@ -174,7 +182,7 @@ namespace Neunet.Forms
         private void Clear()
         {
             Network.Clear();
-            layersListBox.Items.Clear();
+            UpdateItems();
         }
 
         private void ClearButton_Click(object sender, EventArgs e)

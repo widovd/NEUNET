@@ -135,15 +135,8 @@ namespace Neunet.Forms
             }
         }
 
-        private readonly SingleLayer _inputLayer = new SingleLayer();
-        private SingleLayer InputLayer
-        {
-            get { return _inputLayer; }
-        }
-
-
-        private Network _network = new Network();
-        private Network NetworkX
+        private Network _network;
+        private Network DigitsNetwork
         {
             get { return _network; }
             set
@@ -283,12 +276,6 @@ namespace Neunet.Forms
             {
                 TrainingSetImages = BaseArray.ReadFromStream(stream) as ByteArray;
             }
-            int nx = TrainingSetImages.GetLength(1);
-            int ny = TrainingSetImages.GetLength(2);
-            int count = nx * ny;
-            InputLayer.Clear();
-            for (int i = 0; i < count; i++)
-                InputLayer.Add(new Sigmoid()); // ToDo: hoeft geen sigmoid te zijn, alleen Activation is genoeg.
         }
 
         private bool LoadTrainingSetImageFileDialog()
@@ -380,8 +367,7 @@ namespace Neunet.Forms
 
         private void LoadNetwork()
         {
-            NetworkX = (Network)LoadFileForm.LoadFile(NetworkFilePath, out Version fileVersion);
-            NetworkX.Previous = InputLayer;
+            DigitsNetwork = (Network)LoadFileForm.LoadFile(NetworkFilePath, out Version fileVersion);
             SaveReminder = false;
         }
 
@@ -405,7 +391,7 @@ namespace Neunet.Forms
 
         private void SaveNetwork()
         {
-            SaveFileForm.SaveFile(NetworkFilePath, NetworkX);
+            SaveFileForm.SaveFile(NetworkFilePath, DigitsNetwork);
             SaveReminder = false;
         }
 
@@ -608,24 +594,13 @@ namespace Neunet.Forms
 
         private void NewNetwork()
         {
-
-            Network network = new Network();
-            network.Previous = InputLayer;
-            InputLayer.Next = network;
-
-            Network sub1 = new Network();
-            sub1.Add(new SingleLayer(30));
-            network.Add(sub1);
-
-            Network sub2 = new Network();
-            sub2.Add(new SingleLayer(10));
-            network.Add(sub2);
-
-
-            //network.Add(new SingleLayer(30));
-            //network.Add(new SingleLayer(10));
+            int nx = TrainingSetImages.GetLength(1);
+            int ny = TrainingSetImages.GetLength(2);
+            Network network = new Network(new Layer(nx * ny));
+            network.Add(new Layer(30));
+            network.Add(new Layer(10));
             network.Randomize(Mersenne, Settings.BiasMagnitude, Settings.WeightMagnitude);
-            NetworkX = network;
+            DigitsNetwork = network;
             SaveReminder = false;
         }
 
@@ -644,11 +619,11 @@ namespace Neunet.Forms
 
         private void EditNetwork()
         {
-            using (NetworkDialog dialog = new NetworkDialog() { Network = (Network)NetworkX.Clone() })
+            using (NetworkDialog dialog = new NetworkDialog() { Network = (Network)DigitsNetwork.Clone() })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    NetworkX = dialog.Network;
+                    DigitsNetwork = dialog.Network;
                     SaveReminder = false;
                 }
             }
@@ -669,9 +644,9 @@ namespace Neunet.Forms
 
         private void RandomizeNetwork()
         {
-            Network network = (Network)NetworkX.Clone();
+            Network network = (Network)DigitsNetwork.Clone();
             network.Randomize(Mersenne, Settings.BiasMagnitude, Settings.WeightMagnitude);
-            NetworkX = network;
+            DigitsNetwork = network;
             SaveReminder = false;
         }
 
@@ -695,10 +670,10 @@ namespace Neunet.Forms
             {
                 SampleList samples = GetRandomSamples(
                     TrainingSetImages, TrainingSetLabels,
-                    Settings.TrainingSampleCount, NetworkX.OutputLayer.Count, Mersenne);
+                    Settings.TrainingSampleCount, DigitsNetwork.Last.Count, Mersenne);
 
                 arguments.reporter?.ReportSamples(samples);
-                NetworkX.Learn(samples, arguments);
+                DigitsNetwork.Learn(samples, arguments);
             }
         }
 
@@ -724,8 +699,8 @@ namespace Neunet.Forms
 
         private async Task TestAsync()
         {
-            Single1D derivatives = NetworkX.CreateCoefficients();
-            int ny = NetworkX.OutputLayer.Count;
+            Single1D derivatives = DigitsNetwork.CreateCoefficients();
+            int ny = DigitsNetwork.Last.Count;
             SampleList samples = GetRandomSamples(
                 TestSetImages, TestSetLabels,
                 Settings.TestSampleCount, ny, Mersenne);
@@ -736,7 +711,7 @@ namespace Neunet.Forms
                 arguments.reporter?.WriteStart($"Calculating {samples.Count} test samples...");
                 Stopwatch timer = new Stopwatch();
                 timer.Start();
-                float finalCost = NetworkX.GetCostAndDerivatives(samples, derivatives, measurements, arguments);
+                float finalCost = DigitsNetwork.GetCostAndDerivatives(samples, derivatives, measurements, arguments);
                 arguments.reporter?.WriteEnd($"The samples are calculated in {timer.Elapsed.TotalSeconds} s, and the final cost value is {finalCost:F4}.");
             });
             TrainingSamples = samples;

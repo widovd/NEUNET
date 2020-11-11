@@ -53,10 +53,9 @@
     <Compile Include="CalculationSettings.cs" />
     <Compile Include="Exceptions\InvalidCallException.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
-    <Compile Include="Neurons\Layer.cs" />
     <Compile Include="Neurons\MeasurementList.cs" />
     <Compile Include="Neurons\Sigmoid.cs" />
-    <Compile Include="Neurons\SingleLayer.cs" />
+    <Compile Include="Neurons\Layer.cs" />
     <Compile Include="Neurons\Unit.cs" />
     <Compile Include="ProgressInterval.cs" />
     <Compile Include="ProgressReporter.cs" />
