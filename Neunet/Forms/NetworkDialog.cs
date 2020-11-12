@@ -41,7 +41,7 @@ namespace Neunet.Forms
             UpdateItems();
         }
 
-        private Layer LayerX { get; set; } = new Layer(50);
+        private Layer TemplateLayer { get; set; } = new Layer(50);
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -83,9 +83,10 @@ namespace Neunet.Forms
             clearButton.Enabled = layersListBox.Items.Count > 0;
         }
 
-        private void Delete(Layer layer)
+        private void Delete(int index)
         {
-            Network.Remove(layer);
+            if (index < 0 || index >= layersListBox.Items.Count) return;
+            TemplateLayer = Network.Remove(index);
             UpdateItems();
         }
 
@@ -93,9 +94,7 @@ namespace Neunet.Forms
         {
             try
             {
-                Layer layer = (Layer)layersListBox.SelectedItem;
-                if (layer == null) return;
-                Delete(layer);
+               Delete(layersListBox.SelectedIndex);
             }
             catch (BaseException ex)
             {
@@ -103,13 +102,14 @@ namespace Neunet.Forms
             }
         }
 
-        private void Edit(Layer layer)
+        private void Edit(int index)
         {
+            Layer layer = Network[index];
             using (LayerDialog dialog = new LayerDialog() { Layer = layer.Clone() as Layer })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    Network.Replace(layer, dialog.Layer);
+                    Network[index] = dialog.Layer;
                     UpdateItems();
                 }
             }
@@ -119,9 +119,7 @@ namespace Neunet.Forms
         {
             try
             {
-                Layer layer = (Layer)layersListBox.SelectedItem;
-                if (layer == null) return;
-                Edit(layer);
+                Edit(layersListBox.SelectedIndex);
             }
             catch (BaseException ex)
             {
@@ -129,13 +127,13 @@ namespace Neunet.Forms
             }
         }
 
-        private void Insert(Layer before)
+        private void Insert(int index)
         {
-            using (LayerDialog dialog = new LayerDialog() { Layer = (Layer)LayerX.Clone() })
+            using (LayerDialog dialog = new LayerDialog() { Layer = (Layer)TemplateLayer.Clone() })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    Network.Insert(before, dialog.Layer);
+                    Network.Insert(index, dialog.Layer);
                     UpdateItems();
                 }
             }
@@ -145,9 +143,7 @@ namespace Neunet.Forms
         {
             try
             {
-                Layer layer = (Layer)layersListBox.SelectedItem;
-                if (layer == null) return;
-                Insert(layer);
+                Insert(layersListBox.SelectedIndex);
             }
             catch (BaseException ex)
             {
@@ -157,7 +153,7 @@ namespace Neunet.Forms
 
         private void Add()
         {
-            using (LayerDialog dialog = new LayerDialog() { Layer = (Layer)LayerX.Clone() })
+            using (LayerDialog dialog = new LayerDialog() { Layer = (Layer)TemplateLayer.Clone() })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Neulib.Exceptions;
 using Neulib.Numerics;
 using Neulib.Serializers;
@@ -11,47 +13,72 @@ using static System.Math;
 
 namespace Neulib.Neurons
 {
-    public class Network : Unit, IEnumerable, IEnumerator
+    public class Network : Unit, IList<Layer>
     {
         // ----------------------------------------------------------------------------------------
         #region Network properties
 
+        /// <summary>
+        /// This layer contains the neurons which activation values are input for feedforward calculation.
+        /// Neurons in this layer are not changed by this network.
+        /// </summary>
         public Layer Input { get; private set; }
 
-        public Layer First { get; set; }
+        /// <summary>
+        /// The layers of this network. They are changed by feedforward and learning.
+        /// </summary>
+        private List<Layer> Layers { get; set; } = new List<Layer>();
 
-        public Layer Last
+        /// <summary>
+        /// The number of layers in this network.
+        /// </summary>
+        public int Count { get => Layers.Count; }
+
+        /// <summary>
+        /// Gets or sets a layer.
+        /// </summary>
+        /// <param name="index">The index of the layer.</param>
+        /// <returns>The layer referenced by index.</returns>
+        /// <remarks>
+        /// When a layer is set, then the connections of the old layer are removed,
+        /// and the connections of the new layer are initialized (to layer [index - 1])
+        /// </remarks>
+        public Layer this[int index]
         {
-            get
+            get { return Layers[index]; }
+            set
             {
-                Layer layer = First;
-                if (layer == null) return null;
-                while (layer.Next != null) layer = layer.Next;
-                return layer;
+                Layers[index].ClearConnections();
+                value.ClearConnections();
+                if (index > 0) value.AddConnections(Layers[index - 1]);
+                Layers[index] = value;
             }
         }
 
-        public int Count
-        {
-            get
-            {
-                Layer layer = First;
-                int count = 0;
-                while (layer != null) { layer = layer.Next; count++; }
-                return count;
-            }
-        }
+        /// <summary>
+        /// The output layer of this network. If this network is empty, the input layer.
+        /// </summary>
+        public Layer Output { get => Layers != null && Layers.Count > 0 ? Layers[Count - 1] : Input; }
+
+        public bool IsReadOnly => ((ICollection<Layer>)Layers).IsReadOnly;
 
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
+        /// <summary>
+        /// Creates a new instance of Network.
+        /// </summary>
+        /// <param name="inputLayer">The input layer.</param>
         public Network(Layer inputLayer)
         {
             Input = inputLayer;
         }
 
+        /// <summary>
+        /// Creates a new Network from the stream.
+        /// </summary>
         public Network(Stream stream, BinarySerializer serializer)
         {
             Input = (Layer)stream.ReadValue(serializer);
@@ -64,95 +91,88 @@ namespace Neulib.Neurons
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region IEnumerable
+        #region IList
 
-        private Layer _layer;
-
-        public bool MoveNext()
+        public int IndexOf(Layer layer)
         {
-            if (_layer == null)
-                _layer = First;
-            else
-                _layer = _layer.Next;
-            return (_layer != null);
+            return Layers.IndexOf(layer);
         }
-        public void Reset()
-        {
-            _layer = null;
-        }
-        public object Current
-        {
-            get { return _layer; }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return (IEnumerator)this;
-        }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Network
 
         public void Add(Layer layer)
         {
-            Layer last = Last;
-            if (last == null)
+            Layer previous = Output;
+            layer.ClearConnections();
+            if (previous != null) layer.AddConnections(previous);
+            Layers.Add(layer);
+        }
+
+        public void Insert(int index, Layer layer)
+        {
+            layer.ClearConnections();
+            Layer previous = index >= 1 ? Layers[index - 1] : Input;
+            if (previous != null) 
+                layer.AddConnections(previous);
+            Layers.Insert(index, layer);
+            if (index < Count - 1)
             {
-                First = layer;
-                Input.Next = First;
-                First.Previous = Input;
+                Layer nextLayer = Layers[index + 1];
+                nextLayer.ClearConnections();
+                nextLayer.AddConnections(layer);
             }
-            else
-            {
-                last.Next = layer;
-                layer.Previous = last;
-            }
+        }
+
+        public Layer Remove(int index)
+        {
+            Layer layer = Layers[index];
+            layer.ClearConnections();
+            Layers.RemoveAt(index);
+            return layer;
+        }
+
+        public void RemoveAt(int index)
+        {
+            Remove(index);
+        }
+
+        public bool Remove(Layer layer)
+        {
+            layer.ClearConnections();
+            return Layers.Remove(layer);
         }
 
         public void Clear()
         {
-            First = null;
-            Input.Next = First;
+            ForEach(layer => layer.ClearConnections());
+            Layers.Clear();
         }
 
-        public void Insert(Layer beforeLayer, Layer insertLayer)
+        public bool Contains(Layer item)
         {
-            insertLayer.Previous = beforeLayer.Previous;
-            insertLayer.Next = beforeLayer;
-            if (beforeLayer.Previous != null) beforeLayer.Previous.Next = insertLayer;
-            beforeLayer.Previous = insertLayer;
-            if (First == beforeLayer) First = insertLayer;
+            return Layers.Contains(item);
         }
 
-        public void Remove(Layer removeLayer)
+        public void CopyTo(Layer[] array, int arrayIndex)
         {
-            if (removeLayer.Previous != null) removeLayer.Previous.Next = removeLayer.Next;
-            if (removeLayer.Next != null) removeLayer.Next.Previous = removeLayer.Previous;
-            removeLayer.Previous = null;
-            removeLayer.Next = null;
-            if (First == removeLayer) First = removeLayer.Next;
+            Layers.CopyTo(array, arrayIndex);
         }
 
-        public void Replace(Layer removeLayer, Layer replaceLayer)
+        public IEnumerator<Layer> GetEnumerator()
         {
-            if (removeLayer.Previous != null) removeLayer.Previous.Next = replaceLayer;
-            replaceLayer.Previous = removeLayer.Previous;
-            if (removeLayer.Next != null) removeLayer.Next.Previous = replaceLayer;
-            replaceLayer.Next = removeLayer.Next;
-            removeLayer.Previous = null;
-            removeLayer.Next = null;
-            if (First == removeLayer) First = replaceLayer;
+            return ((IEnumerable<Layer>)Layers).GetEnumerator();
         }
 
-        public void ForEach(Action<Layer> action)
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            Layer layer = First;
-            while (layer != null)
-            {
-                action(layer);
-                layer = layer.Next;
-            }
+            return ((IEnumerable)Layers).GetEnumerator();
+        }
+
+        public void ForEach(Action<Layer> action, bool parallel = false)
+        {
+            int count = Layers.Count;
+            if (parallel)
+                Parallel.For(0, count, j => action(Layers[j]));
+            else
+                for (int j = 0; j < count; j++) action(Layers[j]);
         }
 
         #endregion
@@ -172,7 +192,6 @@ namespace Neulib.Neurons
                 throw new InvalidCodeException($"Activator.CreateInstance({type}) failed.", ex, 708686);
             }
         }
-
 
         protected override void CopyFrom(object o)
         {
@@ -250,29 +269,25 @@ namespace Neulib.Neurons
             return index;
         }
 
-
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region Layer
+        #region Network
 
         public void FeedForward(bool parallel)
         {
             ForEach(layer => layer.FeedForward(parallel));
         }
 
-        public void FeedBackward(bool parallel)
+        public void FeedBackward(Single1D ys, CostFunctionEnum costFunction, bool parallel)
         {
-            Layer layer = Last?.Previous;
-            while (layer != null && layer != Input)
+            int count = Count;
+            if (count < 1) return;
+            Layers[count - 1].CalculateDeltas(ys, costFunction);
+            for (int i = count - 2; i >= 0; i--)
             {
-                layer.FeedBackward(parallel);
-                layer = layer.Previous;
+                Layers[i].FeedBackward(Layers[i + 1], parallel);
             }
         }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Network
 
         public float GetCostAndDerivatives(
             SampleList samples, Single1D derivatives, MeasurementList measurements,
@@ -283,7 +298,7 @@ namespace Neulib.Neurons
             int nSamples = samples.Count;
             int nCoeffs = derivatives.Count;
             float cost = 0f;
-            Layer last = Last;
+            Layer last = Output;
             for (int i = 0; i < nCoeffs; i++) derivatives[i] = 0f;
             for (int iSample = 0; iSample < nSamples; iSample++)
             {
@@ -296,8 +311,7 @@ namespace Neulib.Neurons
                 cost += CostFunction(measurement, sample.Requirements, costFunction);
                 int weightCount = CountWeight();
                 cost += 0.5f * lambda * SumWeightSqr() / weightCount; // regularization
-                last.CalculateDeltas(sample.Requirements, costFunction);
-                FeedBackward(true);
+                FeedBackward(sample.Requirements, costFunction, true);
                 AddDerivatives(derivatives, 0, lambda / weightCount);
                 arguments.reporter?.ReportProgress(iSample, nSamples);
             }
@@ -323,7 +337,7 @@ namespace Neulib.Neurons
             Single1D derivatives = new Single1D(nCoefficients);
             Single1D velocities = new Single1D(nCoefficients);
             velocities.Clear();
-            MeasurementList measurements = new MeasurementList(nSamples, Last.Count);
+            MeasurementList measurements = new MeasurementList(nSamples, Output.Count);
             GetCoefficients(coefficients, 0);
             Minimization minimization = new Minimization()
             {

@@ -19,6 +19,20 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Properties
 
+        private Layer _previous;
+        public Layer Previous
+        {
+            get { return _previous; }
+            set
+            {
+                _previous = value;
+                ClearConnections();
+                if (value != null) AddConnections(value);
+            }
+        }
+
+        public Layer Next { get; set; }
+
         /// <summary>
         /// The neurons in this layer.
         /// </summary>
@@ -254,10 +268,10 @@ namespace Neulib.Neurons
             ForEach(neuron => neuron.CalculateDelta(ys[j++], costFunction));
         }
 
-        public void FeedBackward(Layer next, bool parallel)
+        public void FeedBackward(bool parallel)
         // This must not be the last layer in the network
         {
-            ParallelFor(0, Neurons.Count, j => Neurons[j].FeedBackward(next, j), parallel);
+            ParallelFor(0, Neurons.Count, j => Neurons[j].FeedBackward(Next, j), parallel);
         }
 
         public float SumWeightDelta(int j)

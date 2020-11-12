@@ -596,9 +596,11 @@ namespace Neunet.Forms
         {
             int nx = TrainingSetImages.GetLength(1);
             int ny = TrainingSetImages.GetLength(2);
-            Network network = new Network(new Layer(nx * ny));
-            network.Add(new Layer(30));
-            network.Add(new Layer(10));
+            Network network = new Network(new Layer(nx * ny))
+            {
+                new Layer(30),
+                new Layer(10)
+            };
             network.Randomize(Mersenne, Settings.BiasMagnitude, Settings.WeightMagnitude);
             DigitsNetwork = network;
             SaveReminder = false;
@@ -670,7 +672,7 @@ namespace Neunet.Forms
             {
                 SampleList samples = GetRandomSamples(
                     TrainingSetImages, TrainingSetLabels,
-                    Settings.TrainingSampleCount, DigitsNetwork.Last.Count, Mersenne);
+                    Settings.TrainingSampleCount, DigitsNetwork.Output.Count, Mersenne);
 
                 arguments.reporter?.ReportSamples(samples);
                 DigitsNetwork.Learn(samples, arguments);
@@ -700,7 +702,7 @@ namespace Neunet.Forms
         private async Task TestAsync()
         {
             Single1D derivatives = DigitsNetwork.CreateCoefficients();
-            int ny = DigitsNetwork.Last.Count;
+            int ny = DigitsNetwork.Output.Count;
             SampleList samples = GetRandomSamples(
                 TestSetImages, TestSetLabels,
                 Settings.TestSampleCount, ny, Mersenne);
