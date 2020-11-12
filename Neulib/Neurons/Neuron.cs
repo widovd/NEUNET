@@ -226,6 +226,7 @@ namespace Neulib.Neurons
             (double b, _) = random.BoxMuller(biasMagnitude);
             Bias = (float)b;
             int count = Connections.Count;
+            if (count == 0) throw new InvalidValueException(nameof(count), count, 462832);
             double sigma = weightMagnitude / Sqrt(count);
             for (int i = 0; i < count; i++)
             {
@@ -264,7 +265,18 @@ namespace Neulib.Neurons
 
         public override void AddConnections(Layer prevLayer)
         {
+            if (prevLayer == null) throw new VarNullException(nameof(prevLayer), 491537);
             prevLayer.ForEach(neuron => Add(new Connection() { Neuron = neuron }));
+        }
+
+        public override void AddConnections(LayerList prevLayerList)
+        {
+            if (prevLayerList == null) throw new VarNullException(nameof(prevLayerList), 339514);
+            prevLayerList.ForEach(prevLayer =>
+            {
+                if (prevLayer == null) throw new VarNullException(nameof(prevLayer), 443220);
+                prevLayer.ForEach(neuron => Add(new Connection() { Neuron = neuron }));
+            });
         }
 
         public override int SetActivations(Single1D activations, int index)
@@ -307,6 +319,8 @@ namespace Neulib.Neurons
         {
             float sum = Bias;
             ForEach(connection => sum += connection.Activation);
+            if (float.IsNaN(sum))
+                throw new InvalidValueException(nameof(sum), sum, 174119);
             Sum = sum;
             CalculateActivation();
         }

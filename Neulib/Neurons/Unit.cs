@@ -178,6 +178,21 @@ namespace Neulib.Neurons
         {
         }
 
+        /// <summary>
+        /// Adds connections to a list of previous layers.
+        /// </summary>
+        /// <param name="prevLayer">The list of previous layers.</param>
+        public virtual void AddConnections(LayerList prevLayerList)
+        {
+        }
+
+
+        public void ClearAndAddConnections(Layer prevLayer)
+        {
+            ClearConnections();
+            AddConnections(prevLayer);
+        }
+
         #endregion
     }
 }

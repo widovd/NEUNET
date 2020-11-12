@@ -222,12 +222,6 @@ namespace Neulib.Neurons
             return index;
         }
 
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Layer
-
-
         public override void ClearConnections()
         {
             ForEach(neuron => neuron.ClearConnections());
@@ -236,6 +230,11 @@ namespace Neulib.Neurons
         public override void AddConnections(Layer prevLayer)
         {
             ForEach(neuron => neuron.AddConnections(prevLayer));
+        }
+
+        public override void AddConnections(LayerList prevLayerList)
+        {
+            ForEach(neuron => neuron.AddConnections(prevLayerList));
         }
 
         #endregion

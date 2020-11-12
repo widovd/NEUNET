@@ -44,7 +44,10 @@ namespace Neulib.Neurons
 
         protected override void CalculateActivation()
         {
-            Activation = 1f / (1f + (float)Exp(-Sum));
+            float activation = 1f / (1f + (float)Exp(-Sum));
+            if (float.IsNaN(activation))
+                throw new InvalidValueException(nameof(activation), activation, 961838);
+            Activation = activation;
         }
 
         protected override float ActivationDerivative()

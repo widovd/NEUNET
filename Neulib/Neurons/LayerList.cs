@@ -21,25 +21,25 @@ namespace Neulib.Neurons
         /// <summary>
         /// The layers of this LayerList.
         /// </summary>
-        private List<Layer> Layers { get; set; } = new List<Layer>();
+        private readonly List<Layer> _layers = new List<Layer>();
 
         /// <summary>
         /// The number of layers in this LayerList.
         /// </summary>
-        public int Count { get => Layers.Count; }
+        public int Count { get => _layers != null ? _layers.Count : 0; }
 
         /// <summary>
         /// Gets or sets a layer.
         /// </summary>
         /// <param name="index">The index of the layer.</param>
         /// <returns>The layer referenced by index.</returns>
-        public Layer this[int index]
+        public virtual Layer this[int index]
         {
-            get { return Layers[index]; }
-            set { Layers[index] = value; }
+            get { return _layers[index]; }
+            set { _layers[index] = value; }
         }
 
-        public bool IsReadOnly => ((ICollection<Layer>)Layers).IsReadOnly;
+        public bool IsReadOnly => ((ICollection<Layer>)_layers).IsReadOnly;
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -70,68 +70,70 @@ namespace Neulib.Neurons
 
         public int IndexOf(Layer layer)
         {
-            return Layers.IndexOf(layer);
+            return _layers.IndexOf(layer);
         }
 
-        public void Add(Layer layer)
+        public virtual void Add(Layer layer)
         {
-            Layers.Add(layer);
+            if (layer == null) throw new VarNullException(nameof(layer), 424420);
+            _layers.Add(layer);
         }
 
-        public void Insert(int index, Layer layer)
+        public virtual void Insert(int index, Layer layer)
         {
-            Layers.Insert(index, layer);
+            if (layer == null) throw new VarNullException(nameof(layer), 133650);
+            _layers.Insert(index, layer);
         }
 
         public Layer Remove(int index)
         {
-            Layer layer = Layers[index];
-            Layers.RemoveAt(index);
+            Layer layer = _layers[index];
+            _layers.RemoveAt(index);
             return layer;
         }
 
         public void RemoveAt(int index)
         {
-            Remove(index);
+            _layers.RemoveAt(index);
         }
 
         public bool Remove(Layer layer)
         {
-            return Layers.Remove(layer);
+            return _layers.Remove(layer);
         }
 
         public void Clear()
         {
-            Layers.Clear();
+            _layers.Clear();
         }
 
         public bool Contains(Layer item)
         {
-            return Layers.Contains(item);
+            return _layers.Contains(item);
         }
 
         public void CopyTo(Layer[] array, int arrayIndex)
         {
-            Layers.CopyTo(array, arrayIndex);
+            _layers.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<Layer> GetEnumerator()
         {
-            return ((IEnumerable<Layer>)Layers).GetEnumerator();
+            return ((IEnumerable<Layer>)_layers).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable)Layers).GetEnumerator();
+            return ((IEnumerable)_layers).GetEnumerator();
         }
 
         public void ForEach(Action<Layer> action, bool parallel = false)
         {
-            int count = Layers.Count;
+            int count = _layers.Count;
             if (parallel)
-                Parallel.For(0, count, j => action(Layers[j]));
+                Parallel.For(0, count, j => action(_layers[j]));
             else
-                for (int j = 0; j < count; j++) action(Layers[j]);
+                for (int j = 0; j < count; j++) action(_layers[j]);
         }
 
         #endregion
