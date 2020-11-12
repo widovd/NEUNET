@@ -79,7 +79,7 @@ namespace Neulib.Neurons
         /// <summary>
         /// Creates a new Network from the stream.
         /// </summary>
-        public Network(Stream stream, BinarySerializer serializer)
+        public Network(Stream stream, BinarySerializer serializer) : base(stream, serializer)
         {
             Input = (Layer)stream.ReadValue(serializer);
             int count = stream.ReadInt();

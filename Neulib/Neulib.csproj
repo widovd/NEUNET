@@ -54,6 +54,7 @@
     <Compile Include="Exceptions\InvalidCallException.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Neurons\MeasurementList.cs" />
+    <Compile Include="Neurons\LayerList.cs" />
     <Compile Include="Neurons\Sigmoid.cs" />
     <Compile Include="Neurons\Layer.cs" />
     <Compile Include="Neurons\Unit.cs" />
