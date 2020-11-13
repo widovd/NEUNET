@@ -18,9 +18,18 @@ namespace Neulib.Neurons
         // ----------------------------------------------------------------------------------------
         #region Network properties
 
+        private Layer _input;
         // The input layer. This layer is input for feedforward calculation.
         // The activation values change when learning this network.
-        public Layer Input { get; private set; }
+        public Layer Input
+        {
+            get { return _input; }
+            set
+            {
+                _input = value;
+                UpdateConnections(0);
+            }
+        }
 
         /// <summary>
         /// The layers of this Network.
@@ -37,7 +46,7 @@ namespace Neulib.Neurons
         /// </summary>
         /// <param name="index">The index of the layer.</param>
         /// <returns>The layer referenced by index.</returns>
-        public virtual Layer this[int index]
+        public Layer this[int index]
         {
             get { return _layers[index]; }
             set
@@ -58,6 +67,13 @@ namespace Neulib.Neurons
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
+
+        /// <summary>
+        /// Creates a new Network.
+        /// </summary>
+        public Network()
+        {
+        }
 
         /// <summary>
         /// Creates a new Network.
