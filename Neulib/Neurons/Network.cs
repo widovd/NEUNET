@@ -154,7 +154,7 @@ namespace Neulib.Neurons
             {
                 Layer prevLayer = layer;
                 layer = _layers[i];
-                layer.AddDerivatives(prevLayer, derivatives, index, lambdaDivN);
+                index = layer.AddDerivatives(prevLayer, derivatives, index, lambdaDivN);
             }
             return index;
         }
@@ -228,7 +228,7 @@ namespace Neulib.Neurons
             SampleList samples, Single1D derivatives, MeasurementList measurements,
             CalculationArguments arguments)
         {
-            const bool parallel = true; // For debugging set to false .
+            const bool parallel = false; // For debugging set to false .
             CostFunctionEnum costFunction = arguments.settings.CostFunction;
             float lambda = arguments.settings.Lambda;
             int nSamples = samples.Count;
