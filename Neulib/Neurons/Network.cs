@@ -13,46 +13,64 @@ using static System.Math;
 
 namespace Neulib.Neurons
 {
-    public class Network : LayerList
+    public class Network : Unit, IList<Layer>
     {
         // ----------------------------------------------------------------------------------------
         #region Network properties
 
-        // Collection of output layers from other networks or sensor layers.
-        // These layers are input for feedforward calculation.
+        // The input layer. This layer is input for feedforward calculation.
         // The activation values change when learning this network.
-        private readonly LayerList _inputs = new LayerList();
+        public Layer Input { get; private set; }
 
         /// <summary>
-        /// Gets or sets a layer. The connections are updated.
+        /// The layers of this Network.
+        /// </summary>
+        private readonly List<Layer> _layers = new List<Layer>();
+
+        /// <summary>
+        /// The number of layers in this Network.
+        /// </summary>
+        public int Count { get => _layers != null ? _layers.Count : 0; }
+
+        /// <summary>
+        /// Gets or sets a layer.
         /// </summary>
         /// <param name="index">The index of the layer.</param>
         /// <returns>The layer referenced by index.</returns>
-        public override Layer this[int index]
+        public virtual Layer this[int index]
         {
-            get { return base[index]; }
+            get { return _layers[index]; }
             set
             {
-                base[index] = value;
+                _layers[index] = value;
                 UpdateConnections(index);
             }
         }
+
+        public bool IsReadOnly => ((ICollection<Layer>)_layers).IsReadOnly;
 
         /// <summary>
         /// The output layer of this network.
         /// This output layer can be connected to the input collection of other networks using AddInput.
         /// </summary>
-        public Layer Output { get => Count > 0 ? this[Count - 1] : null; }
+        public Layer Output { get => Count > 0 ? _layers[Count - 1] : null; }
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
         /// <summary>
-        /// Creates a new instance of Network.
+        /// Creates a new Network.
         /// </summary>
-        public Network()
+        public Network(Layer input, params Layer[] layers)
         {
+            Input = input ?? throw new VarNullException(nameof(input), 599110);
+            int count = layers.Length;
+            for (int i = 0; i < count; i++)
+            {
+                Layer layer = layers[i] ?? throw new VarNullException(nameof(layer), 357538);
+                Add(layer); // The connection indices are updated
+            }
         }
 
         /// <summary>
@@ -60,83 +78,149 @@ namespace Neulib.Neurons
         /// </summary>
         public Network(Stream stream, BinarySerializer serializer) : base(stream, serializer)
         {
-        }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region IList
-
-        public override void Add(Layer layer)
-        {
-            base.Add(layer);
-            UpdateConnections(Count - 1);
-        }
-
-        public override void Insert(int index, Layer layer)
-        {
-            base.Insert(index, layer);
-            UpdateConnections(index);
+            Input = (Layer)stream.ReadValue(serializer) ?? throw new VarNullException(nameof(Input), 965402);
+            int count = stream.ReadInt();
+            for (int i = 0; i < count; i++)
+            {
+                // Do not use this.Add()! The connection indices are read from stream.
+                _layers.Add((Layer)stream.ReadValue(serializer));
+            }
         }
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region BaseObject
 
+        protected override object CreateNew()
+        {
+            Type type = GetType();
+            if (type == null) throw new VarNullException("type", 119611);
+            try
+            {
+                return Activator.CreateInstance(type, (Layer)Input.Clone());
+            }
+            catch (MissingMethodException ex)
+            {
+                throw new InvalidCodeException($"Activator.CreateInstance({type}) failed.", ex, 528966);
+            }
+        }
+
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
+            Network value = o as Network ?? throw new InvalidTypeException(o, nameof(Network), 321155);
+            Input = (Layer)value.Input.Clone(); // Already done in Clone(), but ok...
+            Clear();
+            // Do not use this.Add()! The connection indices are copied from value.
+            value.ForEach(layer => _layers.Add((Layer)layer.Clone()));
         }
 
         public override void WriteToStream(Stream stream, BinarySerializer serializer)
         {
             base.WriteToStream(stream, serializer);
+            stream.WriteValue(Input, serializer);
+            stream.WriteInt(Count);
+            ForEach(layer => stream.WriteValue(layer, serializer));
         }
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Unit
 
+        public override int CoefficientCount()
+        {
+            int count = 0;
+            ForEach(layer => count += layer.CoefficientCount());
+            return count;
+        }
+
+        public override int SetCoefficients(Single1D coefficients, int index)
+        {
+            ForEach(layer => index = layer.SetCoefficients(coefficients, index));
+            return index;
+        }
+
+        public override int GetCoefficients(Single1D coefficients, int index)
+        {
+            ForEach(layer => index = layer.GetCoefficients(coefficients, index));
+            return index;
+        }
+
+        public int AddDerivatives(Single1D derivatives, int index, float lambdaDivN)
+        {
+            Layer layer = Input;
+            int count = Count;
+            for (int i = 0; i < count; i++)
+            {
+                Layer prevLayer = layer;
+                layer = _layers[i];
+                layer.AddDerivatives(prevLayer, derivatives, index, lambdaDivN);
+            }
+            return index;
+        }
+
         public override void Randomize(Random random, float biasMagnitude, float weightMagnitude)
         {
-            // The inputs must be defined first!
-            if (_inputs.Count == 0)
-                throw new InvalidValueException(nameof(_inputs.Count), _inputs.Count, 561761);
-            base.Randomize(random, biasMagnitude, weightMagnitude);
+            ForEach(layer => layer.Randomize(random, biasMagnitude, weightMagnitude));
+        }
+
+        public override int CountWeight()
+        {
+            int count = 0;
+            ForEach(layer => count += layer.CountWeight());
+            return count;
+        }
+
+        public override float SumWeightSqr()
+        {
+            float sum = 0f;
+            ForEach(layer => sum += layer.SumWeightSqr());
+            return sum;
+        }
+
+        public override int SetActivations(Single1D activations, int index)
+        {
+            ForEach(layer => index = layer.SetActivations(activations, index));
+            return index;
+        }
+
+        public override int GetActivations(Single1D activations, int index)
+        {
+            ForEach(layer => index = layer.GetActivations(activations, index));
+            return index;
         }
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region LayerList
+        #region Network
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Network public
 
-        public void ClearInputs()
-        {
-            _inputs.Clear();
-            UpdateConnections(0);
-        }
-
-        public void AddInput(Layer layer)
-        {
-            _inputs.Add(layer);
-            UpdateConnections(0);
-        }
-
         public void FeedForward(bool parallel)
         {
-            ForEach(layer => layer.FeedForward(parallel));
+            Layer layer = Input;
+            int count = Count;
+            for (int i = 0; i < count; i++)
+            {
+                Layer prevLayer = layer;
+                layer = _layers[i];
+                layer.FeedForward(prevLayer, parallel);
+            }
         }
 
         public void FeedBackward(Single1D ys, CostFunctionEnum costFunction, bool parallel)
         {
             int count = Count;
-            if (count < 1) return;
-            this[count - 1].CalculateDeltas(ys, costFunction);
+            if (count == 0) return;
+            Layer layer = _layers[count - 1];
+            layer.CalculateDeltas(ys, costFunction);
             for (int i = count - 2; i >= 0; i--)
             {
-                this[i].FeedBackward(this[i + 1], parallel);
+                Layer nextLayer = layer;
+                layer = _layers[i];
+                layer.FeedBackward(nextLayer, parallel);
             }
         }
 
@@ -157,7 +241,7 @@ namespace Neulib.Neurons
                 arguments.ThrowIfCancellationRequested();
                 Sample sample = samples[iSample];
                 Single1D measurement = measurements[iSample];
-                _inputs.SetActivations(sample.Inputs, 0);
+                Input.SetActivations(sample.Inputs, 0);
                 FeedForward(parallel);
                 last.GetActivations(measurement, 0);
                 cost += CostFunction(measurement, sample.Requirements, costFunction);
@@ -219,9 +303,9 @@ namespace Neulib.Neurons
             Layer layer = this[index];
             layer.ClearConnections();
             if (index > 0)
-                layer.AddConnections(base[index - 1]);
-            else if (_inputs != null)
-                layer.AddConnections(_inputs);
+                layer.AddConnections(_layers[index - 1]);
+            else if (Input != null)
+                layer.AddConnections(Input);
             if (index < Count - 1)
                 this[index + 1].ClearAndAddConnections(layer);
         }
@@ -268,6 +352,79 @@ namespace Neulib.Neurons
             };
         }
 
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region IList
+
+        public int IndexOf(Layer layer)
+        {
+            return _layers.IndexOf(layer);
+        }
+
+        public void Add(Layer layer)
+        {
+            if (layer == null) throw new VarNullException(nameof(layer), 424420);
+            _layers.Add(layer);
+            UpdateConnections(Count - 1);
+        }
+
+        public void Insert(int index, Layer layer)
+        {
+            if (layer == null) throw new VarNullException(nameof(layer), 133650);
+            _layers.Insert(index, layer);
+            UpdateConnections(index);
+        }
+
+        public Layer Remove(int index)
+        {
+            Layer layer = _layers[index];
+            _layers.RemoveAt(index);
+            return layer;
+        }
+
+        public void RemoveAt(int index)
+        {
+            _layers.RemoveAt(index);
+        }
+
+        public bool Remove(Layer layer)
+        {
+            return _layers.Remove(layer);
+        }
+
+        public void Clear()
+        {
+            _layers.Clear();
+        }
+
+        public bool Contains(Layer item)
+        {
+            return _layers.Contains(item);
+        }
+
+        public void CopyTo(Layer[] array, int arrayIndex)
+        {
+            _layers.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<Layer> GetEnumerator()
+        {
+            return ((IEnumerable<Layer>)_layers).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)_layers).GetEnumerator();
+        }
+
+        public void ForEach(Action<Layer> action, bool parallel = false)
+        {
+            int count = _layers.Count;
+            if (parallel)
+                Parallel.For(0, count, j => action(_layers[j]));
+            else
+                for (int j = 0; j < count; j++) action(_layers[j]);
+        }
 
         #endregion
     }

@@ -367,7 +367,7 @@ namespace Neunet.Forms
 
         private void LoadNetwork()
         {
-            Network network = AddInputs((Network)LoadFileForm.LoadFile(NetworkFilePath, out Version fileVersion));
+            Network network = (Network)LoadFileForm.LoadFile(NetworkFilePath, out Version fileVersion);
             NetworkX = network;
             SaveReminder = false;
         }
@@ -593,13 +593,17 @@ namespace Neunet.Forms
             }
         }
 
+
         private void NewNetwork()
         {
-            NetworkX = Randomize(AddInputs(new Network
-            {
+            int nx = TrainingSetImages.GetLength(1);
+            int ny = TrainingSetImages.GetLength(2);
+            NetworkX = Randomize(new Network
+            (
+                new Layer(nx * ny),
                 new Layer(30),
                 new Layer(10)
-            }));
+            ));
             SaveReminder = false;
         }
 
@@ -622,7 +626,7 @@ namespace Neunet.Forms
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    NetworkX = AddInputs(dialog.Network);
+                    NetworkX = dialog.Network;
                     SaveReminder = false;
                 }
             }
@@ -643,7 +647,7 @@ namespace Neunet.Forms
 
         private void RandomizeNetwork()
         {
-            NetworkX = Randomize(AddInputs((Network)NetworkX.Clone()));
+            NetworkX = Randomize((Network)NetworkX.Clone());
             SaveReminder = false;
         }
 
@@ -871,14 +875,14 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Training set
 
-        private Network AddInputs(Network network)
-        {
-            int nx = TrainingSetImages.GetLength(1);
-            int ny = TrainingSetImages.GetLength(2);
-            network.ClearInputs();
-            network.AddInput(new Layer(nx * ny));
-            return network;
-        }
+        //private Network AddInputs(Network network)
+        //{
+        //    int nx = TrainingSetImages.GetLength(1);
+        //    int ny = TrainingSetImages.GetLength(2);
+        //    network.ClearInputs();
+        //    network.AddInput(new Layer(nx * ny));
+        //    return network;
+        //}
 
         private Network Randomize(Network network)
         {

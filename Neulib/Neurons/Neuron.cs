@@ -47,22 +47,22 @@ namespace Neulib.Neurons
         /// <summary>
         /// The bias value of this neuron.
         /// </summary>
-        public float Bias { get; set; } = 0f;
+        public float Bias { get; set; } = float.NaN;
 
         /// <summary>
         /// The weighted input value of this neuron.
         /// </summary>
-        public float Sum { get; private set; } = 0f;
+        public float Sum { get; private set; } = float.NaN;
 
         /// <summary>
         /// The activation value of this neuron calculated with the activation function and Sum.
         /// </summary>
-        public float Activation { get; set; } = 0f;
+        public float Activation { get; set; } = float.NaN;
 
         /// <summary>
         /// The delta error value of this neuron.
         /// </summary>
-        public float Delta { get; set; } = 0f;
+        public float Delta { get; set; } = float.NaN;
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -88,69 +88,6 @@ namespace Neulib.Neurons
             for (int i = 0; i < count; i++)
             {
                 Connections.Add((Connection)stream.ReadValue(serializer));
-            }
-        }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region IList
-
-        public int IndexOf(Connection item)
-        {
-            return Connections.IndexOf(item);
-        }
-
-        public void Insert(int index, Connection item)
-        {
-            Connections.Insert(index, item);
-        }
-
-        public void Add(Connection item)
-        {
-            Connections.Add(item);
-        }
-
-        public void RemoveAt(int index)
-        {
-            Connections.RemoveAt(index);
-        }
-
-        public bool Remove(Connection item)
-        {
-            return Connections.Remove(item);
-        }
-
-        public void Clear()
-        {
-            Connections.Clear();
-        }
-
-        public bool Contains(Connection item)
-        {
-            return Connections.Contains(item);
-        }
-
-        public void CopyTo(Connection[] array, int arrayIndex)
-        {
-            Connections.CopyTo(array, arrayIndex);
-        }
-
-        public IEnumerator<Connection> GetEnumerator()
-        {
-            return Connections.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Connections.GetEnumerator();
-        }
-
-        public void ForEach(Action<Connection> action)
-        {
-            int count = Connections.Count;
-            for (int i = 0; i < count; i++)
-            {
-                action(Connections[i]);
             }
         }
 
@@ -247,17 +184,6 @@ namespace Neulib.Neurons
             return sum;
         }
 
-        public override int AddDerivatives(Single1D derivatives, int index, float lambdaDivN)
-        {
-            float delta = Delta;
-            // dC/dbj:
-            derivatives[index++] += delta;
-            // dC/dwjk + L2 regularization:
-            ForEach(connection =>
-                derivatives[index++] += connection.Neuron.Activation * delta + lambdaDivN * connection.Weight);
-            return index;
-        }
-
         public override void ClearConnections()
         {
             Clear();
@@ -266,17 +192,7 @@ namespace Neulib.Neurons
         public override void AddConnections(Layer prevLayer)
         {
             if (prevLayer == null) throw new VarNullException(nameof(prevLayer), 491537);
-            prevLayer.ForEach(neuron => Add(new Connection() { Neuron = neuron }));
-        }
-
-        public override void AddConnections(LayerList prevLayerList)
-        {
-            if (prevLayerList == null) throw new VarNullException(nameof(prevLayerList), 339514);
-            prevLayerList.ForEach(prevLayer =>
-            {
-                if (prevLayer == null) throw new VarNullException(nameof(prevLayer), 443220);
-                prevLayer.ForEach(neuron => Add(new Connection() { Neuron = neuron }));
-            });
+            prevLayer.ForEach(index => Add(new Connection() { Index = index }));
         }
 
         public override int SetActivations(Single1D activations, int index)
@@ -315,10 +231,10 @@ namespace Neulib.Neurons
         /// <summary> 
         /// Calculates the activation value of this neuron from the neurons in the previous layer.
         /// </summary>
-        public void FeedForward()
+        public void FeedForward(Layer prevLayer)
         {
             float sum = Bias;
-            ForEach(connection => sum += connection.Activation);
+            ForEach(connection => sum += connection.Weight * prevLayer[connection.Index].Activation);
             if (float.IsNaN(sum))
                 throw new InvalidValueException(nameof(sum), sum, 174119);
             Sum = sum;
@@ -329,7 +245,6 @@ namespace Neulib.Neurons
         {
             Delta = nextLayer.SumWeightDelta(j) * ActivationDerivative();
         }
-
 
         /// <summary>
         /// Calculates Delta of this neuron which must be in the last layer.
@@ -352,6 +267,88 @@ namespace Neulib.Neurons
             Delta = d * ActivationDerivative();
         }
 
+        /// <summary>
+        /// Calculates the partial derivatives of the cost function with respect to the bias and weight values
+        /// and and adds the values to the derivatives array.
+        /// </summary>
+        /// <param name="prevLayer">The previous layer.</param>
+        /// <param name="coefficients">The derivatives array will be updated.</param>
+        /// <param name="index">The start index of the array.</param>
+        /// <param name="lambdaDivN">The regularization parameter lambda / number of weights.</param>
+        /// <returns>The updated start index.</returns>
+        public int AddDerivatives(Layer prevLayer, Single1D derivatives, int index, float lambdaDivN)
+        {
+            float delta = Delta;
+            // dC/dbj:
+            derivatives[index++] += delta;
+            // dC/dwjk + L2 regularization:
+            ForEach(connection =>
+                derivatives[index++] += prevLayer[connection.Index].Activation * delta + lambdaDivN * connection.Weight);
+            return index;
+        }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region IList
+
+        public int IndexOf(Connection item)
+        {
+            return Connections.IndexOf(item);
+        }
+
+        public void Insert(int index, Connection item)
+        {
+            Connections.Insert(index, item);
+        }
+
+        public void Add(Connection item)
+        {
+            Connections.Add(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            Connections.RemoveAt(index);
+        }
+
+        public bool Remove(Connection item)
+        {
+            return Connections.Remove(item);
+        }
+
+        public void Clear()
+        {
+            Connections.Clear();
+        }
+
+        public bool Contains(Connection item)
+        {
+            return Connections.Contains(item);
+        }
+
+        public void CopyTo(Connection[] array, int arrayIndex)
+        {
+            Connections.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<Connection> GetEnumerator()
+        {
+            return Connections.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Connections.GetEnumerator();
+        }
+
+        public void ForEach(Action<Connection> action)
+        {
+            int count = Connections.Count;
+            for (int i = 0; i < count; i++)
+            {
+                action(Connections[i]);
+            }
+        }
 
         #endregion
     }

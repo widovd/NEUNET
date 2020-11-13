@@ -123,19 +123,6 @@ namespace Neulib.Neurons
         }
 
         /// <summary>
-        /// Calculates the partial derivatives of the cost function with respect to the bias and weight values
-        /// and and adds the values to the derivatives array.
-        /// </summary>
-        /// <param name="coefficients">The derivatives array will be updated.</param>
-        /// <param name="index">The start index of the array.</param>
-        /// <param name="lambdaDivN">The regularization parameter lambda / number of weights.</param>
-        /// <returns>The updated start index.</returns>
-        public virtual int AddDerivatives(Single1D derivatives, int index, float lambdaDivN)
-        {
-            return index;
-        }
-
-        /// <summary>
         /// Randomizes the bias and weight values of the neurons.
         /// </summary>
         /// <param name="random">The random number generator.</param>
@@ -177,15 +164,6 @@ namespace Neulib.Neurons
         public virtual void AddConnections(Layer prevLayer)
         {
         }
-
-        /// <summary>
-        /// Adds connections to a list of previous layers.
-        /// </summary>
-        /// <param name="prevLayer">The list of previous layers.</param>
-        public virtual void AddConnections(LayerList prevLayerList)
-        {
-        }
-
 
         public void ClearAndAddConnections(Layer prevLayer)
         {

@@ -20,19 +20,15 @@ namespace Neulib.Neurons
         #region Properties
 
         /// <summary>
-        /// The neuron in the previous layer which is the source of the activation.
+        /// The index of the source neuron in the previous layer.
         /// </summary>
-        public Neuron Neuron { get; set; }
+        public int Index { get; set; }
 
         /// <summary>
         /// The weight value of the connection.
         /// </summary>
-        public float Weight { get; set; } = 1f;
+        public float Weight { get; set; } = float.NaN;
 
-        public float Activation
-        {
-            get => Neuron != null ? Weight * Neuron.Activation : throw new VarNullException(nameof(Neuron), 367776);
-        }
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
@@ -47,9 +43,9 @@ namespace Neulib.Neurons
         /// <summary>
         /// Creates a new connection from the stream.
         /// </summary>
-        /// <remarks>Neuron can not be read from stream. Must be set by the parent network.</remarks>
         public Connection(Stream stream, BinarySerializer serializer) : base(stream, serializer)
         {
+            Index = stream.ReadInt();
             Weight = stream.ReadSingle();
         }
 
@@ -59,7 +55,7 @@ namespace Neulib.Neurons
 
         public override string ToString()
         {
-            return $"weight = {Weight:F3}";
+            return $"index = {Index}, weight = {Weight:F3}";
         }
 
         #endregion
@@ -70,19 +66,16 @@ namespace Neulib.Neurons
         {
             base.CopyFrom(o);
             Connection value = o as Connection ?? throw new InvalidTypeException(o, nameof(Connection), 759981);
+            Index = value.Index;
             Weight = value.Weight;
         }
 
         public override void WriteToStream(Stream stream, BinarySerializer serializer)
         {
             base.WriteToStream(stream, serializer);
+            stream.WriteInt(Index);
             stream.WriteSingle(Weight);
         }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Unit
-
 
         #endregion
     }

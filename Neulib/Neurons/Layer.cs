@@ -59,71 +59,8 @@ namespace Neulib.Neurons
             int count = stream.ReadInt();
             for (int i = 0; i < count; i++)
             {
-                Add((Neuron)stream.ReadValue(serializer));
+                Neurons.Add((Neuron)stream.ReadValue(serializer));
             }
-        }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region IList
-
-        public int IndexOf(Neuron item)
-        {
-            return Neurons.IndexOf(item);
-        }
-
-        public void Insert(int index, Neuron item)
-        {
-            Neurons.Insert(index, item);
-        }
-
-        public void Add(Neuron item)
-        {
-            Neurons.Add(item);
-        }
-
-        public void RemoveAt(int index)
-        {
-            Neurons.RemoveAt(index);
-        }
-
-        public bool Remove(Neuron item)
-        {
-            return Neurons.Remove(item);
-        }
-
-        public void Clear()
-        {
-            Neurons.Clear();
-        }
-
-        public bool Contains(Neuron item)
-        {
-            return Neurons.Contains(item);
-        }
-
-        public void CopyTo(Neuron[] array, int arrayIndex)
-        {
-            Neurons.CopyTo(array, arrayIndex);
-        }
-
-        public IEnumerator<Neuron> GetEnumerator()
-        {
-            return ((IEnumerable<Neuron>)Neurons).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)Neurons).GetEnumerator();
-        }
-
-        public void ForEach(Action<Neuron> action, bool parallel = false)
-        {
-            int count = Neurons.Count;
-            if (parallel)
-                Parallel.For(0, count, j => action(Neurons[j]));
-            else
-                for (int j = 0; j < count; j++) action(Neurons[j]);
         }
 
         #endregion
@@ -185,12 +122,6 @@ namespace Neulib.Neurons
             return index;
         }
 
-        public override int AddDerivatives(Single1D derivatives, int index, float lambdaDivN)
-        {
-            ForEach(neuron => index = neuron.AddDerivatives(derivatives, index, lambdaDivN));
-            return index;
-        }
-
         public override void Randomize(Random random, float biasMagnitude, float weightMagnitude)
         {
             ForEach(neuron => neuron.Randomize(random, biasMagnitude, weightMagnitude));
@@ -232,18 +163,13 @@ namespace Neulib.Neurons
             ForEach(neuron => neuron.AddConnections(prevLayer));
         }
 
-        public override void AddConnections(LayerList prevLayerList)
-        {
-            ForEach(neuron => neuron.AddConnections(prevLayerList));
-        }
-
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Layer
 
-        public void FeedForward(bool parallel)
+        public void FeedForward(Layer prevLayer, bool parallel)
         {
-            ParallelFor(0, Neurons.Count, j => Neurons[j].FeedForward(), parallel);
+            ParallelFor(0, Neurons.Count, j => Neurons[j].FeedForward(prevLayer), parallel);
         }
 
         public void CalculateDeltas(Single1D ys, CostFunctionEnum costFunction)
@@ -269,6 +195,93 @@ namespace Neulib.Neurons
                 d += neuron[j].Weight * neuron.Delta; // wji
             }
             return d;
+        }
+
+        /// <summary>
+        /// Calculates the partial derivatives of the cost function with respect to the bias and weight values
+        /// and and adds the values to the derivatives array.
+        /// </summary>
+        /// <param name="prevLayer">The previous layer.</param>
+        /// <param name="coefficients">The derivatives array will be updated.</param>
+        /// <param name="index">The start index of the array.</param>
+        /// <param name="lambdaDivN">The regularization parameter lambda / number of weights.</param>
+        /// <returns>The updated start index.</returns>
+        public int AddDerivatives(Layer prevLayer, Single1D derivatives, int index, float lambdaDivN)
+        {
+            ForEach(neuron => index = neuron.AddDerivatives(prevLayer, derivatives, index, lambdaDivN));
+            return index;
+        }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region IList
+
+        public int IndexOf(Neuron item)
+        {
+            return Neurons.IndexOf(item);
+        }
+
+        public void Insert(int index, Neuron item)
+        {
+            Neurons.Insert(index, item);
+        }
+
+        public void Add(Neuron item)
+        {
+            Neurons.Add(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            Neurons.RemoveAt(index);
+        }
+
+        public bool Remove(Neuron item)
+        {
+            return Neurons.Remove(item);
+        }
+
+        public void Clear()
+        {
+            Neurons.Clear();
+        }
+
+        public bool Contains(Neuron item)
+        {
+            return Neurons.Contains(item);
+        }
+
+        public void CopyTo(Neuron[] array, int arrayIndex)
+        {
+            Neurons.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<Neuron> GetEnumerator()
+        {
+            return ((IEnumerable<Neuron>)Neurons).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)Neurons).GetEnumerator();
+        }
+
+        public void ForEach(Action<int> action, bool parallel = false)
+        {
+            int count = Neurons.Count;
+            if (parallel)
+                Parallel.For(0, count, j => action(j));
+            else
+                for (int j = 0; j < count; j++) action(j);
+        }
+
+        public void ForEach(Action<Neuron> action, bool parallel = false)
+        {
+            int count = Neurons.Count;
+            if (parallel)
+                Parallel.For(0, count, j => action(Neurons[j]));
+            else
+                for (int j = 0; j < count; j++) action(Neurons[j]);
         }
 
         #endregion
