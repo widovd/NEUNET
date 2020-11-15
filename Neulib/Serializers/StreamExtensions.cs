@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Neulib.Exceptions;
+using Neulib.Numerics;
 using static System.Convert;
 using static System.BitConverter;
 
@@ -214,6 +215,54 @@ namespace Neulib.Serializers
             if (reverse) bytes = ReverseBytes(bytes);
             stream.Write(bytes, 0, count);
         }
+
+
+
+        public static Single2 ReadSingle2(this Stream stream, bool reverse = false)
+        {
+            float x = ReadSingle(stream, reverse);
+            float y = ReadSingle(stream, reverse);
+            return new Single2(x, y);
+        }
+
+        public static void WriteSingle2(this Stream stream, Single2 value, bool reverse = false)
+        {
+            stream.WriteSingle(value.X, reverse);
+            stream.WriteSingle(value.Y, reverse);
+        }
+
+        public static Single2x2 ReadSingle2x2(this Stream stream, bool reverse = false)
+        {
+            float xx = ReadSingle(stream, reverse);
+            float xy = ReadSingle(stream, reverse);
+            float yx = ReadSingle(stream, reverse);
+            float yy = ReadSingle(stream, reverse);
+            return new Single2x2(xx, xy, yx, yy);
+        }
+
+        public static void WriteSingle2x2(this Stream stream, Single2x2 value, bool reverse = false)
+        {
+            stream.WriteSingle(value.XX, reverse);
+            stream.WriteSingle(value.XY, reverse);
+            stream.WriteSingle(value.YX, reverse);
+            stream.WriteSingle(value.YY, reverse);
+        }
+
+        public static Single3 ReadSingle3(this Stream stream, bool reverse = false)
+        {
+            float x = ReadSingle(stream, reverse);
+            float y = ReadSingle(stream, reverse);
+            float z = ReadSingle(stream, reverse);
+            return new Single3(x, y, z);
+        }
+
+        public static void WriteSingle3(this Stream stream, Single3 value, bool reverse = false)
+        {
+            stream.WriteSingle(value.X, reverse);
+            stream.WriteSingle(value.Y, reverse);
+            stream.WriteSingle(value.Z, reverse);
+        }
+
 
     }
 }

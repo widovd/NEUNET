@@ -104,7 +104,9 @@ namespace Neunet.Images.Charts2D
             {
                 int nu = Samples.NU; // the horizontal size of the matrix of x values
                 int nv = Samples.NV; // the vertical size of the matrix of x values
-                return nu * (pictureBox.Height - LabelHeight - OutputHeight - 2 * GapHeight) / Max(nu, nv);
+                float inputSize = nu * (pictureBox.Height - LabelHeight - OutputHeight - 2 * GapHeight) / Max(nu, nv);
+                if (inputSize < 1f) inputSize = 1f;
+                return inputSize;
             }
         }
 

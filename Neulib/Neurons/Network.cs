@@ -242,11 +242,11 @@ namespace Neulib.Neurons
 
         public float GetCostAndDerivatives(
             SampleList samples, Single1D derivatives, MeasurementList measurements,
-            CalculationArguments arguments)
+            CalculationSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
             const bool parallel = false; // For debugging set to false .
-            CostFunctionEnum costFunction = arguments.settings.CostFunction;
-            float lambda = arguments.settings.Lambda;
+            CostFunctionEnum costFunction = settings.CostFunction;
+            float lambda = settings.Lambda;
             int nSamples = samples.Count;
             int nCoeffs = derivatives.Count;
             float cost = 0f;
@@ -254,7 +254,7 @@ namespace Neulib.Neurons
             for (int i = 0; i < nCoeffs; i++) derivatives[i] = 0f;
             for (int iSample = 0; iSample < nSamples; iSample++)
             {
-                arguments.ThrowIfCancellationRequested();
+                tokenSource?.Token.ThrowIfCancellationRequested();
                 Sample sample = samples[iSample];
                 Single1D measurement = measurements[iSample];
                 Input.SetActivations(sample.Inputs, 0);
@@ -265,19 +265,19 @@ namespace Neulib.Neurons
                 cost += 0.5f * lambda * SumWeightSqr() / weightCount; // regularization
                 FeedBackward(sample.Requirements, costFunction, parallel);
                 AddDerivatives(derivatives, 0, lambda / weightCount);
-                arguments.reporter?.ReportProgress(iSample, nSamples);
+                reporter?.ReportProgress(iSample, nSamples);
             }
-            arguments.reporter?.ReportProgress(0, nSamples);
+            reporter?.ReportProgress(0, nSamples);
             cost /= nSamples;
             for (int i = 0; i < nCoeffs; i++) derivatives[i] /= nSamples;
             return cost;
         }
 
         public void Learn(
-            SampleList samples, CalculationArguments arguments)
+            SampleList samples, CalculationSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         // samples = yjks
         {
-            arguments.reporter?.WriteStart($"Learning the network using a subset of {samples.Count} random samples...");
+            reporter?.WriteStart($"Learning the network using a subset of {samples.Count} random samples...");
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
@@ -293,20 +293,20 @@ namespace Neulib.Neurons
             GetCoefficients(coefficients, 0);
             Minimization minimization = new Minimization()
             {
-                MaxIter = arguments.settings.MaxIter,
-                Eps = arguments.settings.Epsilon,
-                Tol = arguments.settings.Tolerance,
+                MaxIter = settings.MaxIter,
+                Eps = settings.Epsilon,
+                Tol = settings.Tolerance,
             };
             float finalCost = minimization.MomentumBasedGradientDescent(coefficients, derivatives, velocities,
                 (iter) =>
                 {
                     SetCoefficients(coefficients, 0);
-                    arguments.reporter?.ReportCoefficients(coefficients);
-                    float cost = GetCostAndDerivatives(samples, derivatives, measurements, arguments);
-                    arguments.reporter?.ReportCostAndDerivatives(cost, derivatives, measurements);
+                    reporter?.ReportCoefficients(coefficients);
+                    float cost = GetCostAndDerivatives(samples, derivatives, measurements, settings, reporter, tokenSource);
+                    reporter?.ReportCostAndDerivatives(cost, derivatives, measurements);
                     return cost;
-                }, arguments.settings.LearningRate, arguments.settings.MomentumCoefficient);
-            arguments.reporter?.WriteEnd($"The network has learned in {timer.Elapsed.TotalSeconds} s, and the final cost value is {finalCost:F4}.");
+                }, settings.LearningRate, settings.MomentumCoefficient);
+            reporter?.WriteEnd($"The network has learned in {timer.Elapsed.TotalSeconds} s, and the final cost value is {finalCost:F4}.");
         }
 
         #endregion

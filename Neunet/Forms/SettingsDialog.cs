@@ -1,25 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 using Neulib;
-using Neulib.Numerics;
-using Neulib.Exceptions;
 using Neulib.Neurons;
-using Neulib.MultiArrays;
-using Neulib.Serializers;
-using Neunet.Extensions;
-using Neunet.Images.Charts2D;
-using Neunet.Serializers;
 
 namespace Neunet.Forms
 {
@@ -28,7 +10,7 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        public CalculationSettings Settings
+        public Settings Settings
         {
             get { return (CalculationSettings)propertyGrid.SelectedObject; }
             set { propertyGrid.SelectedObject = value; }
@@ -63,7 +45,7 @@ namespace Neunet.Forms
                 const string caption = "Settings";
                 const MessageBoxButtons buttons = MessageBoxButtons.OKCancel;
                 if (MessageBox.Show(message, caption, buttons) == DialogResult.Cancel) return;
-                Settings = new CalculationSettings();
+                Settings = Settings?.DefaultSettings();
             }
             catch (Exception ex)
             {

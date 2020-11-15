@@ -16,9 +16,9 @@ namespace Neulib.Numerics
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        public double Lo { get; set; }
+        public double Lo;
 
-        public double Hi { get; set; }
+        public double Hi;
 
         public double Delta { get { return Hi - Lo; } }
 
@@ -74,7 +74,7 @@ namespace Neulib.Numerics
 
         public static bool operator !=(ParamRange left, ParamRange right)
         {
-            return !(left == right);
+            return !left.Equals(right);
         }
 
         #endregion

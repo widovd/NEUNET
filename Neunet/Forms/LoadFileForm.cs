@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
 using System.IO;
 using System.IO.Compression;
@@ -43,7 +44,7 @@ namespace Neunet.Forms
             FileVersion = serializer.Version;
         }
 
-        protected override void FileAction(CalculationArguments arguments)
+        protected override void FileAction(Settings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
             using MemoryStream memoryStream = new MemoryStream();
             using (FileStream fileStream = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.None))

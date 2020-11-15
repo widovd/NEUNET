@@ -68,11 +68,29 @@
     <Compile Include="Forms\AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\LayerDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\LayerDialog.Designer.cs">
       <DependentUpon>LayerDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BugForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BugForm.Designer.cs">
+      <DependentUpon>BugForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WorldDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WorldDialog.Designer.cs">
+      <DependentUpon>WorldDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\NetworkDialog.cs">
       <SubType>Form</SubType>
@@ -93,6 +111,12 @@
       <DependentUpon>TestFloatForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Images\BugWorldImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Images\BugWorldImage.Designer.cs">
+      <DependentUpon>BugWorldImage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Images\CoefficientsImage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -112,11 +136,11 @@
     <Compile Include="Images\SamplesImage.Designer.cs">
       <DependentUpon>SamplesImage.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MainForm.cs">
+    <Compile Include="Forms\DigitsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <Compile Include="Forms\DigitsForm.Designer.cs">
+      <DependentUpon>DigitsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\MinimizeForm.cs">
       <SubType>Form</SubType>
@@ -258,8 +282,17 @@
     <EmbeddedResource Include="Forms\BaseForm.resx">
       <DependentUpon>BaseForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\LayerDialog.resx">
       <DependentUpon>LayerDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BugForm.resx">
+      <DependentUpon>BugForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WorldDialog.resx">
+      <DependentUpon>WorldDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\NetworkDialog.resx">
       <DependentUpon>NetworkDialog.cs</DependentUpon>
@@ -297,8 +330,8 @@
     <EmbeddedResource Include="Images\Charts3D\WireframeToolStrip.resx">
       <DependentUpon>WireframeToolStrip.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\DigitsForm.resx">
+      <DependentUpon>DigitsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MinimizeForm.resx">
       <DependentUpon>MinimizeForm.cs</DependentUpon>

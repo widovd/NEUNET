@@ -14,9 +14,9 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        public CalculationSettings Settings { get; set; }
+        public Settings Settings { get; set; }
 
-        public Action<CalculationArguments> Action { get; set; }
+        public Action<Settings, ProgressReporter, CancellationTokenSource> Action { get; set; }
 
         protected CancellationTokenSource _tokenSource = null;
 
@@ -95,7 +95,7 @@ namespace Neunet.Forms
                 {
                     try
                     {
-                        Action(new CalculationArguments(Settings, reporter, _tokenSource));
+                        Action(Settings, reporter, _tokenSource);
                         return null;
                     }
                     catch (Exception ex)
@@ -136,7 +136,7 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Static
 
-        public static bool RunAsync(Action<CalculationArguments> action, IWin32Window owner)
+        public static bool RunAsync(Action<Settings, ProgressReporter, CancellationTokenSource> action, IWin32Window owner)
         {
             using (AsyncForm form = new AsyncForm { Action = action })
             {

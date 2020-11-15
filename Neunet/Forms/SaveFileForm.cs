@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using System.Threading;
 using System.IO;
 using System.IO.Compression;
 using Neunet.Utils;
@@ -40,7 +41,7 @@ namespace Neunet.Forms
             formatter?.Serialize(stream, Graph);
         }
 
-        protected override void FileAction(CalculationArguments arguments)
+        protected override void FileAction(Settings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
             using MemoryStream memoryStream = new MemoryStream();
             SaveGraph(memoryStream);

@@ -17,41 +17,27 @@ namespace Neulib.Numerics
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        [Browsable(false)]
-        public float XX { get; set; }
+        public float XX;
 
-        [Browsable(false)]
-        public float XY { get; set; }
+        public float XY;
 
-        [Browsable(false)]
-        public float XZ { get; set; }
+        public float XZ;
 
-        [Browsable(false)]
-        public float YX { get; set; }
+        public float YX;
 
-        [Browsable(false)]
-        public float YY { get; set; }
+        public float YY;
 
-        [Browsable(false)]
-        public float YZ { get; set; }
+        public float YZ;
 
-        [Browsable(false)]
-        public float ZX { get; set; }
+        public float ZX;
 
-        [Browsable(false)]
-        public float ZY { get; set; }
+        public float ZY;
 
-        [Browsable(false)]
-        public float ZZ { get; set; }
+        public float ZZ;
 
-        [Browsable(false)]
-        [XmlIgnore]
         public Single3 Row1
         {
-            get
-            {
-                return new Single3(XX, XY, XZ);
-            }
+            get { return new Single3(XX, XY, XZ); }
             set
             {
                 XX = value.X;
@@ -60,14 +46,9 @@ namespace Neulib.Numerics
             }
         }
 
-        [Browsable(false)]
-        [XmlIgnore]
         public Single3 Row2
         {
-            get
-            {
-                return new Single3(YX, YY, YZ);
-            }
+            get { return new Single3(YX, YY, YZ); }
             set
             {
                 YX = value.X;
@@ -76,14 +57,9 @@ namespace Neulib.Numerics
             }
         }
 
-        [Browsable(false)]
-        [XmlIgnore]
         public Single3 Row3
         {
-            get
-            {
-                return new Single3(ZX, ZY, ZZ);
-            }
+            get { return new Single3(ZX, ZY, ZZ); }
             set
             {
                 ZX = value.X;
@@ -92,14 +68,9 @@ namespace Neulib.Numerics
             }
         }
 
-        [Browsable(false)]
-        [XmlIgnore]
         public Single3 Col1
         {
-            get
-            {
-                return new Single3(XX, YX, ZX);
-            }
+            get { return new Single3(XX, YX, ZX); }
             set
             {
                 XX = value.X;
@@ -108,14 +79,9 @@ namespace Neulib.Numerics
             }
         }
 
-        [Browsable(false)]
-        [XmlIgnore]
         public Single3 Col2
         {
-            get
-            {
-                return new Single3(XY, YY, ZY);
-            }
+            get { return new Single3(XY, YY, ZY); }
             set
             {
                 XY = value.X;
@@ -124,14 +90,9 @@ namespace Neulib.Numerics
             }
         }
 
-        [Browsable(false)]
-        [XmlIgnore]
         public Single3 Col3
         {
-            get
-            {
-                return new Single3(XZ, YZ, ZZ);
-            }
+            get { return new Single3(XZ, YZ, ZZ); }
             set
             {
                 XZ = value.X;
@@ -227,73 +188,6 @@ namespace Neulib.Numerics
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region ISerializable, IXmlDocSerializable
-
-        private const string _XXId = "XX";
-        private const string _XYId = "XY";
-        private const string _XZId = "XZ";
-        private const string _YXId = "YX";
-        private const string _YYId = "YY";
-        private const string _YZId = "YZ";
-        private const string _ZXId = "ZX";
-        private const string _ZYId = "ZY";
-        private const string _ZZId = "ZZ";
-
-        private Single3x3(SerializationInfo info, StreamingContext context)
-        {
-            XX = 0f; XY = 0f; XZ = 0f;
-            YX = 0f; YY = 0f; YZ = 0f;
-            ZX = 0f; ZY = 0f; ZZ = 0f;
-            foreach (SerializationEntry entry in info)
-            {
-                switch (entry.Name)
-                {
-                    case _XXId:
-                        XX = (float)entry.Value;
-                        break;
-                    case _XYId:
-                        XY = (float)entry.Value;
-                        break;
-                    case _XZId:
-                        XZ = (float)entry.Value;
-                        break;
-                    case _YXId:
-                        YX = (float)entry.Value;
-                        break;
-                    case _YYId:
-                        YY = (float)entry.Value;
-                        break;
-                    case _YZId:
-                        YZ = (float)entry.Value;
-                        break;
-                    case _ZXId:
-                        ZX = (float)entry.Value;
-                        break;
-                    case _ZYId:
-                        ZY = (float)entry.Value;
-                        break;
-                    case _ZZId:
-                        ZZ = (float)entry.Value;
-                        break;
-                }
-            }
-        }
-
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue(_XXId, XX);
-            info.AddValue(_XYId, XY);
-            info.AddValue(_XZId, XZ);
-            info.AddValue(_YXId, YX);
-            info.AddValue(_YYId, YY);
-            info.AddValue(_YZId, YZ);
-            info.AddValue(_ZXId, ZX);
-            info.AddValue(_ZYId, ZY);
-            info.AddValue(_ZZId, ZZ);
-        }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
         #region Object
 
         public override bool Equals(object o)
@@ -346,7 +240,7 @@ namespace Neulib.Numerics
 
         public static bool operator !=(Single3x3 left, Single3x3 right)
         {
-            return !(left == right);
+            return !left.Equals(right);
         }
 
         public static Single3x3 operator +(Single3x3 M1, Single3x3 M2)

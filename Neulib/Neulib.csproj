@@ -38,6 +38,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -49,8 +50,16 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="BaseObject.cs" />
-    <Compile Include="CalculationArguments.cs" />
-    <Compile Include="CalculationSettings.cs" />
+    <Compile Include="Bugs\WorldSettings.cs" />
+    <Compile Include="Bugs\VisualWorld.cs" />
+    <Compile Include="Bugs\Visual.cs" />
+    <Compile Include="Bugs\VisualList.cs" />
+    <Compile Include="Instructions\Instruction.cs" />
+    <Compile Include="Instructions\InstructionList.cs" />
+    <Compile Include="Numerics\Double2x2.cs" />
+    <Compile Include="Numerics\Single2x2.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Neurons\CalculationSettings.cs" />
     <Compile Include="Exceptions\InvalidCallException.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Neurons\MeasurementList.cs" />

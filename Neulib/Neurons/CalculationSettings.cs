@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using Neulib.Exceptions;
 using Neulib.Serializers;
 
-namespace Neulib
+namespace Neulib.Neurons
 {
     public enum CostFunctionEnum
     {
@@ -13,7 +13,7 @@ namespace Neulib
         CrossEntropy,
     }
 
-    public class CalculationSettings : BaseObject
+    public class CalculationSettings : Settings
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -146,7 +146,7 @@ namespace Neulib
         private const string _LambdaId = "Lambda";
         private const string _VerificationSampleCountId = "VerificationSampleCount";
 
-        public void LoadFromSettings(XmlElement rootElement)
+        public override void LoadFromSettings(XmlElement rootElement)
         {
             BiasMagnitude = rootElement.ReadSingle(_BiasMagnitudeId, BiasMagnitude);
             WeightMagnitude = rootElement.ReadSingle(_WeightMagnitudeId, WeightMagnitude);
@@ -161,7 +161,7 @@ namespace Neulib
             TestSampleCount = rootElement.ReadInt(_VerificationSampleCountId, TestSampleCount);
         }
 
-        public void SaveToSettings(XmlElement rootElement)
+        public override void SaveToSettings(XmlElement rootElement)
         {
             rootElement.WriteSingle(_BiasMagnitudeId, BiasMagnitude);
             rootElement.WriteSingle(_WeightMagnitudeId, WeightMagnitude);

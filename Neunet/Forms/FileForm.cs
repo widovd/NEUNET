@@ -116,7 +116,7 @@ namespace Neunet.Forms
             return serializer;
         }
 
-        protected virtual void FileAction(CalculationArguments arguments)
+        protected virtual void FileAction(Settings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
         }
 
