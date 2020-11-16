@@ -4,31 +4,27 @@ namespace Neulib.Numerics
 {
     public class MatrixNxM
     {
-        private double[,] _Values;
-        public double[,] Values
-        {
-            get { return _Values; }
-        }
+        private readonly double[,] _values;
 
         public double this[int i, int j]
         {
-            get { return Values[i, j]; }
-            set { Values[i, j] = value; }
+            get { return _values[i, j]; }
+            set { _values[i, j] = value; }
         }
 
         public int Count1
         {
-            get { return _Values.GetUpperBound(0) + 1; }
+            get { return _values.GetLength(0); }
         }
 
         public int Count2
         {
-            get { return _Values.GetUpperBound(1) + 1; }
+            get { return _values.GetLength(1); }
         }
 
         public MatrixNxM(int n, int m)
         {
-            _Values = new double[n, m];
+            _values = new double[n, m];
         }
 
         public MatrixNxM MulMatrix(MatrixNxM Mat)
@@ -46,9 +42,9 @@ namespace Neulib.Numerics
                     double Sum = 0;
                     for (int k = 0; k < h; k++)
                     {
-                        Sum += Values[i, k] * Mat.Values[k, j];
+                        Sum += _values[i, k] * Mat._values[k, j];
                     }
-                    Out.Values[i, j] = Sum;
+                    Out._values[i, j] = Sum;
                 }
             }
             return Out;
@@ -65,7 +61,7 @@ namespace Neulib.Numerics
             {
                 for (int j = 0; j < m; j++)
                 {
-                    MatNxN.Values[i, j] = Values[i, j];
+                    MatNxN._values[i, j] = _values[i, j];
                 }
             }
             return MatNxN;

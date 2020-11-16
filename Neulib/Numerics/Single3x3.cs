@@ -332,16 +332,16 @@ namespace Neulib.Numerics
         {
             if (IsNaN(this)) return NaN;
             MatrixNxN M1 = new MatrixNxN(3);
-            M1.Values[0, 0] = XX; M1.Values[0, 1] = XY; M1.Values[0, 2] = XZ;
-            M1.Values[1, 0] = YX; M1.Values[1, 1] = YY; M1.Values[1, 2] = YZ;
-            M1.Values[2, 0] = ZX; M1.Values[2, 1] = ZY; M1.Values[2, 2] = ZZ;
+            M1[0, 0] = XX; M1[0, 1] = XY; M1[0, 2] = XZ;
+            M1[1, 0] = YX; M1[1, 1] = YY; M1[1, 2] = YZ;
+            M1[2, 0] = ZX; M1[2, 1] = ZY; M1[2, 2] = ZZ;
             try
             {
                 MatrixNxN M2 = M1.Inverse();
                 return new Single3x3(
-                    (float)M2.Values[0, 0], (float)M2.Values[0, 1], (float)M2.Values[0, 2],
-                    (float)M2.Values[1, 0], (float)M2.Values[1, 1], (float)M2.Values[1, 2],
-                    (float)M2.Values[2, 0], (float)M2.Values[2, 1], (float)M2.Values[2, 2]
+                    (float)M2[0, 0], (float)M2[0, 1], (float)M2[0, 2],
+                    (float)M2[1, 0], (float)M2[1, 1], (float)M2[1, 2],
+                    (float)M2[2, 0], (float)M2[2, 1], (float)M2[2, 2]
                     );
             }
             catch (SingularMatrixException)

@@ -100,12 +100,10 @@
     <Compile Include="Numerics\SingleN.cs" />
     <Compile Include="Neurons\Network.cs" />
     <Compile Include="Neurons\Neuron.cs" />
-    <Compile Include="Numerics\LinearAlgebra.cs" />
     <Compile Include="Numerics\LudCmp.cs" />
     <Compile Include="Numerics\Minimization.cs" />
     <Compile Include="Numerics\MatrixNxM.cs" />
     <Compile Include="Numerics\MatrixNxN.cs" />
-    <Compile Include="Numerics\ParamRange.cs" />
     <Compile Include="Numerics\Single2.cs" />
     <Compile Include="Numerics\Single3.cs" />
     <Compile Include="Numerics\Single3x3.cs" />

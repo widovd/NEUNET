@@ -14,20 +14,17 @@
         {
             int n = Count1;
             LudCmp Lud = new LudCmp(this);
-            MatrixNxN Out = new MatrixNxN(n);
+            MatrixNxN result = new MatrixNxN(n);
             for (int j = 0; j < n; j++)
             {
-                Single1D Vec = new Single1D(n);
-                for (int i = 0; i < n; i++) Vec[i] = 0f;
-                Vec[j] = 1f;
-                Vec = Lud.LubKsb(Vec);
-                for (int i = 0; i < n; i++) Out[i, j] = Vec[i];
+                double[] vec = new double[n];
+                for (int i = 0; i < n; i++) vec[i] = 0d;
+                vec[j] = 1d;
+                vec = Lud.LubKsb(vec);
+                for (int i = 0; i < n; i++) result[i, j] = vec[i];
             }
-            // test
-            // MatrixNxN Test = MulMatrix(Out);
-            return Out;
+            return result;
         }
 
     }
-
 }

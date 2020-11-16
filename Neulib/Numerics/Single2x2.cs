@@ -192,14 +192,14 @@ namespace Neulib.Numerics
         {
             if (IsNaN(this)) return NaN;
             MatrixNxN M1 = new MatrixNxN(2);
-            M1.Values[0, 0] = XX; M1.Values[0, 1] = XY;
-            M1.Values[1, 0] = YX; M1.Values[1, 1] = YY;
+            M1._values[0, 0] = XX; M1._values[0, 1] = XY;
+            M1._values[1, 0] = YX; M1._values[1, 1] = YY;
             try
             {
                 MatrixNxN M2 = M1.Inverse();
                 return new Single2x2(
-                    (float)M2.Values[0, 0], (float)M2.Values[0, 1],
-                    (float)M2.Values[1, 0], (float)M2.Values[1, 1]
+                    (float)M2._values[0, 0], (float)M2._values[0, 1],
+                    (float)M2._values[1, 0], (float)M2._values[1, 1]
                     );
             }
             catch (SingularMatrixException)

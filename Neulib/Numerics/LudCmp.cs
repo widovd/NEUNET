@@ -18,7 +18,7 @@ namespace Neulib.Numerics
             {
                 for (int j = 0; j < n; j++)
                 {
-                    Values[i, j] = mtx.Values[i, j];
+                    this[i, j] = mtx[i, j];
                 }
             }
 
@@ -28,7 +28,7 @@ namespace Neulib.Numerics
                 double vMax = 0d;
                 for (int j = 0; j < n; j++)
                 {
-                    double v = Abs(Values[i, j]);
+                    double v = Abs(this[i, j]);
                     if (v > vMax) vMax = v;
                 }
                 if (vMax == 0d)  // Singular matrix
@@ -43,24 +43,24 @@ namespace Neulib.Numerics
             {
                 for (int i = 0; i < j; i++)
                 {
-                    double Sum = Values[i, j];
+                    double Sum = this[i, j];
                     for (int k = 0; k < i; k++)
                     {
-                        Sum = Sum - Values[i, k] * Values[k, j];
+                        Sum = Sum - this[i, k] * this[k, j];
                     }
-                    Values[i, j] = Sum;
+                    this[i, j] = Sum;
                 }
 
                 double big = 0d;
                 iMax = j;
                 for (int i = j; i < n; i++)
                 {
-                    double Sum = Values[i, j];
+                    double Sum = this[i, j];
                     for (int k = 0; k <= j - 1; k++)
                     {
-                        Sum = Sum - Values[i, k] * Values[k, j];
+                        Sum = Sum - this[i, k] * this[k, j];
                     }
-                    Values[i, j] = Sum;
+                    this[i, j] = Sum;
                     double dum = vv[i] * Abs(Sum);
                     if (dum >= big) { big = dum; iMax = i; }
                 }
@@ -70,13 +70,13 @@ namespace Neulib.Numerics
                 {
                     for (int k = 0; k < n; k++)
                     {
-                        double dum1 = Values[iMax, k]; Values[iMax, k] = Values[j, k]; Values[j, k] = dum1;
+                        double dum1 = this[iMax, k]; this[iMax, k] = this[j, k]; this[j, k] = dum1;
                     }
                     D = -D;
                     double dum2 = vv[iMax]; vv[iMax] = vv[j]; vv[j] = dum2;
                 }
 
-                double dum3 = Values[j, j];
+                double dum3 = this[j, j];
                 if (Abs(dum3) < Tiny)
                     throw new SingularMatrixException(563278);
                 if (j != n)
@@ -84,40 +84,38 @@ namespace Neulib.Numerics
                     dum3 = 1.0 / dum3;
                     for (int i = j + 1; i < n; i++)
                     {
-                        Values[i, j] = Values[i, j] * dum3;
+                        this[i, j] = this[i, j] * dum3;
                     }
                 }
             }
         }
 
-        public Single1D LubKsb(Single1D vec)
+        public double[] LubKsb(double[] vec)
         {
             int n = Count1;
-            if (n != vec.Count) throw new UnequalValueException(n, vec.Count, 873837);
-            Single1D Out = new Single1D(n);
+            if (n != vec.Length) throw new UnequalValueException(n, vec.Length, 873837);
+            double[] result = new double[n];
             for (int i = 0; i < n; i++)
-            {
-                Out[i] = vec[i];
-            }
+                result[i] = vec[i];
             for (int i = 0; i < n; i++)
             {
                 int j = Ixx[i];
-                double Sum = Out[j];
-                Out[j] = Out[i];
+                double sum = result[j];
+                result[j] = result[i];
                 for (j = 0; j < i; j++)
                 {
-                    double tmp = Out[j];
-                    if (tmp != 0) Sum = Sum - Values[i, j] * tmp;
+                    double tmp = result[j];
+                    if (tmp != 0) sum -= this[i, j] * tmp;
                 }
-                Out[i] = (float)Sum;
+                result[i] = (float)sum;
             }
             for (int i = n - 1; i >= 0; i--)
             {
-                double Sum = Out[i];
-                for (int j = i + 1; j < n; j++) Sum = Sum - Values[i, j] * Out[j];
-                Out[i] = (float)(Sum / Values[i, i]);
+                double sum = result[i];
+                for (int j = i + 1; j < n; j++) sum -= this[i, j] * result[j];
+                result[i] = (float)(sum / this[i, i]);
             }
-            return Out;
+            return result;
         }
 
 
