@@ -19,9 +19,9 @@ namespace Neulib.Visuals
         #region Properties
 
         public float XLo { get; set; } = 0;
-        public float XHi { get; set; } = 600f;
+        public float XHi { get; set; } = 1200f;
         public float YLo { get; set; } = 0;
-        public float YHi { get; set; } = 400f;
+        public float YHi { get; set; } = 800f;
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -31,20 +31,12 @@ namespace Neulib.Visuals
         {
         }
 
-        public VisualWorld(int n)
-        {
-            for (int i = 0; i < n; i++)
-            {
-                Add(new Visual());
-            }
-        }
-
         public VisualWorld(Stream stream, BinarySerializer serializer) : base(stream, serializer)
         {
-            float XLo = stream.ReadSingle();
-            float XHi = stream.ReadSingle();
-            float YLo = stream.ReadSingle();
-            float YHi = stream.ReadSingle();
+            XLo = stream.ReadSingle();
+            XHi = stream.ReadSingle();
+            YLo = stream.ReadSingle();
+            YHi = stream.ReadSingle();
         }
 
         #endregion
@@ -74,6 +66,16 @@ namespace Neulib.Visuals
         // ----------------------------------------------------------------------------------------
         #region Visual
 
+        public override void Randomize(Random random)
+        {
+            base.Randomize(random);
+        }
+
+        public override void Step(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
+        {
+            base.Step(settings, reporter, tokenSource);
+        }
+
         public override void AddInstructions(InstructionList instructions, Transform transform)
         {
             base.AddInstructions(instructions, transform);
@@ -84,11 +86,6 @@ namespace Neulib.Visuals
         #endregion
         // ----------------------------------------------------------------------------------------
         #region VisualWorld
-
-        public static VisualWorld Randomize(VisualWorld world, Random random)
-        {
-            return world;
-        }
 
         public void Learn(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {

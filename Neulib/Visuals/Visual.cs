@@ -166,9 +166,15 @@ namespace Neulib.Visuals
         // ----------------------------------------------------------------------------------------
         #region Visual
 
+        public virtual void Randomize(Random random)
+        {
+            ForEach(visual => visual.Randomize(random));
+        }
+
+
         public virtual void Step(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
-            Thread.Sleep(100);
+            ForEach(visual => visual.Step(settings, reporter, tokenSource));
         }
 
         public virtual void AddInstructions(InstructionList instructions, Transform transform)

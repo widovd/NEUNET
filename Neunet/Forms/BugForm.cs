@@ -16,6 +16,7 @@ using Neulib.Numerics;
 using Neulib.Exceptions;
 using Neulib.Neurons;
 using Neulib.Visuals;
+using Neulib.Visuals.Bugs;
 using Neulib.MultiArrays;
 using Neulib.Serializers;
 using Neunet.Extensions;
@@ -304,7 +305,18 @@ namespace Neunet.Forms
 
         private void NewWorld()
         {
-            BugWorld = Randomize(new VisualWorld(5));
+            BugWorld = new VisualWorld()
+            {
+                new Bug(),
+                new Bug(),
+                new Bug(),
+                new Bug(),
+                new Bug(),
+                new Bug(),
+                new Bug(),
+            };
+            BugWorld.Randomize(Mersenne);
+            bugWorldImage.RefreshImage();
             SaveReminder = false;
         }
 
@@ -348,7 +360,8 @@ namespace Neunet.Forms
 
         private void RandomizeWorld()
         {
-            BugWorld = Randomize((VisualWorld)BugWorld.Clone());
+            BugWorld.Randomize(Mersenne);
+            bugWorldImage.RefreshImage();
             SaveReminder = false;
         }
 
@@ -557,16 +570,6 @@ namespace Neunet.Forms
             stopToolStripButton.Enabled = stopEnabled;
             settingsToolStripMenuItem.Enabled = !running;
             settingsToolStripButton.Enabled = !running;
-        }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Training set
-
-        private VisualWorld Randomize(VisualWorld world)
-        {
-
-            return VisualWorld.Randomize(world, Mersenne);
         }
 
         #endregion

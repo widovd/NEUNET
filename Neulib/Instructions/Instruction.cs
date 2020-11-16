@@ -9,7 +9,7 @@ namespace Neulib.Instructions
 {
     public enum InstructionEnum
     {
-        Add, Rectangle
+        Add, Rectangle, Ellipse, Polygon
     }
     
     public class Instruction
@@ -30,9 +30,9 @@ namespace Neulib.Instructions
             Code = code;
         }
 
-        public Instruction(Single2 point, InstructionEnum code, Transform transform)
+        public Instruction(float x, float y, InstructionEnum code, Transform transform)
         {
-            Point = point;
+            Point = transform * new Single2(x, y);
             Code = code;
         }
 

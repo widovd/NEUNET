@@ -35,11 +35,27 @@ namespace Neulib.Instructions
                     points.Add(toScreen(instruction.Point));
                     switch (instruction.Code)
                     {
+                        case InstructionEnum.Ellipse:
+                            {
+                                PointF p1 = points[0];
+                                PointF p2 = points[1];
+                                graphics.DrawEllipse(pen, p1.X, p1.Y, p2.X - p1.X, p2.Y - p1.Y);
+                                points.Clear();
+                            }
+                            break;
                         case InstructionEnum.Rectangle:
-                            PointF p1 = points[0];
-                            PointF p2 = points[1];
-                            graphics.DrawRectangle(pen, p1.X, p1.Y, p2.X - p1.X, p2.Y - p1.Y);
-                            points.Clear();
+                            {
+                                PointF p1 = points[0];
+                                PointF p2 = points[1];
+                                graphics.DrawRectangle(pen, p1.X, p1.Y, p2.X - p1.X, p2.Y - p1.Y);
+                                points.Clear();
+                            }
+                            break;
+                        case InstructionEnum.Polygon:
+                            {
+                                graphics.DrawPolygon(pen, points.ToArray());
+                                points.Clear();
+                            }
                             break;
                     }
                 });

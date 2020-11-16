@@ -51,7 +51,7 @@
     <Compile Include="Attributes.cs" />
     <Compile Include="BaseObject.cs" />
     <Compile Include="Visuals\Bugs\Bug.cs" />
-    <Compile Include="Visuals\Transform.cs" />
+    <Compile Include="Numerics\Transform.cs" />
     <Compile Include="Visuals\WorldSettings.cs" />
     <Compile Include="Visuals\VisualWorld.cs" />
     <Compile Include="Visuals\Visual.cs" />
