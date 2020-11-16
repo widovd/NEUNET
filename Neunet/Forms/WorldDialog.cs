@@ -15,7 +15,7 @@ using Neulib;
 using Neulib.Numerics;
 using Neulib.Exceptions;
 using Neulib.Neurons;
-using Neulib.Bugs;
+using Neulib.Visuals;
 using Neulib.MultiArrays;
 using Neulib.Serializers;
 using Neunet.Extensions;

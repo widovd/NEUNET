@@ -50,10 +50,10 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="BaseObject.cs" />
-    <Compile Include="Bugs\WorldSettings.cs" />
-    <Compile Include="Bugs\VisualWorld.cs" />
-    <Compile Include="Bugs\Visual.cs" />
-    <Compile Include="Bugs\VisualList.cs" />
+    <Compile Include="Visuals\Bugs\Bug.cs" />
+    <Compile Include="Visuals\WorldSettings.cs" />
+    <Compile Include="Visuals\VisualWorld.cs" />
+    <Compile Include="Visuals\Visual.cs" />
     <Compile Include="Instructions\Instruction.cs" />
     <Compile Include="Instructions\InstructionList.cs" />
     <Compile Include="Numerics\Double2x2.cs" />

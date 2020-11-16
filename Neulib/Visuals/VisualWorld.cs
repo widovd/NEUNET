@@ -11,9 +11,9 @@ using Neulib.Serializers;
 using Neulib.Numerics;
 using Neulib.Instructions;
 
-namespace Neulib.Bugs
+namespace Neulib.Visuals
 {
-    public class VisualWorld : VisualList
+    public class VisualWorld : Visual
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -80,11 +80,6 @@ namespace Neulib.Bugs
             instructions.Add(new Instruction(new Single2(XLo, YLo), InstructionEnum.Add));
             instructions.Add(new Instruction(new Single2(XHi, YHi), InstructionEnum.Rectangle));
         }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region VisualList
-
 
         #endregion
         // ----------------------------------------------------------------------------------------

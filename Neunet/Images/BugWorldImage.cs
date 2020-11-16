@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Neulib.Bugs;
+using Neulib.Visuals;
 using Neulib.Numerics;
 
 namespace Neunet.Images
@@ -17,14 +17,14 @@ namespace Neunet.Images
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        private VisualWorld _bugWorld;
+        private VisualWorld _world;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
-        public VisualWorld BugWorld
+        public VisualWorld World
         {
-            get { return _bugWorld; }
+            get { return _world; }
             set
             {
-                _bugWorld = value;
+                _world = value;
                 RefreshImage();
             }
         }
@@ -46,12 +46,12 @@ namespace Neunet.Images
         public override void DrawImage(Bitmap bitmap)
         {
             base.DrawImage(bitmap);
-            if (BugWorld == null) return;
+            if (World == null) return;
 
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                BugWorld.ForEach(bug => bug.GetInstructions().Draw(graphics, ToScreen));
-                BugWorld.GetInstructions().Draw(graphics, ToScreen);
+                //BugWorld.ForEach(bug => bug.GetInstructions().Draw(graphics, ToScreen));
+                World.GetInstructions().Draw(graphics, ToScreen);
             }
         }
 
@@ -63,18 +63,18 @@ namespace Neunet.Images
         {
             const float margin = 3f;
             Size size = pictureBox.Size;
-            float a = (size.Width - 2f * margin) / (BugWorld.XHi - BugWorld.XLo);
-            float b = (size.Height - 2f * margin) / (BugWorld.YHi - BugWorld.YLo);
+            float a = (size.Width - 2f * margin) / (World.XHi - World.XLo);
+            float b = (size.Height - 2f * margin) / (World.YHi - World.YLo);
             float x, y;
             if (a > b)
             {
-                x = margin + b * (pos.X - BugWorld.XLo);
-                y = margin + b * (pos.Y - BugWorld.YLo);
+                x = margin + b * (pos.X - World.XLo);
+                y = margin + b * (pos.Y - World.YLo);
             }
             else
             {
-                x = margin + a * (pos.X - BugWorld.XLo);
-                y = margin + a * (pos.Y - BugWorld.YLo);
+                x = margin + a * (pos.X - World.XLo);
+                y = margin + a * (pos.Y - World.YLo);
             }
             return new PointF(x, y);
         }

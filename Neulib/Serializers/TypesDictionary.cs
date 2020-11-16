@@ -5,7 +5,8 @@ using System.Text;
 using Neulib.Exceptions;
 using Neulib.Numerics;
 using Neulib.Neurons;
-using Neulib.Bugs;
+using Neulib.Visuals;
+using Neulib.Visuals.Bugs;
 
 namespace Neulib.Serializers
 {
@@ -21,9 +22,9 @@ namespace Neulib.Serializers
             Add("Sigmoid", typeof(Sigmoid));
             Add("Layer", typeof(Layer));
             Add("Network", typeof(Network));
-            Add("Bug", typeof(Visual));
-            Add("BugList", typeof(VisualList));
-            Add("World", typeof(VisualWorld));
+            Add("Visual", typeof(Visual));
+            Add("VisualWorld", typeof(VisualWorld));
+            Add("Bug", typeof(Bug));
             TestCollisions();
         }
 

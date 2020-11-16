@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using Neulib.Exceptions;
 using Neulib.Serializers;
 
-namespace Neulib.Bugs
+namespace Neulib.Visuals
 {
     public enum CostFunctionEnum
     {
