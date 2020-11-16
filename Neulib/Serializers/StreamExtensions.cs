@@ -263,6 +263,19 @@ namespace Neulib.Serializers
             stream.WriteSingle(value.Z, reverse);
         }
 
+        public static Transform ReadTransform(this Stream stream, bool reverse = false)
+        {
+            Single2 translation = ReadSingle2(stream, reverse);
+            Single2x2 rotation = ReadSingle2x2(stream, reverse);
+            return new Transform(translation, rotation);
+        }
+
+        public static void WriteTransform(this Stream stream, Transform value, bool reverse = false)
+        {
+            stream.WriteSingle2(value.Translation, reverse);
+            stream.WriteSingle2x2(value.Rotation, reverse);
+        }
+
 
     }
 }

@@ -514,7 +514,7 @@ namespace Neunet.Images.Charts3D
                 //DrawMessage($"Zoom = {zoom}; BiggestSize = {biggestSize}");
                 return;
             }
-            if (!LinearAlgebra.IsOrthogonal(RotMat)) RotMat = RotMat.Orthogonalize(new Single3x3(1));
+            RotMat = RotMat.Orthogonalize(new Single3x3(1));
             _centerX = bufferBitmap.Width / 2f;
             _centerY = bufferBitmap.Height / 2f;
             if (ViewGrid) DrawGrid(bufferBitmap);

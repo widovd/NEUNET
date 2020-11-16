@@ -68,7 +68,7 @@ namespace Neulib.Numerics
 
         public static bool operator !=(Single2 left, Single2 right)
         {
-            return !(left == right);
+            return !left.Equals(right);
         }
 
         public static Single2 operator +(Single2 p1, Single2 p2)

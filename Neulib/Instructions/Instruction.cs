@@ -30,6 +30,12 @@ namespace Neulib.Instructions
             Code = code;
         }
 
+        public Instruction(Single2 point, InstructionEnum code, Transform transform)
+        {
+            Point = point;
+            Code = code;
+        }
+
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Instruction

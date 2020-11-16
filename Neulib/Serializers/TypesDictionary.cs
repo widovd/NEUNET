@@ -22,6 +22,7 @@ namespace Neulib.Serializers
             Add("Sigmoid", typeof(Sigmoid));
             Add("Layer", typeof(Layer));
             Add("Network", typeof(Network));
+            Add("Transform", typeof(Transform));
             Add("Visual", typeof(Visual));
             Add("VisualWorld", typeof(VisualWorld));
             Add("Bug", typeof(Bug));

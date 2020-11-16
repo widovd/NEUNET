@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Neulib.Visuals;
 using Neulib.Numerics;
+using Neulib.Instructions;
 
 namespace Neunet.Images
 {
@@ -47,11 +48,11 @@ namespace Neunet.Images
         {
             base.DrawImage(bitmap);
             if (World == null) return;
-
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                //BugWorld.ForEach(bug => bug.GetInstructions().Draw(graphics, ToScreen));
-                World.GetInstructions().Draw(graphics, ToScreen);
+                InstructionList instructions = new InstructionList();
+                World.AddInstructions(instructions, World.Transform);
+                instructions.Draw(graphics, ToScreen);
             }
         }
 

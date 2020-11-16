@@ -38,16 +38,12 @@ namespace Neulib.Visuals.Bugs
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            Visual value = o as Visual ?? throw new InvalidTypeException(o, nameof(Visual), 610504);
-            Position = value.Position;
-            Rotation = value.Rotation;
+            Bug value = o as Bug ?? throw new InvalidTypeException(o, nameof(Bug), 554610);
         }
 
         public override void WriteToStream(Stream stream, BinarySerializer serializer)
         {
             base.WriteToStream(stream, serializer);
-            stream.WriteSingle2(Position);
-            stream.WriteSingle2x2(Rotation);
         }
 
         #endregion

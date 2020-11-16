@@ -74,11 +74,11 @@ namespace Neulib.Visuals
         // ----------------------------------------------------------------------------------------
         #region Visual
 
-        protected override void AddInstructions(InstructionList instructions)
+        public override void AddInstructions(InstructionList instructions, Transform transform)
         {
-            base.AddInstructions(instructions);
-            instructions.Add(new Instruction(new Single2(XLo, YLo), InstructionEnum.Add));
-            instructions.Add(new Instruction(new Single2(XHi, YHi), InstructionEnum.Rectangle));
+            base.AddInstructions(instructions, transform);
+            instructions.Add(new Instruction(transform * new Single2(XLo, YLo), InstructionEnum.Add));
+            instructions.Add(new Instruction(transform * new Single2(XHi, YHi), InstructionEnum.Rectangle));
         }
 
         #endregion
