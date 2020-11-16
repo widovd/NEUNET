@@ -29,14 +29,14 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        private VisualWorld _world;
-        public VisualWorld World
+        private World _world;
+        public World World
         {
             get { return _world; }
             set { SetWorld(value); }
         }
 
-        private void SetWorld(VisualWorld value)
+        private void SetWorld(World value)
         {
             _world = value;
             UpdateItems();

@@ -13,7 +13,7 @@ using Neulib.Instructions;
 
 namespace Neulib.Visuals
 {
-    public class VisualWorld : Visual
+    public sealed class World : Moveable
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -27,11 +27,19 @@ namespace Neulib.Visuals
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
-        public VisualWorld()
+        public World()
         {
         }
 
-        public VisualWorld(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public World(Visual items) : base(items)
+        {
+        }
+
+        public World(params Moveable[] items) : base(items)
+        {
+        }
+
+        public World(Stream stream, BinarySerializer serializer) : base(stream, serializer)
         {
             XLo = stream.ReadSingle();
             XHi = stream.ReadSingle();
@@ -46,7 +54,7 @@ namespace Neulib.Visuals
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            VisualWorld value = o as VisualWorld ?? throw new InvalidTypeException(o, nameof(VisualWorld), 550727);
+            World value = o as World ?? throw new InvalidTypeException(o, nameof(World), 550727);
             XLo = value.XLo;
             XHi = value.XHi;
             YLo = value.YLo;
@@ -66,21 +74,21 @@ namespace Neulib.Visuals
         // ----------------------------------------------------------------------------------------
         #region Visual
 
-        public override void Randomize(Random random)
+        public void Randomize(Random random)
         {
-            base.Randomize(random);
+            Visual.Randomize(random);
         }
 
-        public override void Step(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
+        public void Step(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
-            base.Step(settings, reporter, tokenSource);
+            Visual.Step(settings, reporter, tokenSource);
         }
 
-        public override void AddInstructions(InstructionList instructions, Transform transform)
+        public void AddInstructions(InstructionList instructions)
         {
-            base.AddInstructions(instructions, transform);
-            instructions.Add(new Instruction(transform * new Single2(XLo, YLo), InstructionEnum.Add));
-            instructions.Add(new Instruction(transform * new Single2(XHi, YHi), InstructionEnum.Rectangle));
+            Visual.AddInstructions(instructions, Transform);
+            instructions.Add(new Instruction(new Single2(XLo, YLo), InstructionEnum.Add));
+            instructions.Add(new Instruction(new Single2(XHi, YHi), InstructionEnum.Rectangle));
         }
 
         #endregion
@@ -97,7 +105,7 @@ namespace Neulib.Visuals
             while (true)
             {
                 tokenSource?.Token.ThrowIfCancellationRequested();
-                ForEach(visual => visual.Step(settings, reporter, tokenSource), true);
+                Visual.ForEach(visual => visual.Visual.Step(settings, reporter, tokenSource), true);
             }
         }
 

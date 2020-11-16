@@ -18,9 +18,9 @@ namespace Neunet.Images
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        private VisualWorld _world;
+        private World _world;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
-        public VisualWorld World
+        public World World
         {
             get { return _world; }
             set
@@ -51,7 +51,8 @@ namespace Neunet.Images
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {
                 InstructionList instructions = new InstructionList();
-                World.AddInstructions(instructions, World.Transform);
+                World.AddInstructions(instructions);
+                //World.AddInstructions(instructions, World.Transform);
                 instructions.Draw(graphics, ToScreen);
             }
         }

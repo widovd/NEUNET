@@ -67,7 +67,7 @@ namespace Neulib.Visuals.Bugs
             Single2x2 rotation = Single2x2.Rot1(
                 (float)(2d * PI * random.NextDouble())
                 );
-            Transform = new Transform(translation, rotation);
+            Parent.Transform = new Transform(translation, rotation);
         }
 
         public override void AddInstructions(InstructionList instructions, Transform transform)

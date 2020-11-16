@@ -59,8 +59,8 @@ namespace Neunet.Forms
             }
         }
 
-        private VisualWorld _bugWorld;
-        private VisualWorld BugWorld
+        private World _bugWorld;
+        private World BugWorld
         {
             get { return _bugWorld; }
             set
@@ -105,7 +105,7 @@ namespace Neunet.Forms
 
         private void LoadWorld()
         {
-            BugWorld = (VisualWorld)LoadFileForm.LoadFile(WorldFilePath, out Version fileVersion);
+            BugWorld = (World)LoadFileForm.LoadFile(WorldFilePath, out Version fileVersion);
             SaveReminder = false;
         }
 
@@ -305,16 +305,15 @@ namespace Neunet.Forms
 
         private void NewWorld()
         {
-            BugWorld = new VisualWorld()
-            {
-                new Bug(),
-                new Bug(),
-                new Bug(),
-                new Bug(),
-                new Bug(),
-                new Bug(),
-                new Bug(),
-            };
+            BugWorld = new World(
+                new Moveable(new Bug()),
+                new Moveable(new Bug()),
+                new Moveable(new Bug()),
+                new Moveable(new Bug()),
+                new Moveable(new Bug()),
+                new Moveable(new Bug()),
+                new Moveable(new Bug())
+               );
             BugWorld.Randomize(Mersenne);
             bugWorldImage.RefreshImage();
             SaveReminder = false;
@@ -335,7 +334,7 @@ namespace Neunet.Forms
 
         private void EditWorld()
         {
-            using (WorldDialog dialog = new WorldDialog() { World = (VisualWorld)BugWorld.Clone() })
+            using (WorldDialog dialog = new WorldDialog() { World = (World)BugWorld.Clone() })
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {

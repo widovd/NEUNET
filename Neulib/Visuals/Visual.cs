@@ -15,19 +15,17 @@ using Neulib.Instructions;
 
 namespace Neulib.Visuals
 {
-    public class Visual : BaseObject, IList<Visual>
+    public class Visual : BaseObject, IList<Moveable>
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        public Visual Parent { get; set; }
-
-        public Transform Transform { get; set; } = Transform.Default;
+        public Moveable Parent { get; set; }
 
         /// <summary>
         /// The connections with the neurons in the previous layer.
         /// </summary>
-        private List<Visual> Visuals { get; set; } = new List<Visual>();
+        private List<Moveable> Visuals { get; set; } = new List<Moveable>();
 
         /// <summary>
         /// The number of connections of this buglist with the previous layer.
@@ -41,9 +39,7 @@ namespace Neulib.Visuals
         /// </summary>
         /// <param name="index">The index of the buglist in the previous layer.</param>
         /// <returns>The connection with the buglist in the previous layer.</returns>
-        public Visual this[int index] { get => Visuals[index]; set => Visuals[index] = value; }
-
-
+        public Moveable this[int index] { get => Visuals[index]; set => Visuals[index] = value; }
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -55,13 +51,12 @@ namespace Neulib.Visuals
 
         public Visual(Stream stream, BinarySerializer serializer) : base(stream, serializer)
         {
-            Transform = stream.ReadTransform();
             int count = stream.ReadInt();
             for (int i = 0; i < count; i++)
             {
-                Visual visual = (Visual)stream.ReadValue(serializer);
-                visual.Parent = this;
-                Visuals.Add(visual);
+                Moveable moveable = (Moveable)stream.ReadValue(serializer);
+                moveable.Parent = this;
+                Visuals.Add(moveable);
             }
         }
 
@@ -72,45 +67,41 @@ namespace Neulib.Visuals
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            Visual value = o as Visual ?? throw new InvalidTypeException(o, nameof(Visual), 610504);
-            Transform = value.Transform;
+            Visual value = o as Visual ?? throw new InvalidTypeException(o, nameof(Visual), 951859);
             int count = value.Visuals.Count;
             Visuals.Clear();
             for (int i = 0; i < count; i++)
             {
-                Visual visual = (Visual)value.Visuals[i].Clone();
-                visual.Parent = this;
-                Visuals.Add(visual);
+                Moveable moveable = (Moveable)value.Visuals[i].Clone();
+                moveable.Parent = this;
+                Visuals.Add(moveable);
             }
         }
 
         public override void WriteToStream(Stream stream, BinarySerializer serializer)
         {
             base.WriteToStream(stream, serializer);
-            stream.WriteTransform(Transform);
             int count = Visuals.Count;
             stream.WriteInt(count);
             for (int i = 0; i < count; i++)
-            {
                 stream.WriteValue(Visuals[i], serializer);
-            }
         }
 
         #endregion
         // ----------------------------------------------------------------------------------------
         #region IList
 
-        public int IndexOf(Visual item)
+        public int IndexOf(Moveable item)
         {
             return Visuals.IndexOf(item);
         }
 
-        public void Insert(int index, Visual item)
+        public void Insert(int index, Moveable item)
         {
             Visuals.Insert(index, item);
         }
 
-        public void Add(Visual item)
+        public void Add(Moveable item)
         {
             Visuals.Add(item);
         }
@@ -120,7 +111,7 @@ namespace Neulib.Visuals
             Visuals.RemoveAt(index);
         }
 
-        public bool Remove(Visual item)
+        public bool Remove(Moveable item)
         {
             return Visuals.Remove(item);
         }
@@ -130,17 +121,17 @@ namespace Neulib.Visuals
             Visuals.Clear();
         }
 
-        public bool Contains(Visual item)
+        public bool Contains(Moveable item)
         {
             return Visuals.Contains(item);
         }
 
-        public void CopyTo(Visual[] array, int arrayIndex)
+        public void CopyTo(Moveable[] array, int arrayIndex)
         {
             Visuals.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<Visual> GetEnumerator()
+        public IEnumerator<Moveable> GetEnumerator()
         {
             return Visuals.GetEnumerator();
         }
@@ -150,7 +141,11 @@ namespace Neulib.Visuals
             return Visuals.GetEnumerator();
         }
 
-        public void ForEach(Action<Visual> action, bool parallel = false)
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region VisualList
+
+        public void ForEach(Action<Moveable> action, bool parallel = false)
         {
             int count = Visuals.Count;
             if (parallel)
@@ -162,24 +157,20 @@ namespace Neulib.Visuals
                 }
         }
 
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Visual
-
         public virtual void Randomize(Random random)
         {
-            ForEach(visual => visual.Randomize(random));
+            ForEach(moveable => moveable.Visual.Randomize(random));
         }
-
 
         public virtual void Step(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
-            ForEach(visual => visual.Step(settings, reporter, tokenSource));
+            ForEach(moveable => moveable.Visual.Step(settings, reporter, tokenSource));
         }
+
 
         public virtual void AddInstructions(InstructionList instructions, Transform transform)
         {
-            ForEach(visual => visual.AddInstructions(instructions, transform * visual.Transform));
+            ForEach(moveable => moveable.Visual.AddInstructions(instructions, transform * moveable.Transform));
         }
 
         #endregion

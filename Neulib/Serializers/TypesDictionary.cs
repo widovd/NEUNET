@@ -23,8 +23,8 @@ namespace Neulib.Serializers
             Add("Layer", typeof(Layer));
             Add("Network", typeof(Network));
             Add("Transform", typeof(Transform));
-            Add("Visual", typeof(Visual));
-            Add("VisualWorld", typeof(VisualWorld));
+            Add("Visual", typeof(Moveable));
+            Add("VisualWorld", typeof(World));
             Add("Bug", typeof(Bug));
             TestCollisions();
         }
