@@ -315,26 +315,11 @@ namespace Neulib.Serializers
             return new Single2(x, y);
         }
 
-        public static Double2 ReadDouble2(this XmlElement rootElement, string name, Double2 defaultValue)
-        {
-            XmlElement element = rootElement.GetOrCreateElement(name);
-            double x = element.ReadDouble(_XId, defaultValue.X);
-            double y = element.ReadDouble(_YId, defaultValue.Y);
-            return new Double2(x, y);
-        }
-
         public static void WriteSingle2(this XmlElement rootElement, string name, Single2 value)
         {
             XmlElement element = rootElement.GetOrCreateElement(name);
             element.WriteSingle(_XId, value.X);
             element.WriteSingle(_YId, value.Y);
-        }
-
-        public static void WriteDouble2(this XmlElement rootElement, string name, Double2 value)
-        {
-            XmlElement element = rootElement.GetOrCreateElement(name);
-            element.WriteDouble(_XId, value.X);
-            element.WriteDouble(_YId, value.Y);
         }
 
         public static Single3 ReadSingle3(this XmlElement rootElement, string name, Single3 defaultValue)
@@ -346,29 +331,12 @@ namespace Neulib.Serializers
             return new Single3(x, y, z);
         }
 
-        public static Double3 ReadDouble3(this XmlElement rootElement, string name, Double3 defaultValue)
-        {
-            XmlElement element = rootElement.GetOrCreateElement(name);
-            double x = element.ReadDouble(_XId, defaultValue.X);
-            double y = element.ReadDouble(_YId, defaultValue.Y);
-            double z = element.ReadDouble(_ZId, defaultValue.Z);
-            return new Double3(x, y, z);
-        }
-
         public static void WriteSingle3(this XmlElement rootElement, string name, Single3 value)
         {
             XmlElement element = rootElement.GetOrCreateElement(name);
             element.WriteSingle(_XId, value.X);
             element.WriteSingle(_YId, value.Y);
             element.WriteSingle(_ZId, value.Z);
-        }
-
-        public static void WriteDouble3(this XmlElement rootElement, string name, Double3 value)
-        {
-            XmlElement element = rootElement.GetOrCreateElement(name);
-            element.WriteDouble(_XId, value.X);
-            element.WriteDouble(_YId, value.Y);
-            element.WriteDouble(_ZId, value.Z);
         }
 
         #endregion
@@ -400,22 +368,6 @@ namespace Neulib.Serializers
             return new Single3x3(xx, xy, xz, yx, yy, yz, zx, zy, zz);
         }
 
-
-        public static Double3x3 ReadDouble3x3(this XmlElement rootElement, string name, Double3x3 defaultValue)
-        {
-            XmlElement element = rootElement.GetOrCreateElement(name);
-            double xx = element.ReadDouble(_XXId, defaultValue.XX);
-            double xy = element.ReadDouble(_XYId, defaultValue.XY);
-            double xz = element.ReadDouble(_XZId, defaultValue.XZ);
-            double yx = element.ReadDouble(_YXId, defaultValue.YX);
-            double yy = element.ReadDouble(_YYId, defaultValue.YY);
-            double yz = element.ReadDouble(_YZId, defaultValue.YZ);
-            double zx = element.ReadDouble(_ZXId, defaultValue.ZX);
-            double zy = element.ReadDouble(_ZYId, defaultValue.ZY);
-            double zz = element.ReadDouble(_ZZId, defaultValue.ZZ);
-            return new Double3x3(xx, xy, xz, yx, yy, yz, zx, zy, zz);
-        }
-
         public static void WriteSingle3x3(this XmlElement rootElement, string name, Single3x3 value)
         {
             XmlElement element = rootElement.GetOrCreateElement(name);
@@ -430,20 +382,6 @@ namespace Neulib.Serializers
             element.WriteSingle(_ZZId, value.ZZ);
         }
 
-        public static void WriteDouble3x3(this XmlElement rootElement, string name, Double3x3 value)
-        {
-            XmlElement element = rootElement.GetOrCreateElement(name);
-            element.WriteDouble(_XXId, value.XX);
-            element.WriteDouble(_XYId, value.XY);
-            element.WriteDouble(_XZId, value.XZ);
-            element.WriteDouble(_YXId, value.YX);
-            element.WriteDouble(_YYId, value.YY);
-            element.WriteDouble(_YZId, value.YZ);
-            element.WriteDouble(_ZXId, value.ZX);
-            element.WriteDouble(_ZYId, value.ZY);
-            element.WriteDouble(_ZZId, value.ZZ);
-        }
-
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Chart2DBounds
@@ -452,47 +390,6 @@ namespace Neulib.Serializers
         private const string _XHiId = "XHi";
         private const string _YLoId = "YLo";
         private const string _YHiId = "YHi";
-
-        public static ParamBounds ReadDouble2Bounds(this XmlElement rootElement, string name, ParamBounds defaultValue)
-        {
-            XmlElement element = rootElement.GetOrCreateElement(name);
-            double XLo = element.ReadDouble(_XLoId, defaultValue.XLo);
-            double XHi = element.ReadDouble(_XHiId, defaultValue.XHi);
-            double YLo = element.ReadDouble(_YLoId, defaultValue.YLo);
-            double YHi = element.ReadDouble(_YHiId, defaultValue.YHi);
-            return new ParamBounds(XLo, XHi, YLo, YHi);
-        }
-
-        public static void WriteDouble2Bounds(this XmlElement rootElement, string name, ParamBounds value)
-        {
-            XmlElement element = rootElement.GetOrCreateElement(name);
-            element.WriteDouble(_XLoId, value.XLo);
-            element.WriteDouble(_XHiId, value.XHi);
-            element.WriteDouble(_YLoId, value.YLo);
-            element.WriteDouble(_YHiId, value.YHi);
-        }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region Double2
-
-        private const string _UId = "U";
-        private const string _VId = "V";
-
-        public static Double2 ReadParamCoord(this XmlElement rootElement, string name, Double2 defaultValue)
-        {
-            XmlElement element = rootElement.GetOrCreateElement(name);
-            double u = element.ReadDouble(_UId, defaultValue.X);
-            double v = element.ReadDouble(_VId, defaultValue.Y);
-            return new Double2(u, v);
-        }
-
-        public static void WriteParamCoord(this XmlElement rootElement, string name, Double2 value)
-        {
-            XmlElement element = rootElement.GetOrCreateElement(name);
-            element.WriteDouble(_UId, value.X);
-            element.WriteDouble(_VId, value.Y);
-        }
 
         #endregion
         // ----------------------------------------------------------------------------------------

@@ -17,9 +17,9 @@
             MatrixNxN Out = new MatrixNxN(n);
             for (int j = 0; j < n; j++)
             {
-                DoubleN Vec = new DoubleN(n);
-                for (int i = 0; i < n; i++) Vec[i] = 0d;
-                Vec[j] = 1d;
+                Single1D Vec = new Single1D(n);
+                for (int i = 0; i < n; i++) Vec[i] = 0f;
+                Vec[j] = 1f;
                 Vec = Lud.LubKsb(Vec);
                 for (int i = 0; i < n; i++) Out[i, j] = Vec[i];
             }

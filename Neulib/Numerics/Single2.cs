@@ -144,11 +144,6 @@ namespace Neulib.Numerics
             return value;
         }
 
-        public Double2 ToDouble2()
-        {
-            return new Double2(X, Y);
-        }
-
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Static

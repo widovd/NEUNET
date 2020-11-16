@@ -90,11 +90,11 @@ namespace Neulib.Numerics
             }
         }
 
-        public DoubleN LubKsb(DoubleN vec)
+        public Single1D LubKsb(Single1D vec)
         {
             int n = Count1;
             if (n != vec.Count) throw new UnequalValueException(n, vec.Count, 873837);
-            DoubleN Out = new DoubleN(n);
+            Single1D Out = new Single1D(n);
             for (int i = 0; i < n; i++)
             {
                 Out[i] = vec[i];
@@ -109,13 +109,13 @@ namespace Neulib.Numerics
                     double tmp = Out[j];
                     if (tmp != 0) Sum = Sum - Values[i, j] * tmp;
                 }
-                Out[i] = Sum;
+                Out[i] = (float)Sum;
             }
             for (int i = n - 1; i >= 0; i--)
             {
                 double Sum = Out[i];
                 for (int j = i + 1; j < n; j++) Sum = Sum - Values[i, j] * Out[j];
-                Out[i] = Sum / Values[i, i];
+                Out[i] = (float)(Sum / Values[i, i]);
             }
             return Out;
         }

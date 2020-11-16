@@ -156,11 +156,6 @@ namespace Neulib.Numerics
             return value;
         }
 
-        public Double3 ToDouble3()
-        {
-            return new Double3(X, Y, Z);
-        }
-
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Static
