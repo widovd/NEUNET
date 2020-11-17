@@ -21,9 +21,6 @@ namespace Neulib.Visuals.Arthropods
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        public float Width { get; set; } = 20f;
-        public float Height { get; set; } = 30f;
-
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors

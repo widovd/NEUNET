@@ -25,11 +25,13 @@ namespace Neulib.Serializers
             Add(typeof(Network), 728343);
             Add(typeof(Transform), 365737);
             Add(typeof(Moveable), 141375);
+            Add(typeof(Visual), 861962);
             Add(typeof(World), 898392);
             Add(typeof(Arthropod), 688396);
             Add(typeof(Leg), 927638);
             Add(typeof(Limb), 271223);
             Add(typeof(Segment), 742681);
+            Add(typeof(Segmented), 787582);
         }
 
         protected TypesDictionary(SerializationInfo info, StreamingContext context) : base(info, context)

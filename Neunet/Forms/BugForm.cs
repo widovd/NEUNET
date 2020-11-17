@@ -310,6 +310,15 @@ namespace Neunet.Forms
                 new Moveable(new Segment()),
                 new Moveable(new Segment()),
                 new Moveable(new Segment()),
+                new Moveable(new Segment()),
+                new Moveable(new Segment()),
+                new Moveable(new Segment()),
+                new Moveable(new Segment()),
+                new Moveable(new Segment()),
+                new Moveable(new Segment()),
+                new Moveable(new Segment()),
+                new Moveable(new Segment()),
+                new Moveable(new Segment()),
             });
             
             BugWorld = new World(A1);

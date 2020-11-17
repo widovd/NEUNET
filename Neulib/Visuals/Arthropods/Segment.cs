@@ -39,6 +39,7 @@ namespace Neulib.Visuals.Arthropods
         {
             Width = stream.ReadSingle();
             Length = stream.ReadSingle();
+            Angle = stream.ReadSingle();
         }
 
         #endregion
@@ -51,6 +52,7 @@ namespace Neulib.Visuals.Arthropods
             Segment value = o as Segment ?? throw new InvalidTypeException(o, nameof(Segment), 403658);
             Width = value.Width;
             Length = value.Length;
+            Angle = value.Angle;
         }
 
         public override void WriteToStream(Stream stream, Serializer serializer)
@@ -58,6 +60,7 @@ namespace Neulib.Visuals.Arthropods
             base.WriteToStream(stream, serializer);
             stream.WriteSingle(Width);
             stream.WriteSingle(Length);
+            stream.WriteSingle(Angle);
         }
 
         #endregion

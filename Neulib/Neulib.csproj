@@ -132,7 +132,7 @@
     <Folder Include="Obsolete\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Visuals\Arthropods\TextFile1.txt" />
+    <Content Include="Visuals\Arthropods\Wiki.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
