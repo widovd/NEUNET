@@ -163,6 +163,16 @@ namespace Neulib.Numerics
             get { return new Single2(0f, 0f); }
         }
 
+        public static Single2 OneX
+        {
+            get { return new Single2(1f, 0f); }
+        }
+
+        public static Single2 OneY
+        {
+            get { return new Single2(0f, 1f); }
+        }
+
         #endregion
     }
 

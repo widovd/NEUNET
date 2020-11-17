@@ -22,6 +22,19 @@ namespace Neulib.Visuals
 
         public Visual Parent { get; set; }
 
+        [Obsolete]
+        public Moveable Previous
+        {
+            get
+            {
+                Visual parent = Parent;
+                if (parent == null) return null;
+                int index = Parent.IndexOf(this);
+                if (index == 0) return null;
+                return Parent[index - 1];
+            }
+        }
+
         public Transform Transform { get; set; } = Transform.Default;
 
         public Visual _visual;
@@ -66,6 +79,12 @@ namespace Neulib.Visuals
             Visual = (Visual)stream.ReadValue(serializer);
         }
 
+        public static Moveable GetMoveable(Visual visual)
+        {
+            return new Moveable(visual);
+        }
+
+
         #endregion
         // ----------------------------------------------------------------------------------------
         #region BaseObject
@@ -89,17 +108,22 @@ namespace Neulib.Visuals
         // ----------------------------------------------------------------------------------------
         #region Moveable
 
+        public virtual void UpdateTransforms()
+        {
+            Visual.UpdateTransforms();
+        }
+
         public virtual void Randomize(Random random)
         {
             Visual.Randomize(random);
         }
 
-        public void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
+        public virtual void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
             Visual.Step(dt, settings, reporter, tokenSource);
         }
 
-        public void AddInstructions(InstructionList instructions, Transform transform)
+        public virtual void AddInstructions(InstructionList instructions, Transform transform)
         {
             Visual.AddInstructions(instructions, transform * Transform);
         }

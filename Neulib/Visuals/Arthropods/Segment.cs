@@ -22,7 +22,10 @@ namespace Neulib.Visuals.Arthropods
         #region Properties
 
         public float Width { get; set; } = 20f;
-        public float Height { get; set; } = 30f;
+
+        public float Length { get; set; } = 30f;
+
+        public float Angle { get; set; } = 0.2f;
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -34,6 +37,8 @@ namespace Neulib.Visuals.Arthropods
 
         public Segment(Stream stream, Serializer serializer) : base(stream, serializer)
         {
+            Width = stream.ReadSingle();
+            Length = stream.ReadSingle();
         }
 
         #endregion
@@ -43,12 +48,16 @@ namespace Neulib.Visuals.Arthropods
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            Segment value = o as Segment ?? throw new InvalidTypeException(o, nameof(Segment), 542013);
+            Segment value = o as Segment ?? throw new InvalidTypeException(o, nameof(Segment), 403658);
+            Width = value.Width;
+            Length = value.Length;
         }
 
         public override void WriteToStream(Stream stream, Serializer serializer)
         {
             base.WriteToStream(stream, serializer);
+            stream.WriteSingle(Width);
+            stream.WriteSingle(Length);
         }
 
         #endregion
@@ -60,15 +69,31 @@ namespace Neulib.Visuals.Arthropods
             base.Randomize(random);
         }
 
-        public override void AddInstructions(InstructionList instructions, Transform transform)
+        float da = 0f;
+
+        public override void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
-            base.AddInstructions(instructions, transform);
+            base.Step(dt, settings, reporter, tokenSource);
+            float dda = - Angle;
+            da += dda * dt;
+            Angle += da * dt;
         }
 
 
+        public override void AddInstructions(InstructionList instructions, Transform transform)
+        {
+            base.AddInstructions(instructions, transform);
+            float w2 = Width / 2;
+            float l = Length;
+            instructions.Add(new Instruction(0, -w2, InstructionEnum.Add, transform));
+            instructions.Add(new Instruction(0, w2, InstructionEnum.Add, transform));
+            instructions.Add(new Instruction(l, w2, InstructionEnum.Add, transform));
+            instructions.Add(new Instruction(l, -w2, InstructionEnum.Polygon, transform));
+        }
+
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region Bug
+        #region Segment
 
         #endregion
     }

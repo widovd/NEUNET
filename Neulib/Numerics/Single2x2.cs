@@ -252,7 +252,7 @@ namespace Neulib.Numerics
             get => new Single2x2(1f, 0f, 0f, 1f);
         }
 
-        public static Single2x2 Rot1(float a)
+        public static Single2x2 Rotation(float a)
         {
             float cs = (float)Cos(a);
             float sn = (float)Sin(a);

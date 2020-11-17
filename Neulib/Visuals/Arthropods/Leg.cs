@@ -16,7 +16,7 @@ using static System.Math;
 
 namespace Neulib.Visuals.Arthropods
 {
-    public class Leg : Visual
+    public class Leg : Segmented
     {
         // ----------------------------------------------------------------------------------------
         #region Properties

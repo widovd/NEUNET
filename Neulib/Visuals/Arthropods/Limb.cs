@@ -16,13 +16,12 @@ using static System.Math;
 
 namespace Neulib.Visuals.Arthropods
 {
-    public class Limb : Visual
+    public class Limb : Segment
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        public float Width { get; set; } = 20f;
-        public float Height { get; set; } = 30f;
+
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -43,7 +42,7 @@ namespace Neulib.Visuals.Arthropods
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            Arthropod value = o as Arthropod ?? throw new InvalidTypeException(o, nameof(Arthropod), 554610);
+            Limb value = o as Limb ?? throw new InvalidTypeException(o, nameof(Limb), 513505);
         }
 
         public override void WriteToStream(Stream stream, Serializer serializer)
@@ -60,15 +59,25 @@ namespace Neulib.Visuals.Arthropods
             base.Randomize(random);
         }
 
-        public override void AddInstructions(InstructionList instructions, Transform transform)
+        public override void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
-            base.AddInstructions(instructions, transform);
+            base.Step(dt, settings, reporter, tokenSource);
         }
 
 
+        public override void AddInstructions(InstructionList instructions, Transform transform)
+        {
+            base.AddInstructions(instructions, transform);
+
+        }
+
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region Bug
+        #region Segment
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Limb
 
         #endregion
     }

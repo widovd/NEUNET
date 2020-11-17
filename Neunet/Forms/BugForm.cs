@@ -305,15 +305,15 @@ namespace Neunet.Forms
 
         private void NewWorld()
         {
-            BugWorld = new World(
-                new Moveable(new Arthropod()),
-                new Moveable(new Arthropod()),
-                new Moveable(new Arthropod()),
-                new Moveable(new Arthropod()),
-                new Moveable(new Arthropod()),
-                new Moveable(new Arthropod()),
-                new Moveable(new Arthropod())
-               );
+            Moveable A1 = new Moveable(new Arthropod()
+            {
+                new Moveable(new Segment()),
+                new Moveable(new Segment()),
+                new Moveable(new Segment()),
+            });
+            
+            BugWorld = new World(A1);
+            BugWorld.UpdateTransforms();
             BugWorld.Randomize(Mersenne);
             bugWorldImage.RefreshImage();
             SaveReminder = false;

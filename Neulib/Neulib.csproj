@@ -51,6 +51,7 @@
     <Compile Include="Attributes.cs" />
     <Compile Include="BaseObject.cs" />
     <Compile Include="Serializers\XmlNodeExtensions.cs" />
+    <Compile Include="Visuals\Arthropods\Segmented.cs" />
     <Compile Include="Visuals\Arthropods\Limb.cs" />
     <Compile Include="Visuals\Arthropods\Leg.cs" />
     <Compile Include="Visuals\Arthropods\Segment.cs" />

@@ -101,5 +101,17 @@ namespace Neulib.Numerics
         }
 
         #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Transform
+
+        public Transform Shackle(float length, float angle)
+        {
+            return new Transform(
+                Translation + Rotation * Single2.OneX * length,
+                Rotation * Single2x2.Rotation(angle) // of andersom
+                ) ;
+        }
+
+        #endregion
     }
 }

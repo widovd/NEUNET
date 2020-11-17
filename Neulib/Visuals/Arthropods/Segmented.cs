@@ -16,7 +16,7 @@ using static System.Math;
 
 namespace Neulib.Visuals.Arthropods
 {
-    public class Arthropod : Segmented
+    public class Segmented : Visual
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -25,20 +25,11 @@ namespace Neulib.Visuals.Arthropods
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
-        public Arthropod()
+        public Segmented()
         {
         }
 
-        public Arthropod(int nSegments)
-        {
-            for (int i = 0; i < nSegments; i++)
-            {
-
-            }
-        }
-
-
-        public Arthropod(Stream stream, Serializer serializer) : base(stream, serializer)
+        public Segmented(Stream stream, Serializer serializer) : base(stream, serializer)
         {
         }
 
@@ -49,7 +40,7 @@ namespace Neulib.Visuals.Arthropods
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            Arthropod value = o as Arthropod ?? throw new InvalidTypeException(o, nameof(Arthropod), 554610);
+            Segmented value = o as Segmented ?? throw new InvalidTypeException(o, nameof(Segmented), 995344);
         }
 
         public override void WriteToStream(Stream stream, Serializer serializer)
@@ -64,16 +55,6 @@ namespace Neulib.Visuals.Arthropods
         public override void Randomize(Random random)
         {
             base.Randomize(random);
-            //Width = 10f + 50f * (float)random.NextDouble();
-            //Height = 10f + 50f * (float)random.NextDouble();
-            //Single2 translation = new Single2(
-            //    1200f * (float)random.NextDouble(),
-            //    800f * (float)random.NextDouble()
-            //    );
-            //Single2x2 rotation = Single2x2.Rot1(
-            //    (float)(2d * PI * random.NextDouble())
-            //    );
-            //Parent.Transform = new Transform(translation, rotation);
         }
 
         public override void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
@@ -84,21 +65,30 @@ namespace Neulib.Visuals.Arthropods
         public override void AddInstructions(InstructionList instructions, Transform transform)
         {
             base.AddInstructions(instructions, transform);
-            //int n = 72;
-            //for (int i = 0; i <= n; i++)
-            //{
-            //    double a = 2d * PI * i / n;
-            //    double r = 1d + 0.3d * Cos(3 * a) + 0.2d * Cos(10 * a);
-            //    double x = r * Cos(a);
-            //    double y = r * Sin(a);
-            //    instructions.Add(new Instruction((float)x * Width, (float)y * Height, i < n ? InstructionEnum.Add : InstructionEnum.Polygon, transform));
-            //}
         }
 
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region Bug
+        #region Segmented
+
+        public override void UpdateTransforms()
+        {
+            base.UpdateTransforms();
+            ForEach((previous, moveable) =>
+            {
+                if (previous == null)
+                {
+                    moveable.Transform = Transform.Default;
+                }
+                else
+                {
+                    Segment segment = moveable.Visual as Segment ?? throw new VarNullException(nameof(Segment), 343052);
+                    moveable.Transform = previous.Transform.Shackle(segment.Length, segment.Angle);
+                }
+            });
+        }
+
 
         #endregion
     }

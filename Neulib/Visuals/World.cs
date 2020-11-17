@@ -19,10 +19,10 @@ namespace Neulib.Visuals
         // ----------------------------------------------------------------------------------------
         #region Properties
 
-        public float XLo { get; set; } = 0;
-        public float XHi { get; set; } = 1200f;
-        public float YLo { get; set; } = 0;
-        public float YHi { get; set; } = 800f;
+        public float XLo { get; set; } = -600;
+        public float XHi { get; set; } = 600f;
+        public float YLo { get; set; } = -400;
+        public float YHi { get; set; } = 400f;
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -75,15 +75,31 @@ namespace Neulib.Visuals
         // ----------------------------------------------------------------------------------------
         #region Visual
 
+        public override void UpdateTransforms()
+        {
+            base.UpdateTransforms();
+        }
+
+        public override void Randomize(Random random)
+        {
+            base.Randomize(random);
+        }
+
+        public override void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
+        {
+            base.Step(dt, settings, reporter, tokenSource);
+        }
+
+        public override void AddInstructions(InstructionList instructions, Transform transform)
+        {
+            base.AddInstructions(instructions, transform);
+        }
+
+
         #endregion
         // ----------------------------------------------------------------------------------------
         #region World
 
-
-        public void Randomize(Random random)
-        {
-            Visual.Randomize(random);
-        }
 
         public InstructionList GetInstructions()
         {
@@ -105,7 +121,8 @@ namespace Neulib.Visuals
                 long prevTicks = ticks;
                 ticks = timer.Elapsed.Ticks;
                 float dt = (float)(ticks - prevTicks) / TimeSpan.TicksPerSecond;
-                Visual.ForEach(moveable => moveable.Step(dt, settings, reporter, tokenSource), true);
+                Step(dt, settings, reporter, tokenSource);
+                UpdateTransforms();
             }
         }
 

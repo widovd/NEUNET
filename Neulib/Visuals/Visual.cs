@@ -157,6 +157,23 @@ namespace Neulib.Visuals
                 }
         }
 
+        public void ForEach(Action<Moveable, Moveable> action)
+        {
+            int count = Moveables.Count;
+            Moveable moveable = null;
+            for (int i = 0; i < count; i++)
+            {
+                Moveable previous = moveable;
+                moveable = Moveables[i];
+                action(previous, moveable);
+            }
+        }
+
+        public virtual void UpdateTransforms()
+        {
+            ForEach(moveable => moveable.UpdateTransforms());
+        }
+
         public virtual void Randomize(Random random)
         {
             ForEach(moveable => moveable.Randomize(random));
