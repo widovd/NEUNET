@@ -25,21 +25,21 @@ namespace Neulib.Visuals
         /// <summary>
         /// The connections with the neurons in the previous layer.
         /// </summary>
-        private List<Moveable> Visuals { get; set; } = new List<Moveable>();
+        private List<Moveable> Moveables { get; set; } = new List<Moveable>();
 
         /// <summary>
         /// The number of connections of this buglist with the previous layer.
         /// </summary>
-        public int Count { get => Visuals.Count; }
+        public int Count { get => Moveables.Count; }
 
-        public bool IsReadOnly => ((ICollection<Visual>)Visuals).IsReadOnly;
+        public bool IsReadOnly => ((ICollection<Visual>)Moveables).IsReadOnly;
 
         /// <summary>
         /// Returns the connection with the buglist in the previous layer.
         /// </summary>
         /// <param name="index">The index of the buglist in the previous layer.</param>
         /// <returns>The connection with the buglist in the previous layer.</returns>
-        public Moveable this[int index] { get => Visuals[index]; set => Visuals[index] = value; }
+        public Moveable this[int index] { get => Moveables[index]; set => Moveables[index] = value; }
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ namespace Neulib.Visuals
             {
                 Moveable moveable = (Moveable)stream.ReadValue(serializer);
                 moveable.Parent = this;
-                Visuals.Add(moveable);
+                Moveables.Add(moveable);
             }
         }
 
@@ -68,23 +68,23 @@ namespace Neulib.Visuals
         {
             base.CopyFrom(o);
             Visual value = o as Visual ?? throw new InvalidTypeException(o, nameof(Visual), 951859);
-            int count = value.Visuals.Count;
-            Visuals.Clear();
+            int count = value.Moveables.Count;
+            Moveables.Clear();
             for (int i = 0; i < count; i++)
             {
-                Moveable moveable = (Moveable)value.Visuals[i].Clone();
+                Moveable moveable = (Moveable)value.Moveables[i].Clone();
                 moveable.Parent = this;
-                Visuals.Add(moveable);
+                Moveables.Add(moveable);
             }
         }
 
         public override void WriteToStream(Stream stream, BinarySerializer serializer)
         {
             base.WriteToStream(stream, serializer);
-            int count = Visuals.Count;
+            int count = Moveables.Count;
             stream.WriteInt(count);
             for (int i = 0; i < count; i++)
-                stream.WriteValue(Visuals[i], serializer);
+                stream.WriteValue(Moveables[i], serializer);
         }
 
         #endregion
@@ -93,52 +93,52 @@ namespace Neulib.Visuals
 
         public int IndexOf(Moveable item)
         {
-            return Visuals.IndexOf(item);
+            return Moveables.IndexOf(item);
         }
 
         public void Insert(int index, Moveable item)
         {
-            Visuals.Insert(index, item);
+            Moveables.Insert(index, item);
         }
 
         public void Add(Moveable item)
         {
-            Visuals.Add(item);
+            Moveables.Add(item);
         }
 
         public void RemoveAt(int index)
         {
-            Visuals.RemoveAt(index);
+            Moveables.RemoveAt(index);
         }
 
         public bool Remove(Moveable item)
         {
-            return Visuals.Remove(item);
+            return Moveables.Remove(item);
         }
 
         public void Clear()
         {
-            Visuals.Clear();
+            Moveables.Clear();
         }
 
         public bool Contains(Moveable item)
         {
-            return Visuals.Contains(item);
+            return Moveables.Contains(item);
         }
 
         public void CopyTo(Moveable[] array, int arrayIndex)
         {
-            Visuals.CopyTo(array, arrayIndex);
+            Moveables.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<Moveable> GetEnumerator()
         {
-            return Visuals.GetEnumerator();
+            return Moveables.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return Visuals.GetEnumerator();
+            return Moveables.GetEnumerator();
         }
 
         #endregion
@@ -147,13 +147,13 @@ namespace Neulib.Visuals
 
         public void ForEach(Action<Moveable> action, bool parallel = false)
         {
-            int count = Visuals.Count;
+            int count = Moveables.Count;
             if (parallel)
-                Parallel.For(0, count, (int i) => action(Visuals[i]));
+                Parallel.For(0, count, (int i) => action(Moveables[i]));
             else
                 for (int i = 0; i < count; i++)
                 {
-                    action(Visuals[i]);
+                    action(Moveables[i]);
                 }
         }
 
@@ -166,7 +166,6 @@ namespace Neulib.Visuals
         {
             ForEach(moveable => moveable.Visual.Step(settings, reporter, tokenSource));
         }
-
 
         public virtual void AddInstructions(InstructionList instructions, Transform transform)
         {

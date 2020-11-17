@@ -50,9 +50,7 @@ namespace Neunet.Images
             if (World == null) return;
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                InstructionList instructions = new InstructionList();
-                World.AddInstructions(instructions);
-                //World.AddInstructions(instructions, World.Transform);
+                InstructionList instructions = World.GetInstructions();
                 instructions.Draw(graphics, ToScreen);
             }
         }

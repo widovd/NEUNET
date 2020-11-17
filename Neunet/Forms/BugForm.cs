@@ -406,19 +406,17 @@ namespace Neunet.Forms
 
         private async Task PlayAsync()
         {
-            updateTimer.Enabled = true;
-            await RunAsync((settings, reporter, tokenSource) =>
+            try
             {
-                reporter?.WriteStart($"Running...");
-                Stopwatch timer = new Stopwatch();
-                timer.Start();
-                BugWorld.Run(settings, reporter, tokenSource);
-                reporter?.WriteEnd($"Run ended after {timer.Elapsed.TotalSeconds} s.");
-            });
-            updateTimer.Enabled = false;
-
-            SetProgress(0);
-            SetStatusText(string.Empty);
+                updateTimer.Enabled = true;
+                await RunAsync(BugWorld.Run);
+            }
+            finally
+            {
+                updateTimer.Enabled = false;
+                SetProgress(0);
+                SetStatusText(string.Empty);
+            }
         }
 
         private async void RunButton_Click(object sender, EventArgs e)

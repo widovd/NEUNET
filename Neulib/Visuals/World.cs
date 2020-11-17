@@ -74,6 +74,11 @@ namespace Neulib.Visuals
         // ----------------------------------------------------------------------------------------
         #region Visual
 
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region World
+
+
         public void Randomize(Random random)
         {
             Visual.Randomize(random);
@@ -84,16 +89,14 @@ namespace Neulib.Visuals
             Visual.Step(settings, reporter, tokenSource);
         }
 
-        public void AddInstructions(InstructionList instructions)
+        public InstructionList GetInstructions()
         {
+            InstructionList instructions = new InstructionList();
             Visual.AddInstructions(instructions, Transform);
             instructions.Add(new Instruction(new Single2(XLo, YLo), InstructionEnum.Add));
             instructions.Add(new Instruction(new Single2(XHi, YHi), InstructionEnum.Rectangle));
+            return instructions;
         }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
-        #region VisualWorld
 
         public void Learn(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {

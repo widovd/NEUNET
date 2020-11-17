@@ -44,19 +44,19 @@ namespace Neulib.Visuals
             Visual = new Visual();
         }
 
-        public Moveable(Visual items)
+        public Moveable(Visual visual)
         {
-            Visual = items;
+            Visual = visual;
         }
 
-        public Moveable(params Moveable[] items)
+        public Moveable(params Moveable[] moveables)
         {
             Visual = new Visual();
-            int count = items.Length;
+            int count = moveables.Length;
             for (int i = 0; i < count; i++)
             {
-                Moveable visual = items[i];
-                Visual.Add(visual);
+                Moveable moveable = moveables[i];
+                Visual.Add(moveable);
             }
         }
 
@@ -87,7 +87,7 @@ namespace Neulib.Visuals
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region Visual
+        #region Moveable
 
         #endregion
     }
