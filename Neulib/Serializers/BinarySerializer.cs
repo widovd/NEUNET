@@ -24,7 +24,7 @@ namespace Neulib.Serializers
 
         private const int _nullToken = 0;
 
-        public IBinarySerializable ReadValue(Stream stream)
+        public override ISerializable ReadValue(Stream stream)
         {
             CancellationTokenSource?.Token.ThrowIfCancellationRequested();
             int token = stream.ReadInt();
@@ -32,10 +32,10 @@ namespace Neulib.Serializers
                 return null;
             Type type = Types.GetType(token);
             long pos2 = stream.ReadLong();
-            IBinarySerializable serializable = null;
+            ISerializable serializable = null;
             try
             {
-                serializable = Activator.CreateInstance(type, stream, this) as IBinarySerializable;
+                serializable = Activator.CreateInstance(type, stream, this) as ISerializable;
             }
             catch (MissingMethodException ex)
             {
@@ -49,7 +49,7 @@ namespace Neulib.Serializers
             return serializable;
         }
 
-        public void WriteValue(Stream stream, IBinarySerializable serializable)
+        public override void WriteValue(Stream stream, ISerializable serializable)
         {
             CancellationTokenSource?.Token.ThrowIfCancellationRequested();
             if (serializable == null)
@@ -68,15 +68,14 @@ namespace Neulib.Serializers
             stream.Position = pos2;
         }
 
-        public override object Deserialize(Stream stream)
+        public override ISerializable Deserialize(Stream stream)
         {
             Version = Version.Parse(stream.ReadString());
             return ReadValue(stream);
         }
 
-        public override void Serialize(Stream stream, object graph)
+        public override void Serialize(Stream stream, ISerializable serializable)
         {
-            if (!(graph is IBinarySerializable serializable)) return;
             stream.WriteString(Version.ToString());
             WriteValue(stream, serializable);
         }

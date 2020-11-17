@@ -40,7 +40,7 @@ namespace Neunet.Forms
         {
             stream.Position = 0;
             Serializer serializer = GetSerializer();
-            Graph = serializer.Deserialize(stream);
+            Serializable = serializer.Deserialize(stream);
             FileVersion = serializer.Version;
         }
 
@@ -88,7 +88,7 @@ namespace Neunet.Forms
                 FilePath = filePath,
                 FileFormat = FileForm.GetFileFormat(filePath),
             };
-            object graph = form.ShowDialog() == DialogResult.OK ? form.Graph : null;
+            object graph = form.ShowDialog() == DialogResult.OK ? form.Serializable : null;
             fileVersion = form.FileVersion;
             return graph;
         }

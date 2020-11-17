@@ -32,7 +32,7 @@ namespace Neulib.Visuals.Arthropods
         {
         }
 
-        public Segment(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public Segment(Stream stream, Serializer serializer) : base(stream, serializer)
         {
         }
 
@@ -46,7 +46,7 @@ namespace Neulib.Visuals.Arthropods
             Segment value = o as Segment ?? throw new InvalidTypeException(o, nameof(Segment), 542013);
         }
 
-        public override void WriteToStream(Stream stream, BinarySerializer serializer)
+        public override void WriteToStream(Stream stream, Serializer serializer)
         {
             base.WriteToStream(stream, serializer);
         }

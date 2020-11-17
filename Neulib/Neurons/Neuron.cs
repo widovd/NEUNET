@@ -78,7 +78,7 @@ namespace Neulib.Neurons
         /// <summary>
         /// Creates a new neuron from the stream.
         /// </summary>
-        public Neuron(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public Neuron(Stream stream, Serializer serializer) : base(stream, serializer)
         {
             Bias = stream.ReadSingle();
             Sum = stream.ReadSingle();
@@ -120,7 +120,7 @@ namespace Neulib.Neurons
             }
         }
 
-        public override void WriteToStream(Stream stream, BinarySerializer serializer)
+        public override void WriteToStream(Stream stream, Serializer serializer)
         {
             base.WriteToStream(stream, serializer);
             stream.WriteSingle(Bias);

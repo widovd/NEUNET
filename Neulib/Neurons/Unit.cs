@@ -36,7 +36,7 @@ namespace Neulib.Neurons
         /// <summary>
         /// Creates a new unit from the stream.
         /// </summary>
-        public Unit(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public Unit(Stream stream, Serializer serializer) : base(stream, serializer)
         {
         }
 

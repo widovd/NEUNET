@@ -8,7 +8,7 @@ using Neulib.Serializers;
 namespace Neulib
 {
 
-    public class BaseObject : ICloneable, IBinarySerializable
+    public class BaseObject : ICloneable, ISerializable
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -22,7 +22,7 @@ namespace Neulib
         {
         }
 
-        public BaseObject(Stream stream, BinarySerializer serializer)
+        public BaseObject(Stream stream, Serializer serializer)
         { }
 
         #endregion
@@ -57,7 +57,7 @@ namespace Neulib
         // ----------------------------------------------------------------------------------------
         #region IBinarySerializable
 
-        public virtual void WriteToStream(Stream stream, BinarySerializer serializer)
+        public virtual void WriteToStream(Stream stream, Serializer serializer)
         { }
 
         #endregion

@@ -40,7 +40,7 @@ namespace Neulib.Visuals
         {
         }
 
-        public World(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public World(Stream stream, Serializer serializer) : base(stream, serializer)
         {
             XLo = stream.ReadSingle();
             XHi = stream.ReadSingle();
@@ -62,7 +62,7 @@ namespace Neulib.Visuals
             YHi = value.YHi;
         }
 
-        public override void WriteToStream(Stream stream, BinarySerializer serializer)
+        public override void WriteToStream(Stream stream, Serializer serializer)
         {
             base.WriteToStream(stream, serializer);
             stream.WriteSingle(XLo);

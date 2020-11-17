@@ -49,7 +49,7 @@ namespace Neulib.Visuals
         {
         }
 
-        public Visual(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public Visual(Stream stream, Serializer serializer) : base(stream, serializer)
         {
             int count = stream.ReadInt();
             for (int i = 0; i < count; i++)
@@ -78,7 +78,7 @@ namespace Neulib.Visuals
             }
         }
 
-        public override void WriteToStream(Stream stream, BinarySerializer serializer)
+        public override void WriteToStream(Stream stream, Serializer serializer)
         {
             base.WriteToStream(stream, serializer);
             int count = Moveables.Count;

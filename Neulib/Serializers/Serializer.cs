@@ -30,12 +30,21 @@ namespace Neulib.Serializers
         // ----------------------------------------------------------------------------------------
         #region Serializer, IFormatter
 
-        public virtual object Deserialize(Stream stream)
+        public virtual ISerializable ReadValue(Stream stream)
         {
             return null;
         }
 
-        public virtual void Serialize(Stream stream, object graph)
+        public virtual void WriteValue(Stream stream, ISerializable serializable)
+        {
+        }
+
+        public virtual ISerializable Deserialize(Stream stream)
+        {
+            return null;
+        }
+
+        public virtual void Serialize(Stream stream, ISerializable serializable)
         {
         }
 

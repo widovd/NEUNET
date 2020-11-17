@@ -22,12 +22,12 @@ namespace Neulib.Serializers
             return destination;
         }
 
-        public static IBinarySerializable ReadValue(this Stream stream, BinarySerializer serializer)
+        public static ISerializable ReadValue(this Stream stream, Serializer serializer)
         {
             return serializer.ReadValue(stream);
         }
 
-        public static void WriteValue(this Stream stream, IBinarySerializable value, BinarySerializer serializer)
+        public static void WriteValue(this Stream stream, ISerializable value, Serializer serializer)
         {
             serializer.WriteValue(stream, value);
         }

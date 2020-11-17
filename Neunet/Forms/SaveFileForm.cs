@@ -38,7 +38,7 @@ namespace Neunet.Forms
         private void SaveGraph(Stream stream)
         {
             Serializer formatter = GetSerializer();
-            formatter?.Serialize(stream, Graph);
+            formatter?.Serialize(stream, Serializable);
         }
 
         protected override void FileAction(Settings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
@@ -77,20 +77,20 @@ namespace Neunet.Forms
         // ----------------------------------------------------------------------------------------
         #region SaveFileForm
 
-        public static bool SaveFile(string filePath, object graph)
+        public static bool SaveFile(string filePath, ISerializable serializable)
         {
             using SaveFileForm form = new SaveFileForm()
             {
                 FilePath = filePath,
-                FileFormat = FileForm.GetFileFormat(filePath),
-                Graph = graph,
+                FileFormat = GetFileFormat(filePath),
+                Serializable = serializable,
             };
             return form.ShowDialog() == DialogResult.OK;
         }
 
-        public static bool SaveDialog(ref string filePath, object graph)
+        public static bool SaveDialog(ref string filePath, ISerializable serializable)
         {
-            return FileUtils.GetSaveFileName(ref filePath, FreshFilter) && SaveFile(filePath, graph);
+            return FileUtils.GetSaveFileName(ref filePath, FreshFilter) && SaveFile(filePath, serializable);
         }
 
         #endregion

@@ -8,9 +8,8 @@ using System.IO;
 
 namespace Neulib.Serializers
 {
-    public interface IBinarySerializable
+    public interface ISerializable
     {
-        //void ReadFromStream(Stream stream, BinarySerializer serializer);
-        void WriteToStream(Stream stream, BinarySerializer serializer);
+        void WriteToStream(Stream stream, Serializer serializer);
     }
 }

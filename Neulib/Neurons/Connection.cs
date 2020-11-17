@@ -43,7 +43,7 @@ namespace Neulib.Neurons
         /// <summary>
         /// Creates a new connection from the stream.
         /// </summary>
-        public Connection(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public Connection(Stream stream, Serializer serializer) : base(stream, serializer)
         {
             Index = stream.ReadInt();
             Weight = stream.ReadSingle();
@@ -70,7 +70,7 @@ namespace Neulib.Neurons
             Weight = value.Weight;
         }
 
-        public override void WriteToStream(Stream stream, BinarySerializer serializer)
+        public override void WriteToStream(Stream stream, Serializer serializer)
         {
             base.WriteToStream(stream, serializer);
             stream.WriteInt(Index);

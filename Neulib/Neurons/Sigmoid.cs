@@ -30,7 +30,7 @@ namespace Neulib.Neurons
         /// <summary>
         /// Creates a new neuron from the stream.
         /// </summary>
-        public Sigmoid(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public Sigmoid(Stream stream, Serializer serializer) : base(stream, serializer)
         {
         }
 

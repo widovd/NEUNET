@@ -54,7 +54,7 @@ namespace Neulib.Neurons
         /// <summary>
         /// Creates a new layer from the stream.
         /// </summary>
-        public Layer(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public Layer(Stream stream, Serializer serializer) : base(stream, serializer)
         {
             int count = stream.ReadInt();
             for (int i = 0; i < count; i++)
@@ -88,7 +88,7 @@ namespace Neulib.Neurons
             }
         }
 
-        public override void WriteToStream(Stream stream, BinarySerializer serializer)
+        public override void WriteToStream(Stream stream, Serializer serializer)
         {
             base.WriteToStream(stream, serializer);
             int count = Neurons.Count;

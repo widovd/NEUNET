@@ -46,7 +46,7 @@ namespace Neunet.Forms
         }
 
         // The object, or root of the object graph, to serialize. All child objects of this root object are automatically serialized.
-        public object Graph { get; set; }
+        public ISerializable Serializable { get; set; }
 
         #endregion
         // ----------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ namespace Neunet.Forms
             Serializer serializer = FileFormat switch
             {
                 FileFormatEnum.BinarySerializer => new BinarySerializer(_tokenSource),
-                FileFormatEnum.XmlDocSerializer => new XmlDocSerializer(_tokenSource),
+                //FileFormatEnum.XmlDocSerializer => new XmlDocSerializer(_tokenSource),
                 _ => throw new InvalidCaseException(nameof(FileFormat), FileFormat, 802008),
             };
             return serializer;

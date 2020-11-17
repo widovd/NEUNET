@@ -32,17 +32,17 @@ namespace Neulib.Serializers
 
         private const string _TypeAttributeId = "type";
 
-        public IXmlDocSerializable ReadValueChild(XmlElement childElement)
+        public ISerializable ReadValueChild(XmlElement childElement)
         {
             string typeName = childElement.GetAttribute(_TypeAttributeId);
             if (string.IsNullOrEmpty(typeName)) return null; // Happens when null is serialized.
             int token = int.Parse(typeName);
             Type type = Types.GetType(token);
             if (type == null) throw new VarNullException(nameof(type), 275854);
-            IXmlDocSerializable serializable;
+            ISerializable serializable;
             try
             {
-                serializable = Activator.CreateInstance(type, childElement, this) as IXmlDocSerializable;
+                serializable = Activator.CreateInstance(type, childElement, this) as ISerializable;
             }
             catch (MissingMethodException ex)
             {
@@ -51,15 +51,15 @@ namespace Neulib.Serializers
             return serializable;
         }
 
-        public IXmlDocSerializable ReadValue(XmlElement element, string name)
+        public ISerializable ReadValue(XmlElement element, string name)
         {
             CancellationTokenSource?.Token.ThrowIfCancellationRequested();
             XmlElement childElement = element.GetChildElement(name);
-            IXmlDocSerializable serializable = childElement != null ? ReadValueChild(childElement) : null;
+            ISerializable serializable = childElement != null ? ReadValueChild(childElement) : null;
             return serializable;
         }
 
-        public void WriteValueChild(XmlElement childElement, IXmlDocSerializable serializable)
+        public void WriteValueChild(XmlElement childElement, ISerializable serializable)
         {
             Type type = serializable.GetType();
             int token = Types.GetToken(type);
@@ -71,7 +71,7 @@ namespace Neulib.Serializers
             serializable.WriteToXml(childElement, this);
         }
 
-        public void WriteValue(XmlElement element, string name, IXmlDocSerializable serializable)
+        public void WriteValue(XmlElement element, string name, ISerializable serializable)
         {
             CancellationTokenSource?.Token.ThrowIfCancellationRequested();
             XmlElement childElement = element.CreateChildElement(name);
@@ -90,13 +90,13 @@ namespace Neulib.Serializers
             XmlElement rootElement = document[_RootId];
             if (rootElement == null) throw new XmlException($"Root element '{_RootId}' is missing.");
             Version = Version.Parse(rootElement.GetAttribute(_VersionId.ToLower()));
-            IXmlDocSerializable serializable = ReadValue(rootElement, _ItemsId);
+            ISerializable serializable = ReadValue(rootElement, _ItemsId);
             return serializable;
         }
 
         public override void Serialize(Stream stream, object graph)
         {
-            if (!(graph is IXmlDocSerializable serializable)) return;
+            if (!(graph is ISerializable serializable)) return;
             XmlDocument document = new XmlDocument();
             XmlElement rootElement = document.CreateChildElement(_RootId);
             rootElement.SetAttribute("xmlns:xsd", NameSpace);

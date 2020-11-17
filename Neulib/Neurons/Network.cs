@@ -92,7 +92,7 @@ namespace Neulib.Neurons
         /// <summary>
         /// Creates a new Network from the stream.
         /// </summary>
-        public Network(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public Network(Stream stream, Serializer serializer) : base(stream, serializer)
         {
             Input = (Layer)stream.ReadValue(serializer) ?? throw new VarNullException(nameof(Input), 965402);
             int count = stream.ReadInt();
@@ -131,7 +131,7 @@ namespace Neulib.Neurons
             value.ForEach(layer => _layers.Add((Layer)layer.Clone()));
         }
 
-        public override void WriteToStream(Stream stream, BinarySerializer serializer)
+        public override void WriteToStream(Stream stream, Serializer serializer)
         {
             base.WriteToStream(stream, serializer);
             stream.WriteValue(Input, serializer);

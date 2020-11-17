@@ -60,7 +60,7 @@ namespace Neulib.Visuals
             }
         }
 
-        public Moveable(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public Moveable(Stream stream, Serializer serializer) : base(stream, serializer)
         {
             Transform = stream.ReadTransform();
             Visual = (Visual)stream.ReadValue(serializer);
@@ -78,7 +78,7 @@ namespace Neulib.Visuals
             Visual = (Visual)value.Visual.Clone();
         }
 
-        public override void WriteToStream(Stream stream, BinarySerializer serializer)
+        public override void WriteToStream(Stream stream, Serializer serializer)
         {
             base.WriteToStream(stream, serializer);
             stream.WriteTransform(Transform);
