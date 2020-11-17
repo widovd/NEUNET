@@ -22,17 +22,15 @@ namespace Neulib.Serializers
         // ----------------------------------------------------------------------------------------
         #region Serializer, IFormatter
 
-        private const ushort _NullToken = 0;
+        private const int _nullToken = 0;
 
         public IBinarySerializable ReadValue(Stream stream)
         {
             CancellationTokenSource?.Token.ThrowIfCancellationRequested();
-            ushort token = stream.ReadUshort();
-            if (token == _NullToken)
+            int token = stream.ReadInt();
+            if (token == _nullToken)
                 return null;
-            Type type = Types.FirstOrDefault(pair => TypesDictionary.GetToken(pair.Key) == token).Value;
-            if (type == null) // The stream contains an undefined token
-                throw new InvalidValueException($"The stream contains an unknown token: {token}", 944327);
+            Type type = Types.GetType(token);
             long pos2 = stream.ReadLong();
             IBinarySerializable serializable = null;
             try
@@ -56,15 +54,11 @@ namespace Neulib.Serializers
             CancellationTokenSource?.Token.ThrowIfCancellationRequested();
             if (serializable == null)
             {
-                stream.WriteUshort(_NullToken);
+                stream.WriteInt(_nullToken);
                 return;
             }
-            Type type = serializable.GetType();
-            string name = Types.FirstOrDefault(pair => pair.Value == type).Key;
-            if (string.IsNullOrEmpty(name))
-                throw new InvalidValueException($"Type '{serializable.GetType()}' is not registered in TypesDictionary", 468077);
-            ushort token = TypesDictionary.GetToken(name);
-            stream.WriteUshort(token);
+            int token = Types.GetToken(serializable.GetType());
+            stream.WriteInt(token);
             long pos1 = stream.Position;
             stream.WriteLong(0);
             serializable.WriteToStream(stream, this);
@@ -76,16 +70,7 @@ namespace Neulib.Serializers
 
         public override object Deserialize(Stream stream)
         {
-            long pos = stream.Position;
-            try
-            {
-                Version = Version.Parse(stream.ReadString());
-            }
-            catch
-            {
-                Version = new Version(3, 2, 8, 0); // The first published version which didn't have this Version feature.
-                stream.Position = pos;
-            }
+            Version = Version.Parse(stream.ReadString());
             return ReadValue(stream);
         }
 

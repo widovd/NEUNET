@@ -36,9 +36,8 @@ namespace Neulib.Serializers
         {
             string typeName = childElement.GetAttribute(_TypeAttributeId);
             if (string.IsNullOrEmpty(typeName)) return null; // Happens when null is serialized.
-            if (!Types.ContainsKey(typeName))
-                throw new InvalidValueException($"Type name '{typeName}' is not registered as class type.", 318264);
-            Type type = Types[typeName];
+            int token = int.Parse(typeName);
+            Type type = Types.GetType(token);
             if (type == null) throw new VarNullException(nameof(type), 275854);
             IXmlDocSerializable serializable;
             try
@@ -63,7 +62,8 @@ namespace Neulib.Serializers
         public void WriteValueChild(XmlElement childElement, IXmlDocSerializable serializable)
         {
             Type type = serializable.GetType();
-            string typeName = Types.FirstOrDefault(pair => pair.Value == type).Key;
+            int token = Types.GetToken(type);
+            string typeName = token.ToString();
             if (string.IsNullOrEmpty(typeName))
                 throw new InvalidValueException($"Type '{serializable.GetType()}' is not registered in TypesDictionary", 178884);
             //throw XmlDocumentSerializationException.NotRegistered(serializable);

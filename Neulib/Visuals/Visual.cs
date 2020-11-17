@@ -159,17 +159,17 @@ namespace Neulib.Visuals
 
         public virtual void Randomize(Random random)
         {
-            ForEach(moveable => moveable.Visual.Randomize(random));
+            ForEach(moveable => moveable.Randomize(random));
         }
 
-        public virtual void Step(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
+        public virtual void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
-            ForEach(moveable => moveable.Visual.Step(settings, reporter, tokenSource));
+            ForEach(moveable => moveable.Step(dt, settings, reporter, tokenSource));
         }
 
         public virtual void AddInstructions(InstructionList instructions, Transform transform)
         {
-            ForEach(moveable => moveable.Visual.AddInstructions(instructions, transform * moveable.Transform));
+            ForEach(moveable => moveable.AddInstructions(instructions, transform));
         }
 
         #endregion

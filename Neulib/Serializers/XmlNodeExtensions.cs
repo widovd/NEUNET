@@ -73,30 +73,6 @@ namespace Neulib.Serializers
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region Value
-
-        public static IXmlDocSerializable ReadValueChild(this XmlElement element, XmlDocSerializer serializer)
-        {
-            return serializer.ReadValueChild(element);
-        }
-
-        public static void WriteValueChild(this XmlElement element, IXmlDocSerializable serializable, XmlDocSerializer serializer)
-        {
-            serializer.WriteValueChild(element, serializable);
-        }
-
-        public static IXmlDocSerializable ReadValue(this XmlElement element, string name, XmlDocSerializer serializer)
-        {
-            return serializer.ReadValue(element, name);
-        }
-
-        public static void WriteValue(this XmlElement element, string name, IXmlDocSerializable serializable, XmlDocSerializer serializer)
-        {
-            serializer.WriteValue(element, name, serializable);
-        }
-
-        #endregion
-        // ----------------------------------------------------------------------------------------
         #region String
 
         public static string ReadString(this XmlElement rootElement, string name, string defaultValue)

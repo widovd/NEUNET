@@ -16,7 +16,7 @@ using Neulib.Numerics;
 using Neulib.Exceptions;
 using Neulib.Neurons;
 using Neulib.Visuals;
-using Neulib.Visuals.Bugs;
+using Neulib.Visuals.Arthropods;
 using Neulib.MultiArrays;
 using Neulib.Serializers;
 using Neunet.Extensions;
@@ -306,13 +306,13 @@ namespace Neunet.Forms
         private void NewWorld()
         {
             BugWorld = new World(
-                new Moveable(new Bug()),
-                new Moveable(new Bug()),
-                new Moveable(new Bug()),
-                new Moveable(new Bug()),
-                new Moveable(new Bug()),
-                new Moveable(new Bug()),
-                new Moveable(new Bug())
+                new Moveable(new Arthropod()),
+                new Moveable(new Arthropod()),
+                new Moveable(new Arthropod()),
+                new Moveable(new Arthropod()),
+                new Moveable(new Arthropod()),
+                new Moveable(new Arthropod()),
+                new Moveable(new Arthropod())
                );
             BugWorld.Randomize(Mersenne);
             bugWorldImage.RefreshImage();
@@ -370,33 +370,6 @@ namespace Neunet.Forms
             {
                 if (SaveReminder && CancelOnClose()) return;
                 RandomizeWorld();
-            }
-            catch (Exception ex)
-            {
-                ExceptionDialog.Show(ex);
-            }
-        }
-
-        private async Task LearnAsync()
-        {
-            SaveReminder = true;
-            await RunAsync((settings, reporter, tokenSource) =>
-            {
-                reporter?.WriteStart($"Learning...");
-                Stopwatch timer = new Stopwatch();
-                timer.Start();
-                BugWorld.Learn(settings, reporter, tokenSource);
-                reporter?.WriteEnd($"Learning ended after {timer.Elapsed.TotalSeconds} s.");
-            });
-            SetProgress(0);
-            SetStatusText(string.Empty);
-        }
-
-        private async void LearnButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                await LearnAsync();
             }
             catch (Exception ex)
             {
@@ -559,10 +532,8 @@ namespace Neunet.Forms
             // Run menu
             randomizeToolStripMenuItem.Enabled = !running;
             randomizeToolStripButton.Enabled = !running;
-            learnToolStripMenuItem.Enabled = !running;
-            learnToolStripButton.Enabled = !running;
-            verifyToolStripButton.Enabled = !running;
-            verifyToolStripMenuItem.Enabled = !running;
+            runToolStripButton.Enabled = !running;
+            runToolStripMenuItem.Enabled = !running;
             stopToolStripMenuItem.Enabled = stopEnabled;
             stopToolStripButton.Enabled = stopEnabled;
             settingsToolStripMenuItem.Enabled = !running;

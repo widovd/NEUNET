@@ -54,8 +54,6 @@
             this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.calculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.randomizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.learnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.verifyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +63,7 @@
             this.programFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.newToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -73,24 +71,20 @@
             this.editToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.randomizeToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.learnToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.verifyToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.runToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.stopToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.settingsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.bugWorldImage = new Neunet.Images.BugWorldImage();
             this.updateTimer = new System.Windows.Forms.Timer(this.components);
+            this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.mainMenuStrip.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
+            this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip
             // 
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.progressBar,
-            this.messageStatusLabel,
-            this.saveReminderLabel});
             this.statusStrip.Location = new System.Drawing.Point(0, 536);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(837, 22);
@@ -262,13 +256,6 @@
             // 
             // calculateToolStripMenuItem
             // 
-            this.calculateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.randomizeToolStripMenuItem,
-            this.learnToolStripMenuItem,
-            this.verifyToolStripMenuItem,
-            this.stopToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.settingsToolStripMenuItem});
             this.calculateToolStripMenuItem.Name = "calculateToolStripMenuItem";
             this.calculateToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
             this.calculateToolStripMenuItem.Text = "Run";
@@ -278,45 +265,29 @@
             this.randomizeToolStripMenuItem.Image = global::Neunet.Properties.Resources.Dices;
             this.randomizeToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.randomizeToolStripMenuItem.Name = "randomizeToolStripMenuItem";
-            this.randomizeToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.randomizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.randomizeToolStripMenuItem.Text = "Randomize";
             this.randomizeToolStripMenuItem.Click += new System.EventHandler(this.RandomizeMenuItem_Click);
-            // 
-            // learnToolStripMenuItem
-            // 
-            this.learnToolStripMenuItem.Image = global::Neunet.Properties.Resources.Learn;
-            this.learnToolStripMenuItem.Name = "learnToolStripMenuItem";
-            this.learnToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.learnToolStripMenuItem.Text = "Learn";
-            this.learnToolStripMenuItem.Click += new System.EventHandler(this.LearnButton_Click);
-            // 
-            // verifyToolStripMenuItem
-            // 
-            this.verifyToolStripMenuItem.Image = global::Neunet.Properties.Resources.Verify;
-            this.verifyToolStripMenuItem.Name = "verifyToolStripMenuItem";
-            this.verifyToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.verifyToolStripMenuItem.Text = "Verify";
-            this.verifyToolStripMenuItem.Click += new System.EventHandler(this.RunButton_Click);
             // 
             // stopToolStripMenuItem
             // 
             this.stopToolStripMenuItem.Image = global::Neunet.Properties.Resources.Stop;
             this.stopToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-            this.stopToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.stopToolStripMenuItem.Text = "Stop";
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(130, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Image = global::Neunet.Properties.Resources.Settings;
             this.settingsToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.CalculationSettingsToolStripMenuItem_Click);
             // 
@@ -374,8 +345,8 @@
             // 
             // toolStrip1
             // 
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripButton,
             this.openToolStripButton,
             this.saveToolStripButton,
@@ -383,16 +354,15 @@
             this.editToolStripButton,
             this.toolStripSeparator5,
             this.randomizeToolStripButton,
-            this.learnToolStripButton,
-            this.verifyToolStripButton,
+            this.runToolStripButton,
             this.stopToolStripButton,
             this.settingsToolStripButton,
             this.toolStripSeparator6});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(837, 25);
-            this.toolStrip1.TabIndex = 12;
-            this.toolStrip1.Text = "toolStrip";
+            this.toolStrip.Location = new System.Drawing.Point(0, 24);
+            this.toolStrip.Name = "toolStrip1";
+            this.toolStrip.Size = new System.Drawing.Size(837, 25);
+            this.toolStrip.TabIndex = 12;
+            this.toolStrip.Text = "toolStrip";
             // 
             // newToolStripButton
             // 
@@ -464,29 +434,17 @@
             this.randomizeToolStripButton.ToolTipText = "Randomize the network";
             this.randomizeToolStripButton.Click += new System.EventHandler(this.RandomizeMenuItem_Click);
             // 
-            // learnToolStripButton
+            // runToolStripButton
             // 
-            this.learnToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.learnToolStripButton.Image = global::Neunet.Properties.Resources.Learn;
-            this.learnToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.learnToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.learnToolStripButton.Name = "learnToolStripButton";
-            this.learnToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.learnToolStripButton.Text = "Learn";
-            this.learnToolStripButton.ToolTipText = "Learn the network";
-            this.learnToolStripButton.Click += new System.EventHandler(this.LearnButton_Click);
-            // 
-            // verifyToolStripButton
-            // 
-            this.verifyToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.verifyToolStripButton.Image = global::Neunet.Properties.Resources.Verify;
-            this.verifyToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.verifyToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.verifyToolStripButton.Name = "verifyToolStripButton";
-            this.verifyToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.verifyToolStripButton.Text = "Verify";
-            this.verifyToolStripButton.ToolTipText = "Verify the network";
-            this.verifyToolStripButton.Click += new System.EventHandler(this.RunButton_Click);
+            this.runToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.runToolStripButton.Image = global::Neunet.Properties.Resources.Run;
+            this.runToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.runToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.runToolStripButton.Name = "runToolStripButton";
+            this.runToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.runToolStripButton.Text = "Run";
+            this.runToolStripButton.ToolTipText = "Verify the network";
+            this.runToolStripButton.Click += new System.EventHandler(this.RunButton_Click);
             // 
             // stopToolStripButton
             // 
@@ -530,13 +488,21 @@
             // 
             this.updateTimer.Tick += new System.EventHandler(this.UpdateTimer_Tick);
             // 
+            // runToolStripMenuItem
+            // 
+            this.runToolStripMenuItem.Image = global::Neunet.Properties.Resources.Run;
+            this.runToolStripMenuItem.Name = "runToolStripMenuItem";
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runToolStripMenuItem.Text = "Run";
+            this.runToolStripMenuItem.Click += new System.EventHandler(this.RunButton_Click);
+            // 
             // BugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(837, 558);
             this.Controls.Add(this.bugWorldImage);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.mainMenuStrip);
             this.Controls.Add(this.statusStrip);
             this.Name = "BugForm";
@@ -548,8 +514,8 @@
             this.statusStrip.PerformLayout();
             this.mainMenuStrip.ResumeLayout(false);
             this.mainMenuStrip.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -584,15 +550,13 @@
         private System.Windows.Forms.ToolStripMenuItem editMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calculateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem randomizeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem learnToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem verifyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem openTestSetImageFileMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openTestSetLabelFileMenuItem;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton newToolStripButton;
         private System.Windows.Forms.ToolStripButton openToolStripButton;
         private System.Windows.Forms.ToolStripButton saveToolStripButton;
@@ -600,13 +564,13 @@
         private System.Windows.Forms.ToolStripButton editToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripButton randomizeToolStripButton;
-        private System.Windows.Forms.ToolStripButton learnToolStripButton;
-        private System.Windows.Forms.ToolStripButton verifyToolStripButton;
+        private System.Windows.Forms.ToolStripButton runToolStripButton;
         private System.Windows.Forms.ToolStripButton stopToolStripButton;
         private System.Windows.Forms.ToolStripButton settingsToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private Images.BugWorldImage bugWorldImage;
         private System.Windows.Forms.Timer updateTimer;
+        private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
     }
 }
 

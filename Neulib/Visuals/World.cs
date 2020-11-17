@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -84,11 +85,6 @@ namespace Neulib.Visuals
             Visual.Randomize(random);
         }
 
-        public void Step(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
-        {
-            Visual.Step(settings, reporter, tokenSource);
-        }
-
         public InstructionList GetInstructions()
         {
             InstructionList instructions = new InstructionList();
@@ -98,17 +94,18 @@ namespace Neulib.Visuals
             return instructions;
         }
 
-        public void Learn(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
-        {
-
-        }
-
         public void Run(WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
         {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+            long ticks = timer.Elapsed.Ticks;
             while (true)
             {
                 tokenSource?.Token.ThrowIfCancellationRequested();
-                Visual.ForEach(visual => visual.Visual.Step(settings, reporter, tokenSource), true);
+                long prevTicks = ticks;
+                ticks = timer.Elapsed.Ticks;
+                float dt = (float)(ticks - prevTicks) / TimeSpan.TicksPerSecond;
+                Visual.ForEach(moveable => moveable.Step(dt, settings, reporter, tokenSource), true);
             }
         }
 

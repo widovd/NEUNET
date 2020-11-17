@@ -524,6 +524,7 @@
     <None Include="Icons\New.png" />
     <None Include="Icons\Random.png" />
     <None Include="Icons\Verify.png" />
+    <None Include="Icons\Reset.png" />
     <Content Include="Neunet.ico" />
     <None Include="Icons\neural.png" />
     <Content Include="Icons\NewDistribution.png" />
@@ -570,7 +571,6 @@
     <Content Include="Icons\RenameColumn.png" />
     <Content Include="Icons\RenameRow.png" />
     <Content Include="Icons\RenameTreeNode.png" />
-    <Content Include="Icons\Reset.png" />
     <Content Include="Icons\ResetOrigin.png" />
     <Content Include="Icons\ResetPerspective.png" />
     <Content Include="Icons\ResetZoom.png" />

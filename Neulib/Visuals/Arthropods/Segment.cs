@@ -14,9 +14,9 @@ using Neulib.Numerics;
 using Neulib.Instructions;
 using static System.Math;
 
-namespace Neulib.Visuals.Bugs
+namespace Neulib.Visuals.Arthropods
 {
-    public class Bug : Visual
+    public class Segment : Visual
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -28,11 +28,11 @@ namespace Neulib.Visuals.Bugs
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
-        public Bug()
+        public Segment()
         {
         }
 
-        public Bug(Stream stream, BinarySerializer serializer) : base(stream, serializer)
+        public Segment(Stream stream, BinarySerializer serializer) : base(stream, serializer)
         {
         }
 
@@ -43,7 +43,7 @@ namespace Neulib.Visuals.Bugs
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            Bug value = o as Bug ?? throw new InvalidTypeException(o, nameof(Bug), 554610);
+            Segment value = o as Segment ?? throw new InvalidTypeException(o, nameof(Segment), 542013);
         }
 
         public override void WriteToStream(Stream stream, BinarySerializer serializer)
@@ -58,31 +58,11 @@ namespace Neulib.Visuals.Bugs
         public override void Randomize(Random random)
         {
             base.Randomize(random);
-            Width = 10f + 50f * (float)random.NextDouble();
-            Height = 10f + 50f * (float)random.NextDouble();
-            Single2 translation = new Single2(
-                1200f * (float)random.NextDouble(),
-                800f * (float)random.NextDouble()
-                );
-            Single2x2 rotation = Single2x2.Rot1(
-                (float)(2d * PI * random.NextDouble())
-                );
-            Parent.Transform = new Transform(translation, rotation);
         }
 
         public override void AddInstructions(InstructionList instructions, Transform transform)
         {
             base.AddInstructions(instructions, transform);
-            int n = 72;
-            for (int i = 0; i <= n; i++)
-            {
-                double a = 2d * PI * (double)i / n;
-                double r = 1d + 0.3d * Cos(3 * a) + 0.2d * Cos(10 * a);
-                double x = r * Cos(a);
-                double y = r * Sin(a);
-                instructions.Add(new Instruction((float)x * Width, (float)y * Height, i < n ? InstructionEnum.Add : InstructionEnum.Polygon, transform));
-            }
-
         }
 
 

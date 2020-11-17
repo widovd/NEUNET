@@ -89,6 +89,21 @@ namespace Neulib.Visuals
         // ----------------------------------------------------------------------------------------
         #region Moveable
 
+        public virtual void Randomize(Random random)
+        {
+            Visual.Randomize(random);
+        }
+
+        public void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
+        {
+            Visual.Step(dt, settings, reporter, tokenSource);
+        }
+
+        public void AddInstructions(InstructionList instructions, Transform transform)
+        {
+            Visual.AddInstructions(instructions, transform * Transform);
+        }
+
         #endregion
     }
 }

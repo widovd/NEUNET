@@ -50,7 +50,11 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="BaseObject.cs" />
-    <Compile Include="Visuals\Bugs\Bug.cs" />
+    <Compile Include="Serializers\XmlNodeExtensions.cs" />
+    <Compile Include="Visuals\Arthropods\Limb.cs" />
+    <Compile Include="Visuals\Arthropods\Leg.cs" />
+    <Compile Include="Visuals\Arthropods\Segment.cs" />
+    <Compile Include="Visuals\Arthropods\Arthropod.cs" />
     <Compile Include="Numerics\Transform.cs" />
     <Compile Include="Visuals\Visual.cs" />
     <Compile Include="Visuals\WorldSettings.cs" />
@@ -112,12 +116,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializers\BinarySerializer.cs" />
     <Compile Include="Serializers\IBinarySerializable.cs" />
-    <Compile Include="Serializers\IXmlDocSerializable.cs" />
     <Compile Include="Serializers\Serializer.cs" />
     <Compile Include="Serializers\StreamExtensions.cs" />
     <Compile Include="Serializers\TypesDictionary.cs" />
-    <Compile Include="Serializers\XmlDocSerializer.cs" />
-    <Compile Include="Serializers\XmlNodeExtensions.cs" />
     <Compile Include="Utils\LineReader.cs" />
     <Compile Include="Utils\LineWriter.cs" />
     <Compile Include="Utils\StringCipher.cs" />
@@ -128,6 +129,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Obsolete\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Visuals\Arthropods\TextFile1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

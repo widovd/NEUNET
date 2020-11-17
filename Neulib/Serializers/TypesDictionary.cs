@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
@@ -6,27 +7,29 @@ using Neulib.Exceptions;
 using Neulib.Numerics;
 using Neulib.Neurons;
 using Neulib.Visuals;
-using Neulib.Visuals.Bugs;
+using Neulib.Visuals.Arthropods;
 
 namespace Neulib.Serializers
 {
     [Serializable]
-    public class TypesDictionary : Dictionary<string, Type>
+    public class TypesDictionary : Dictionary<Type, int>
     {
 
         public TypesDictionary()
         {
-            Add("Connection", typeof(Connection));
-            Add("Unit", typeof(Unit));
-            Add("Neuron", typeof(Neuron));
-            Add("Sigmoid", typeof(Sigmoid));
-            Add("Layer", typeof(Layer));
-            Add("Network", typeof(Network));
-            Add("Transform", typeof(Transform));
-            Add("Visual", typeof(Moveable));
-            Add("VisualWorld", typeof(World));
-            Add("Bug", typeof(Bug));
-            TestCollisions();
+            Add(typeof(Connection), 480537);
+            Add(typeof(Unit), 545117);
+            Add(typeof(Neuron), 906231);
+            Add(typeof(Sigmoid), 489479);
+            Add(typeof(Layer), 489479);
+            Add(typeof(Network), 728343);
+            Add(typeof(Transform), 365737);
+            Add(typeof(Moveable), 141375);
+            Add(typeof(World), 898392);
+            Add(typeof(Arthropod), 688396);
+            Add(typeof(Leg), 927638);
+            Add(typeof(Limb), 271223);
+            Add(typeof(Segment), 742681);
         }
 
         protected TypesDictionary(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -34,38 +37,20 @@ namespace Neulib.Serializers
             throw new NotImplementedException();
         }
 
-        public static ushort GetToken(string key)
+        public Type GetType(int token)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(key);
-            int token = 0;
-            int length = bytes.Length;
-            for (int i = 0; i < length; i++)
-            {
-                token ^= bytes[i] << (8 * (i % 2));
-            }
-            return (ushort)(token & 0xFFFF);
+            Type type = this.FirstOrDefault(pair => pair.Value == token).Key;
+            if (type == default) // The stream contains an undefined token
+                throw new InvalidValueException($"Token '{token}' is not registered in TypesDictionary", 944327);
+            return type;
         }
 
-        private void TestCollisions()
+        public int GetToken(Type type)
         {
-            KeyCollection keys = Keys;
-            //StringBuilder builder = new StringBuilder();
-            foreach (string key1 in keys)
-            {
-                ushort token1 = GetToken(key1);
-                if (token1 == 0)
-                    throw new InvalidCodeException($"Key '{key1}' collides with the reserved key for 'null'.\nPlease change the name of this key.", 236991);
-                foreach (string key2 in keys)
-                {
-                    if (Equals(key1, key2)) continue; // trivial, no collision
-                    ushort token2 = GetToken(key2);
-                    if (token1 == token2)
-                        throw new InvalidCodeException($"Key '{key1}' collides with key '{key2}'.\nPlease change the name of one of these keys.", 705006);
-                }
-                //builder.Append($"'{key1}'={token1}");
-                //builder.AppendLine();
-                //Console.WriteLine($"key: '{key1}', token: {token1}");
-            }
+            int token = this.FirstOrDefault(pair => pair.Key == type).Value;
+            if (token == default)// The type is not defined
+                throw new InvalidValueException($"Type '{type}' is not registered in TypesDictionary", 468077);
+            return token;
         }
 
     }
