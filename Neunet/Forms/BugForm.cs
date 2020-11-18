@@ -305,22 +305,7 @@ namespace Neunet.Forms
 
         private void NewWorld()
         {
-            Moveable A1 = new Moveable(new Arthropod()
-            {
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-                new Moveable(new Segment()),
-            });
-            
+            Moveable A1 = new Moveable(new Arthropod(13, 2, 4));
             BugWorld = new World(A1);
             BugWorld.UpdateTransforms();
             BugWorld.Randomize(Mersenne);

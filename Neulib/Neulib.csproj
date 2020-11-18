@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="BaseObject.cs" />
+    <Compile Include="Instructions\Polygon.cs" />
     <Compile Include="Serializers\XmlNodeExtensions.cs" />
     <Compile Include="Visuals\Arthropods\Segmented.cs" />
     <Compile Include="Visuals\Arthropods\Limb.cs" />

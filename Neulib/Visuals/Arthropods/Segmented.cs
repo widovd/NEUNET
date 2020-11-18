@@ -17,6 +17,7 @@ using static System.Math;
 namespace Neulib.Visuals.Arthropods
 {
     public class Segmented : Visual
+    // Collection of Segment
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -73,6 +74,7 @@ namespace Neulib.Visuals.Arthropods
         #region Segmented
 
         public override void UpdateTransforms()
+        // Zet ze achter elkaar
         {
             base.UpdateTransforms();
             ForEach((previous, moveable) =>
@@ -83,7 +85,7 @@ namespace Neulib.Visuals.Arthropods
                 }
                 else
                 {
-                    Segment segment = moveable.Visual as Segment ?? throw new VarNullException(nameof(Segment), 343052);
+                    Segment segment = moveable.Visual as Segment ?? throw new VarNullException(nameof(segment), 343052);
                     moveable.Transform = previous.Transform.Shackle(segment.Length, segment.Angle);
                 }
             });

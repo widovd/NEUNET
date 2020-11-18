@@ -21,6 +21,12 @@ namespace Neulib.Visuals.Arthropods
         // ----------------------------------------------------------------------------------------
         #region Properties
 
+        /// <summary>
+        /// Angle of this leg with respect to the parent segment. Zero means perpendicular.
+        /// </summary>
+        public float Angle { get; set; } = 0f;
+
+
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Constructors
@@ -28,6 +34,16 @@ namespace Neulib.Visuals.Arthropods
         public Leg()
         {
         }
+
+        public Leg(int nSegments)
+        {
+            for (int i = 0; i < nSegments; i++)
+            {
+                Add(new Moveable(new Segment()));
+            }
+        }
+
+
 
         public Leg(Stream stream, Serializer serializer) : base(stream, serializer)
         {

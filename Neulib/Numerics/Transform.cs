@@ -90,7 +90,7 @@ namespace Neulib.Numerics
         public static Transform operator *(Transform left, Transform right)
         {
             return new Transform(
-                left.Translation + left.Rotation * right.Translation, 
+                left.Translation + left.Rotation * right.Translation,
                 left.Rotation * right.Rotation
                 );
         }
@@ -104,12 +104,22 @@ namespace Neulib.Numerics
         // ----------------------------------------------------------------------------------------
         #region Transform
 
+        public Single2 Apply(Single2 point)
+        {
+            return Translation + Rotation * point;
+        }
+
+        public Single2 Apply(float x, float y)
+        {
+            return Apply(new Single2(x, y));
+        }
+
         public Transform Shackle(float length, float angle)
         {
             return new Transform(
                 Translation + Rotation * Single2.OneX * length,
                 Rotation * Single2x2.Rotation(angle) // of andersom
-                ) ;
+                );
         }
 
         #endregion

@@ -29,11 +29,11 @@ namespace Neulib.Visuals.Arthropods
         {
         }
 
-        public Arthropod(int nSegments)
+        public Arthropod(int nSegments1, int nLegs, int nSegments2)
         {
-            for (int i = 0; i < nSegments; i++)
+            for (int i = 0; i < nSegments1; i++)
             {
-
+                Add(new Moveable(new Segment(nLegs, nSegments2)));
             }
         }
 

@@ -105,8 +105,14 @@ namespace Neulib.Visuals
         {
             InstructionList instructions = new InstructionList();
             Visual.AddInstructions(instructions, Transform);
-            instructions.Add(new Instruction(new Single2(XLo, YLo), InstructionEnum.Add));
-            instructions.Add(new Instruction(new Single2(XHi, YHi), InstructionEnum.Rectangle));
+            Polygon polygon = new Polygon(Color.Black, 1f)
+            {
+                {XLo, YLo },
+                {XHi, YLo },
+                {XHi, YHi },
+                {XLo, YHi },
+            };
+            instructions.Add(polygon);
             return instructions;
         }
 
