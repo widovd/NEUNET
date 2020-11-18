@@ -307,7 +307,16 @@ namespace Neunet.Forms
         private void NewWorld()
         {
             Visual A1 = new Millipede();
-            BugWorld = new World(A1);
+            BugWorld = new World(
+                new Millipede(),
+                new Millipede(),
+                new Millipede(),
+                new Millipede(),
+                new Millipede(),
+                new Millipede(),
+                new Millipede(),
+                new Millipede()
+                );
             BugWorld.Randomize(Mersenne);
             BugWorld.UpdateTransforms();
             bugWorldImage.RefreshImage();

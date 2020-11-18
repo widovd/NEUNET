@@ -9,9 +9,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Neulib.Exceptions;
+using Neulib.Extensions;
 using Neulib.Serializers;
 using Neulib.Numerics;
 using Neulib.Instructions;
+using static System.Math;
 
 namespace Neulib.Visuals
 {
@@ -48,6 +50,17 @@ namespace Neulib.Visuals
             {
                 value.Parent = this;
                 Visuals[index] = value;
+            }
+        }
+
+        public Visual Top
+        {
+            get
+            {
+                Visual visual = this;
+                while (visual.Parent != null)
+                    visual = visual.Parent;
+                return visual;
             }
         }
 
@@ -193,6 +206,13 @@ namespace Neulib.Visuals
 
         public virtual void Randomize(Random random)
         {
+            (double x, double y) = random.BoxMuller(100, 0);
+            double a = 2d * PI * random.NextDouble();
+            Transform = new Transform(
+                new Single2((float)x, (float)y),
+                Single2x2.Rotation((float)a)
+                );
+
             ForEach(visual => visual.Randomize(random));
         }
 

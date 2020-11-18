@@ -32,7 +32,7 @@ namespace Neulib.Visuals
         {
         }
 
-        public World(Visual items) : base(items)
+        public World(params Visual[] visuals) : base(visuals)
         {
         }
 
@@ -51,7 +51,7 @@ namespace Neulib.Visuals
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            World value = o as World ?? throw new InvalidTypeException(o, nameof(World), 550727);
+            World value = o as World ?? throw new InvalidTypeException(o, nameof(Top), 550727);
             XLo = value.XLo;
             XHi = value.XHi;
             YLo = value.YLo;
