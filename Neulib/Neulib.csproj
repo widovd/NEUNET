@@ -52,6 +52,8 @@
     <Compile Include="BaseObject.cs" />
     <Compile Include="Instructions\Polygon.cs" />
     <Compile Include="Serializers\XmlNodeExtensions.cs" />
+    <Compile Include="Visuals\Arthropods\Myriapods\Myriapod.cs" />
+    <Compile Include="Visuals\Arthropods\Myriapods\Millipede.cs" />
     <Compile Include="Visuals\Arthropods\Segmented.cs" />
     <Compile Include="Visuals\Arthropods\Limb.cs" />
     <Compile Include="Visuals\Arthropods\Leg.cs" />

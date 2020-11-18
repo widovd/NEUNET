@@ -17,6 +17,7 @@ using Neulib.Exceptions;
 using Neulib.Neurons;
 using Neulib.Visuals;
 using Neulib.Visuals.Arthropods;
+using Neulib.Visuals.Arthropods.Myriapods;
 using Neulib.MultiArrays;
 using Neulib.Serializers;
 using Neunet.Extensions;
@@ -305,10 +306,10 @@ namespace Neunet.Forms
 
         private void NewWorld()
         {
-            Moveable A1 = new Moveable(new Arthropod(13, 2, 4));
+            Moveable A1 = new Moveable(new Millipede());
             BugWorld = new World(A1);
-            BugWorld.UpdateTransforms();
             BugWorld.Randomize(Mersenne);
+            BugWorld.UpdateTransforms();
             bugWorldImage.RefreshImage();
             SaveReminder = false;
         }

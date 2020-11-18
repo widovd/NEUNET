@@ -14,10 +14,9 @@ using Neulib.Numerics;
 using Neulib.Instructions;
 using static System.Math;
 
-namespace Neulib.Visuals.Arthropods
+namespace Neulib.Visuals.Arthropods.Myriapods
 {
-    public class Segmented : Visual
-    // Collection of Segment
+    public class Myriapod : Arthropod
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -26,11 +25,11 @@ namespace Neulib.Visuals.Arthropods
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
-        public Segmented()
+        public Myriapod()
         {
         }
 
-        public Segmented(Stream stream, Serializer serializer) : base(stream, serializer)
+        public Myriapod(Stream stream, Serializer serializer) : base(stream, serializer)
         {
         }
 
@@ -41,7 +40,7 @@ namespace Neulib.Visuals.Arthropods
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            Segmented value = o as Segmented ?? throw new InvalidTypeException(o, nameof(Segmented), 995344);
+            Myriapod value = o as Myriapod ?? throw new InvalidTypeException(o, nameof(Myriapod), 929472);
         }
 
         public override void WriteToStream(Stream stream, Serializer serializer)
@@ -68,28 +67,22 @@ namespace Neulib.Visuals.Arthropods
             base.AddInstructions(instructions, transform);
         }
 
-
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Segmented
 
         public override void UpdateTransforms()
-        // Zet ze achter elkaar
         {
             base.UpdateTransforms();
-            ForEach((previous, moveable) =>
-            {
-                if (previous == null)
-                {
-                    moveable.Transform = Transform.Default;
-                }
-                else
-                {
-                    Segment segment = moveable.Visual as Segment ?? throw new VarNullException(nameof(segment), 343052);
-                    moveable.Transform = previous.Transform.Shackle(segment.Length, segment.Angle);
-                }
-            });
         }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Arthropod
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Myriapod
 
         #endregion
     }

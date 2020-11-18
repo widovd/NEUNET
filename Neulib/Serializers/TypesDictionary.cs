@@ -8,6 +8,7 @@ using Neulib.Numerics;
 using Neulib.Neurons;
 using Neulib.Visuals;
 using Neulib.Visuals.Arthropods;
+using Neulib.Visuals.Arthropods.Myriapods;
 
 namespace Neulib.Serializers
 {
@@ -27,11 +28,13 @@ namespace Neulib.Serializers
             Add(typeof(Moveable), 141375);
             Add(typeof(Visual), 861962);
             Add(typeof(World), 898392);
-            Add(typeof(Arthropod), 688396);
-            Add(typeof(Leg), 927638);
-            Add(typeof(Limb), 271223);
             Add(typeof(Segment), 742681);
             Add(typeof(Segmented), 787582);
+            Add(typeof(Leg), 927638);
+            Add(typeof(Limb), 271223);
+            Add(typeof(Arthropod), 688396);
+            Add(typeof(Myriapod), 273657);
+            Add(typeof(Millipede), 669267);
         }
 
         protected TypesDictionary(SerializationInfo info, StreamingContext context) : base(info, context)

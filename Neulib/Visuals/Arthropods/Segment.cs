@@ -17,6 +17,7 @@ using static System.Math;
 namespace Neulib.Visuals.Arthropods
 {
     public class Segment : Visual
+    // Part of a Segmented
     // Collection of Segmented
     {
         // ----------------------------------------------------------------------------------------
@@ -25,12 +26,12 @@ namespace Neulib.Visuals.Arthropods
         /// <summary>
         /// Width of this segment.
         /// </summary>
-        public float Width { get; set; } = 20f;
+        public float Width { get; set; } = 50f;
 
         /// <summary>
         /// Length of this segment.
         /// </summary>
-        public float Length { get; set; } = 30f;
+        public float Length { get; set; } = 80f;
 
         /// <summary>
         /// Angle of this segment with respect to the previous segment.
@@ -101,20 +102,13 @@ namespace Neulib.Visuals.Arthropods
             Angle += da * dt;
         }
 
-
         public override void AddInstructions(InstructionList instructions, Transform transform)
         {
             base.AddInstructions(instructions, transform);
             float w2 = Width / 2;
             float l = Length;
-            Polygon polygon = new Polygon(Color.Black, 1f)
-            {
-                transform.Apply(0, -w2 ),
-                transform.Apply(0, w2 ),
-                transform.Apply(l, w2 ),
-                transform.Apply(l, -w2 ),
-            };
-            instructions.Add(polygon);
+            float r = 0.4f * Min(w2, l);
+            instructions.Add(Polygon.RoundedRectangle(0, -w2, l, w2, r, 16, transform, Color.Black, 1f));
         }
 
         #endregion

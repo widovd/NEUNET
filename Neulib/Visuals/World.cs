@@ -83,6 +83,7 @@ namespace Neulib.Visuals
         public override void Randomize(Random random)
         {
             base.Randomize(random);
+            UpdateTransforms();
         }
 
         public override void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)

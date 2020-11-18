@@ -14,10 +14,9 @@ using Neulib.Numerics;
 using Neulib.Instructions;
 using static System.Math;
 
-namespace Neulib.Visuals.Arthropods
+namespace Neulib.Visuals.Arthropods.Myriapods
 {
-    public class Segmented : Visual
-    // Collection of Segment
+    public class Millipede : Myriapod
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -26,11 +25,11 @@ namespace Neulib.Visuals.Arthropods
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
-        public Segmented()
+        public Millipede()
         {
         }
 
-        public Segmented(Stream stream, Serializer serializer) : base(stream, serializer)
+        public Millipede(Stream stream, Serializer serializer) : base(stream, serializer)
         {
         }
 
@@ -41,7 +40,7 @@ namespace Neulib.Visuals.Arthropods
         protected override void CopyFrom(object o)
         {
             base.CopyFrom(o);
-            Segmented value = o as Segmented ?? throw new InvalidTypeException(o, nameof(Segmented), 995344);
+            Millipede value = o as Millipede ?? throw new InvalidTypeException(o, nameof(Millipede), 929472);
         }
 
         public override void WriteToStream(Stream stream, Serializer serializer)
@@ -56,6 +55,19 @@ namespace Neulib.Visuals.Arthropods
         public override void Randomize(Random random)
         {
             base.Randomize(random);
+            Clear();
+            float a1 = (float)random.BoxMuller1(PI/50d);
+            float l1 = (float)random.Weibull(20d, 2d);
+            float w1 = (float)random.Weibull(25d, 2d);
+            int nSegments = (int)random.Weibull(25d, 2d);
+            for (int i = 0; i < nSegments; i++)
+            {
+                Segment segment = new Segment();
+                segment.Length = l1;
+                segment.Width = w1;
+                segment.Angle = a1;
+                Add(new Moveable(segment));
+            }
         }
 
         public override void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
@@ -68,28 +80,26 @@ namespace Neulib.Visuals.Arthropods
             base.AddInstructions(instructions, transform);
         }
 
-
         #endregion
         // ----------------------------------------------------------------------------------------
         #region Segmented
 
         public override void UpdateTransforms()
-        // Zet ze achter elkaar
         {
             base.UpdateTransforms();
-            ForEach((previous, moveable) =>
-            {
-                if (previous == null)
-                {
-                    moveable.Transform = Transform.Default;
-                }
-                else
-                {
-                    Segment segment = moveable.Visual as Segment ?? throw new VarNullException(nameof(segment), 343052);
-                    moveable.Transform = previous.Transform.Shackle(segment.Length, segment.Angle);
-                }
-            });
         }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Arthropod
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Myriapod
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Millipede
 
         #endregion
     }

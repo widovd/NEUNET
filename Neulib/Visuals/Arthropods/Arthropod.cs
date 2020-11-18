@@ -64,16 +64,6 @@ namespace Neulib.Visuals.Arthropods
         public override void Randomize(Random random)
         {
             base.Randomize(random);
-            //Width = 10f + 50f * (float)random.NextDouble();
-            //Height = 10f + 50f * (float)random.NextDouble();
-            //Single2 translation = new Single2(
-            //    1200f * (float)random.NextDouble(),
-            //    800f * (float)random.NextDouble()
-            //    );
-            //Single2x2 rotation = Single2x2.Rot1(
-            //    (float)(2d * PI * random.NextDouble())
-            //    );
-            //Parent.Transform = new Transform(translation, rotation);
         }
 
         public override void Step(float dt, WorldSettings settings, ProgressReporter reporter, CancellationTokenSource tokenSource)
@@ -84,21 +74,20 @@ namespace Neulib.Visuals.Arthropods
         public override void AddInstructions(InstructionList instructions, Transform transform)
         {
             base.AddInstructions(instructions, transform);
-            //int n = 72;
-            //for (int i = 0; i <= n; i++)
-            //{
-            //    double a = 2d * PI * i / n;
-            //    double r = 1d + 0.3d * Cos(3 * a) + 0.2d * Cos(10 * a);
-            //    double x = r * Cos(a);
-            //    double y = r * Sin(a);
-            //    instructions.Add(new Instruction((float)x * Width, (float)y * Height, i < n ? InstructionEnum.Add : InstructionEnum.Polygon, transform));
-            //}
         }
-
 
         #endregion
         // ----------------------------------------------------------------------------------------
-        #region Bug
+        #region Segmented
+
+        public override void UpdateTransforms()
+        {
+            base.UpdateTransforms();
+        }
+
+        #endregion
+        // ----------------------------------------------------------------------------------------
+        #region Arthropod
 
         #endregion
     }
