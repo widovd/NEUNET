@@ -63,7 +63,6 @@
     <Compile Include="Visuals\Visual.cs" />
     <Compile Include="Visuals\WorldSettings.cs" />
     <Compile Include="Visuals\World.cs" />
-    <Compile Include="Visuals\Moveable.cs" />
     <Compile Include="Instructions\Instruction.cs" />
     <Compile Include="Instructions\InstructionList.cs" />
     <Compile Include="Numerics\Single2x2.cs" />

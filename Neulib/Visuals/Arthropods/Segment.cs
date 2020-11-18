@@ -50,7 +50,7 @@ namespace Neulib.Visuals.Arthropods
         {
             for (int i = 0; i < nLegs; i++)
             {
-                Add(new Moveable(new Leg(nSegments)));
+                Add(new Leg(nSegments));
             }
         }
 
@@ -124,11 +124,11 @@ namespace Neulib.Visuals.Arthropods
             int count = Count;
             for (int i = 0; i < count; i++)
             {
-                Moveable moveable = this[i];
-                Leg leg = moveable.Visual as Leg ?? throw new VarNullException(nameof(leg), 896174);
+                Visual visual = this[i];
+                Leg leg = visual as Leg ?? throw new VarNullException(nameof(leg), 896174);
                 float sgn = i % 2 == 0 ? 1 : -1;
                 float x = (1 + 2 * (i / 2)) * Length / count;
-                moveable.Transform = new Transform(
+                visual.Transform = new Transform(
                     new Single2(x, sgn * w2),
                     Single2x2.Rotation(sgn * (pi2 + leg.Angle))
                     );

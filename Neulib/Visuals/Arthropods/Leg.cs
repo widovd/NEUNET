@@ -39,7 +39,7 @@ namespace Neulib.Visuals.Arthropods
         {
             for (int i = 0; i < nSegments; i++)
             {
-                Add(new Moveable(new Segment()));
+                Add(new Segment());
             }
         }
 

@@ -14,7 +14,7 @@ using Neulib.Instructions;
 
 namespace Neulib.Visuals
 {
-    public sealed class World : Moveable
+    public sealed class World : Visual
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -33,10 +33,6 @@ namespace Neulib.Visuals
         }
 
         public World(Visual items) : base(items)
-        {
-        }
-
-        public World(params Moveable[] items) : base(items)
         {
         }
 
@@ -105,7 +101,7 @@ namespace Neulib.Visuals
         public InstructionList GetInstructions()
         {
             InstructionList instructions = new InstructionList();
-            Visual.AddInstructions(instructions, Transform);
+            AddInstructions(instructions, Transform);
             Polygon polygon = new Polygon(Color.Black, 1f)
             {
                 {XLo, YLo },

@@ -66,7 +66,7 @@ namespace Neulib.Visuals.Arthropods.Myriapods
                 segment.Length = l1;
                 segment.Width = w1;
                 segment.Angle = a1;
-                Add(new Moveable(segment));
+                Add(segment);
             }
         }
 

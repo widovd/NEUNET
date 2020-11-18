@@ -77,16 +77,16 @@ namespace Neulib.Visuals.Arthropods
         // Zet ze achter elkaar
         {
             base.UpdateTransforms();
-            ForEach((previous, moveable) =>
+            ForEach((previous, visual) =>
             {
                 if (previous == null)
                 {
-                    moveable.Transform = Transform.Default;
+                    visual.Transform = Transform.Default;
                 }
                 else
                 {
-                    Segment segment = moveable.Visual as Segment ?? throw new VarNullException(nameof(segment), 343052);
-                    moveable.Transform = previous.Transform.Shackle(segment.Length, segment.Angle);
+                    Segment segment = visual as Segment ?? throw new VarNullException(nameof(segment), 343052);
+                    visual.Transform = previous.Transform.Shackle(segment.Length, segment.Angle);
                 }
             });
         }

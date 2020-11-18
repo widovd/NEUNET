@@ -306,7 +306,7 @@ namespace Neunet.Forms
 
         private void NewWorld()
         {
-            Moveable A1 = new Moveable(new Millipede());
+            Visual A1 = new Millipede();
             BugWorld = new World(A1);
             BugWorld.Randomize(Mersenne);
             BugWorld.UpdateTransforms();

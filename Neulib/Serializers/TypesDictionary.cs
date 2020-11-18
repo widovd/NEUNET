@@ -25,7 +25,6 @@ namespace Neulib.Serializers
             Add(typeof(Layer), 489479);
             Add(typeof(Network), 728343);
             Add(typeof(Transform), 365737);
-            Add(typeof(Moveable), 141375);
             Add(typeof(Visual), 861962);
             Add(typeof(World), 898392);
             Add(typeof(Segment), 742681);
