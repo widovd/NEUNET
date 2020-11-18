@@ -111,11 +111,11 @@
       <DependentUpon>TestFloatForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Images\BugWorldImage.cs">
+    <Compile Include="Images\WorldImage.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Images\BugWorldImage.Designer.cs">
-      <DependentUpon>BugWorldImage.cs</DependentUpon>
+    <Compile Include="Images\WorldImage.Designer.cs">
+      <DependentUpon>WorldImage.cs</DependentUpon>
     </Compile>
     <Compile Include="Images\CoefficientsImage.cs">
       <SubType>UserControl</SubType>

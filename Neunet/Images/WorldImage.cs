@@ -13,7 +13,7 @@ using Neulib.Instructions;
 
 namespace Neunet.Images
 {
-    public partial class BugWorldImage : BaseImage
+    public partial class WorldImage : BaseImage
     {
         // ----------------------------------------------------------------------------------------
         #region Properties
@@ -35,7 +35,7 @@ namespace Neunet.Images
         // ----------------------------------------------------------------------------------------
         #region Constructors
 
-        public BugWorldImage()
+        public WorldImage()
         {
             InitializeComponent();
         }

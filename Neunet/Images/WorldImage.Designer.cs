@@ -1,6 +1,6 @@
 ﻿namespace Neunet.Images
 {
-    partial class BugWorldImage
+    partial class WorldImage
     {
         /// <summary> 
         /// Required designer variable.

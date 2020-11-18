@@ -75,7 +75,7 @@
             this.stopToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.settingsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.bugWorldImage = new Neunet.Images.BugWorldImage();
+            this.bugWorldImage = new Neunet.Images.WorldImage();
             this.updateTimer = new System.Windows.Forms.Timer(this.components);
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
@@ -568,7 +568,7 @@
         private System.Windows.Forms.ToolStripButton stopToolStripButton;
         private System.Windows.Forms.ToolStripButton settingsToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
-        private Images.BugWorldImage bugWorldImage;
+        private Images.WorldImage bugWorldImage;
         private System.Windows.Forms.Timer updateTimer;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
     }
